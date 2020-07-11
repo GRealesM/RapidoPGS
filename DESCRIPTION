@@ -1,4 +1,4 @@
-Package: RaPGS
+Package: RapidoPGS
 Title: A Rapido and light package to compute Polygenig Risk Scores
 Version: 0.1.0.0000
 Authors@R:  c(

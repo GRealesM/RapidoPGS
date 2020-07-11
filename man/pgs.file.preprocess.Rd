@@ -4,14 +4,14 @@
 \alias{pgs.file.preprocess}
 \title{Preprocess GWAS summary statistics datasets for PGS computation}
 \usage{
-pgs.file.preprocess(dataset, blockfile = "ld.blocks.RDS", panel_filter = FALSE)
+pgs.file.preprocess(dataset, blockfile = "ld.blocks.RDS", ref = NULL)
 }
 \arguments{
 \item{dataset}{a string with the name or path to the GWAS summary statistic dataset, or the path to it}
 
 \item{blockfile}{a string with the name or path to a RDS file containing the genomic coordinates of LD blocks, computed for EUR populations.}
 
-\item{panel_filter}{a logical indicating if SNPs should be filtered and aligned to HapMap3 reference panel. Useful if working with such dataset. Default FALSE.}
+\item{ref}{a string indicating the reference file SNPs should be filtered and aligned to.}
 }
 \value{
 a data.table to be used for PGS computation.
@@ -29,7 +29,9 @@ ALT: Alternative, or effect allele, the one \eqn{\beta} refers to
 BETA: Beta (or log(OR)), or effect sizes.
 SE: Standard error of \eqn{\beta}
 P: P-values for the association test
-ALT_FREQ: Minor/ALT allele frequency in the tested population, or in a close population from a reference panel.
+ALT_FREQ: Minor/ALT allele frequency in the tested population, or in a close population from a reference panel. No problem it flipped.
+
+If a ref is provided. It should have 4 columns: CHR19, BP19, SNPID, REF, and ALT
 }
 \author{
 Guillermo Reales, Chris Wallace

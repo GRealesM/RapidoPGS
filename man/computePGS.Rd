@@ -32,7 +32,7 @@ computePGS(
 
 \item{recalc}{a logical indicating if weights should be recalculated after thresholding. If TRUE, \code{filt_threshold} should be defined}
 
-\item{forsAUC}{a logical indicating if output should be in sAUC evaluation format}
+\item{forsAUC}{a logical indicating if output should be in sAUC evaluation format as we used it for the paper.}
 
 \item{altformat}{a logical indicating if output should be in a format containing pid (chr:pos), ALT, and weights only. Default FALSE}
 }

@@ -204,54 +204,59 @@ wakefield_pp <- function(p,f, N, s,pi_i=1e-4,sd.prior=0.2) {
 ##' BETA: Beta (or log(OR)), or effect sizes.
 ##' SE: Standard error of \eqn{\beta}
 ##' P: P-values for the association test
-##' ALT_FREQ: Minor/ALT allele frequency in the tested population, or in a close population from a reference panel.
+##' ALT_FREQ: Minor/ALT allele frequency in the tested population, or in a close population from a reference panel. No problem it flipped.
 ##'
+##' If a ref is provided. It should have 4 columns: CHR19, BP19, SNPID, REF, and ALT
 ##' @param dataset a string with the name or path to the GWAS summary statistic dataset, or the path to it
 ##' @param blockfile a string with the name or path to a RDS file containing the genomic coordinates of LD blocks, computed for EUR populations.
-##' @param panel_filter a logical indicating if SNPs should be filtered and aligned to HapMap3 reference panel. Useful if working with such dataset. Default FALSE.
+##' @param ref a string indicating the reference file SNPs should be filtered and aligned to.
 ##' @return a data.table to be used for PGS computation.
 ##' @export
 ##' @author Guillermo Reales, Chris Wallace
 
-pgs.file.preprocess  <- function(dataset, blockfile="ld.blocks.RDS", panel_filter=FALSE){
+pgs.file.preprocess  <- function(dataset, blockfile="ld.blocks.RDS", ref=NULL){
 
 	message("Loading dataset...")
 	ds <- fread(dataset)
 	# Here's a list of columns that the dataset must have, otherwise it will fail
 	mincol <- c("CHR19","BP19", "REF","ALT","BETA", "SE", "P", "ALT_FREQ")
 	if(!all(mincol %in% names(ds))) stop("All minimum columns should be present. Please check, missing columns: ", setdiff(mincol,names(ds)))
-
-	# If panel_filter is TRUE, it will filter and align our alleles and their effects to the hapmap3 reference, which I have already formatted for our purposes.
-	if(panel_filter){
-		message("Filtering SNPs...")
-		if(!file_exists("reference_hapmap3.txt")) stop("Reference hapmap3 file not found, please download it from TO BE DECIDED, or run without panel_filter")
-		refmap3 <- fread("reference_hapmap3.txt")
-		refmap3[, alleles:=paste(REF,ALT, sep="/")][,pid:=paste(CHR19, BP19, sep=":")]
-		ds[,alleles:=paste(REF,ALT, sep="/")][,pid:=paste(CHR19, BP19, sep=":")]
-		ds <- ds[pid %in% refmap3$pid,]
-		ds  <- merge(ds, refmap3[,.(SNPID, pid, alleles)], by ='pid', suffixes=c("", ".reference"))
-		ds[, alleles:=toupper(alleles)][, c("REF", "ALT"):=list(toupper(REF), toupper(ALT))][, SNPID:=SNPID.reference]
-
-		message("Aligning alleles...")
-		# Check if everything is alright  
-		if(!all(g.class(ds$alleles.reference, ds$alleles)== "nochange")){
-		    allele_diagnostics <- g.class(ds$alleles.reference, ds$alleles)
-		    alleles_to_flip <-  allele_diagnostics == "rev"
-		    alleles_to_comp <- allele_diagnostics == "comp"
-		    alleles_to_revcomp <- allele_diagnostics == "revcomp"
-		    cat("Some SNPs have to be flipped. ", sum(alleles_to_flip), " to flip, ", sum(alleles_to_comp), " to find their complement, and ", sum(alleles_to_revcomp), " to find their reverse complement.\n")
-		    ds$alleles[alleles_to_flip] <- unlist(g.rev(ds$alleles[alleles_to_flip]))
-		    ds$alleles[alleles_to_comp] <- g.complement(ds$alleles[alleles_to_comp])
-		    ds$alleles[alleles_to_revcomp] <- unlist(g.rev(g.complement(ds$alleles[alleles_to_revcomp])))
-		    ds$REF <- sapply(strsplit(ds$alleles, "/"), `[`, 1)
-		    ds$ALT <- sapply(strsplit(ds$alleles, "/"), `[`, 2)
-		    ds$BETA[alleles_to_flip] <- ds$BETA[alleles_to_flip]*-1
-		    ds$BETA[alleles_to_revcomp] <- ds$BETA[alleles_to_revcomp]*-1
-		    rm(alleles_to_flip, alleles_to_comp, alleles_to_revcomp)
-		  }
-		ds[, c("alleles", "alleles.reference"):=NULL]
-	}
 	
+	if(!is.null(ref)){
+	# Next step is to filter and align our alleles and their effects to the hapmap3 reference, which I have already formatted for our purposes.
+	message("Filtering SNPs...")
+	refset <- fread(ref)
+	refset[, alleles:=paste(REF,ALT, sep="/")][,pid:=paste(CHR19, BP19, sep=":")]
+	ds[,alleles:=paste(REF,ALT, sep="/")][,pid:=paste(CHR19, BP19, sep=":")]
+	ds <- ds[pid %in% refset$pid,]
+	ds  <- merge(ds, refset[,.(SNPID, pid, alleles)], by ='pid', suffixes=c("", ".reference"))
+	ds[, alleles:=toupper(alleles)][, c("REF", "ALT"):=list(toupper(REF), toupper(ALT))][, SNPID:=SNPID.reference]
+
+	message("Aligning alleles...")
+	# Check if everything is alright  
+	if(!all(g.class(ds$alleles.reference, ds$alleles)== "nochange")){
+	    allele_diagnostics <- g.class(ds$alleles.reference, ds$alleles)
+	    alleles_to_flip <-  allele_diagnostics == "rev"
+	    alleles_to_comp <- allele_diagnostics == "comp"
+	    alleles_to_revcomp <- allele_diagnostics == "revcomp"
+	    cat("Some SNPs have to be flipped. ", sum(alleles_to_flip), " to flip, ", sum(alleles_to_comp), " to find their complement, and ", sum(alleles_to_revcomp), " to find their reverse complement.\n")
+	    ds$alleles[alleles_to_flip] <- unlist(g.rev(ds$alleles[alleles_to_flip]))
+	    ds$alleles[alleles_to_comp] <- g.complement(ds$alleles[alleles_to_comp])
+	    ds$alleles[alleles_to_revcomp] <- unlist(g.rev(g.complement(ds$alleles[alleles_to_revcomp])))
+	    ds$REF <- sapply(strsplit(ds$alleles, "/"), `[`, 1)
+	    ds$ALT <- sapply(strsplit(ds$alleles, "/"), `[`, 2)
+	    ds$BETA[alleles_to_flip] <- ds$BETA[alleles_to_flip]*-1
+	    ds$BETA[alleles_to_revcomp] <- ds$BETA[alleles_to_revcomp]*-1
+	   # NOTE: I introduced the following bit from milcytokine_basis on to guarantee that we have no ambiguity nor duplicated SNPs
+	#if(!all(g.class(ds$alleles.reference, ds$alleles)== "nochange")){
+	#	ds  <- ds[g.class(ds$alleles.reference, ds$alleles)== "nochange",]
+	#	}
+	
+	    rm(alleles_to_flip, alleles_to_comp, alleles_to_revcomp)
+	  }
+	ds[, c("alleles", "alleles.reference"):=NULL]
+	}
+
 	ds <- unique(ds)
 
 	# I made ld.blocks file from fourier_ls-all.bed, so now I can simply load the object
@@ -259,16 +264,15 @@ pgs.file.preprocess  <- function(dataset, blockfile="ld.blocks.RDS", panel_filte
 	# blranges <- GRanges(seqnames=blocks$chr, ranges=IRanges(blocks$start, end=blocks$stop, names=1:nrow(blocks)), strand="*") 
 	# saveRDS(blranges, "ld.blocks.RDS")
 	message("Assigning LD blocks...")
-	if(!file.exists(blockfile)) stop("ld.blocks.RDS file is missing. Please download it from TO BE DETERMINED")
 	blranges <- readRDS(blockfile)
 	ds  <- ds[!is.na(CHR19) & !is.na(BP19),] 
 	snpranges <- GRanges(seqnames=paste("chr",ds$CHR19, sep=""), ranges=IRanges(ds$BP19, end=ds$BP19, names=ds$SNPID), strand="*")
         ds[,ld.block:=findOverlaps(snpranges, blranges, select='last')]
-	ds  <- ds[,colnames(ds) %in% c(mincol, "ld.block", "pid", "SNPID"), with=FALSE]
 	ds  <- na.omit(ds)
 	message("Done!")
 	return(ds)
 }
+
 
 
 
@@ -286,7 +290,7 @@ pgs.file.preprocess  <- function(dataset, blockfile="ld.blocks.RDS", panel_filte
 ##' @param sd.prior a scalar representing our prior expectation of \eqn{\beta} (DEFAULT 0.2)
 ##' @param filt_threshold a scalar indicating the ppi threshold to filter the dataset after PGS computation. If NULL (Default), nothresholding will be applied
 ##' @param recalc a logical indicating if weights should be recalculated after thresholding. If TRUE, \code{filt_threshold} should be defined
-##' @param forsAUC a logical indicating if output should be in sAUC evaluation format
+##' @param forsAUC a logical indicating if output should be in sAUC evaluation format as we used it for the paper.
 ##' @param altformat a logical indicating if output should be in a format containing pid (chr:pos), ALT, and weights only. Default FALSE
 ##' @return a data.table containing the formatted sumstat dataset with computed PGS weights.
 ##' @export
@@ -295,6 +299,7 @@ pgs.file.preprocess  <- function(dataset, blockfile="ld.blocks.RDS", panel_filte
 computePGS <- function(ds, N0,N1=NULL,pi_i= 1e-04, sd.prior=0.2, filt_threshold = NULL, recalc=FALSE, forsAUC=FALSE, altformat=FALSE){
 
 	if(is.null(N1)){
+		if(is.numeric(N0) && length(N0) == 1) { # In case N0 is supplied
 		message("N1 not supplied. Assuming quantitative trait with ", N0, " individuals. Computing PGS.")
 		ds[,sdY:=sdY.est(vbeta=SE^2, maf=ALT_FREQ, n=N0)][,ppi:=wakefield_pp_quant(BETA,SE,sdY,sd.prior), by="ld.block"][,weight:=ppi*BETA]
 	if(!is.null(filt_threshold)){
@@ -303,17 +308,46 @@ computePGS <- function(ds, N0,N1=NULL,pi_i= 1e-04, sd.prior=0.2, filt_threshold 
 		ds[,sdY:=sdY.est(vbeta=SE^2, maf=ALT_FREQ, n=N0)][,ppi:=wakefield_pp_quant(BETA,SE,sdY,sd.prior), by="ld.block"][,weight:=ppi*BETA]		
 		}
 	}
-	} else {
-		message("Computing PGS for a case-control dataset, with ", N0," controls, and ", N1, " cases.")
-		ds[,ppi:=wakefield_pp(p = P, f = ALT_FREQ, N= N0+N1, s = N1/(N0+N1), pi_i, sd.prior), by = "ld.block"][, weight:=ppi*BETA]	
-			if(!is.null(filt_threshold)){
-				ds  <- ds[ds$ppi > filt_threshold,]
-			if(recalc){
-				ds[,ppi:=wakefield_pp(p = P, f = ALT_FREQ, N= N0+N1 , s = N1/(N0+N1), pi_i = 1e-04, sd.prior=0.2), by = "ld.block"][, weight:=ppi*BETA]
-			}
-			}	
+
+		} else{ # In case column name is supplied
+		if(is.character(N0) && length(N0) == 1){
+		Nco <- N0
+		message("N1 not supplied.  Assuming quantitative trait with multiple N, supplied by column ", Nco,". Mmax N: ", max(ds[,get(Nco)]), ", min N = ", min(ds[,get(Nco)]), ", and mean N: ",mean(ds[,get(Nco)]), ". Computing PGS.")
+		ds[,sdY:=sdY.est(vbeta=SE^2, maf=ALT_FREQ, n=get(Nco))][,ppi:=wakefield_pp_quant(BETA,SE,sdY,sd.prior), by="ld.block"][,weight:=ppi*BETA]
+	if(!is.null(filt_threshold)){
+		ds  <- ds[ds$ppi > filt_threshold,]
+		if(recalc){
+		ds[,sdY:=sdY.est(vbeta=SE^2, maf=ALT_FREQ, n=get(Nco))][,ppi:=wakefield_pp_quant(BETA,SE,sdY,sd.prior), by="ld.block"][,weight:=ppi*BETA]		
+		}
+
+	}
+		}
+		}
+	} else  { # If both are supplied
+		if(is.character(N0) && is.character(N1)){
+			message("Computing PGS for a case-control dataset. Both N0 and N1 columns provided.")
+			Nco  <- N0
+			Nca <- N1
+			ds[,ppi:=wakefield_pp(p = P, f = ALT_FREQ, N=get(Nco)+get(Nca), s = get(Nca)/(get(Nco)+get(Nca)), pi_i, sd.prior), by = "ld.block"][, weight:=ppi*BETA]	
+				if(!is.null(filt_threshold)){
+					ds  <- ds[ds$ppi > filt_threshold,]
+				if(recalc){
+					ds[,ppi:=wakefield_pp(p = P, f = ALT_FREQ, N= get(Nco)+get(Nca) , s = get(Nca)/(get(Nca)+get(Nca)), pi_i = 1e-04, sd.prior=0.2), by = "ld.block"][, weight:=ppi*BETA]
+				}
+				}
+		}else{
+			message("Computing PGS for a case-control dataset, with ", N0," controls, and ", N1, " cases.")
+			ds[,ppi:=wakefield_pp(p = P, f = ALT_FREQ, N= N0+N1, s = N1/(N0+N1), pi_i, sd.prior), by = "ld.block"][, weight:=ppi*BETA]	
+				if(!is.null(filt_threshold)){
+					ds  <- ds[ds$ppi > filt_threshold,]
+				if(recalc){
+					ds[,ppi:=wakefield_pp(p = P, f = ALT_FREQ, N= N0+N1 , s = N1/(N0+N1), pi_i = 1e-04, sd.prior=0.2), by = "ld.block"][, weight:=ppi*BETA]
+				}
+				}
+		  }	
 		}
 	if(forsAUC){
+		ds[,pid:=paste(CHR19,BP19,sep=":")]
 		ds <- ds[,c("pid", "ALT", "weight")]
 	}
 	if(altformat){
@@ -515,7 +549,51 @@ auc <- function(prs.model.file, gwas.summary.stats.file, N0,N1, soFile = 'getAdj
 }
 
 
+##' Retrieve GWAS summary datasets from GWAS catalog
+##' '\code{gwascat.download} takes a PMID from the user and downloads the associated summary statistics datasets published in GWAS catalog
+##' 
+##' This function, takes PUBMED ids as an input, searches at the GWAS catalog
+##' for harmonised datasets associated to that, interactively asking the  
+##' user to choose if there are more than one, and fetches the dataset. 
+##'
+##' @param ID a numeric. A PubMed ID (PMID) reference number from a GWAS paper.
+##' @param hm_only a logical. Should GWAS catalog harmonised columns be retained?
+##' @return a data.table containing the dataset, if available.
+##' @examples
+##' test1 <- gwascat.download(27863252) # Astle, should work
+##' negcontrol <- gwascat.download(01223247236) # The Empress Pub phone number. Shouldn't work!
+##' @export
 
+gwascat.download <- function(ID, hm_only=TRUE){
+		gwc.manifest <- fread("https://www.ebi.ac.uk/gwas/api/search/downloads/studies_alternative")
+		
+		
+		study.manifest <- gwc.manifest[ID == PUBMEDID,] 
+		
+		if(nrow(study.manifest) == 0) stop("Please provide a valid PUBMED ID")
+		if(nrow(study.manifest) > 1){
+			message("There are multiple datasets associated to this PUBMED ID")
+			print(study.manifest[,"STUDY ACCESSION"])
+			study_acc  <- readline(prompt=paste("Please select accession (from 1 to ", nrow(study.manifest),"):", sep=""))
+			study_acc  <- as.integer(study_acc)
+			while(!study_acc %in% 1:nrow(study.manifest)){
+				message("Oops! Seems that your number is not in the options. Please try again.")
+				print(study.manifest[,"STUDY ACCESSION"])
+				study_acc  <- readline(prompt=paste("Please select accession (from 1 to ", nrow(study.manifest),"):", sep=""))
+				study_acc  <- as.integer(study_acc)
+			}
+		}
+		study.manifest <- study.manifest[study_acc,]
+		url <- paste("ftp://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/", gsub(" ","", study.manifest$`FIRST AUTHOR`), "_", ID,"_",study.manifest$`STUDY ACCESSION`, "/harmonised/",ID,"-",study.manifest$`STUDY ACCESSION`,"-",sapply(strsplit(study.manifest$MAPPED_TRAIT_URI, "/"), `[`,5),".h.tsv.gz", sep="")
+		if(!RCurl::url.exists(url)) stop("The file you requested is unavailable. This may be due to the fact that public and harmonised summary statistics do not exist. Please check at GWAS catalog website.")
+		message("Retrieving dataset for ",study.manifest$`DISEASE/TRAIT`,", by ", study.manifest$`FIRST AUTHOR`,", from ",study.manifest$DATE, ", published at ", study.manifest$JOURNAL,", with accession ", study.manifest$`STUDY ACCESSION`,".")
+		
+		ds <- fread(url)
+		if(hm_only){
+		hmcols <- grep("hm_",names(ds), value=TRUE)
+		ds  <- ds[,..hmcols]
+		}
+}
 
 
 

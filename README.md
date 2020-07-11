@@ -1,4 +1,4 @@
-# RaPGS
+# RápidoPGS
 
 ## A rapido and lightweight method to compute Polygenic Risk Scores.
 
