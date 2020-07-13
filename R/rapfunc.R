@@ -168,17 +168,18 @@ wakefield_pp_quant <- function(beta, se.beta, sdY, sd.prior=0.15, pi_i=1e-4) {
 ##' The method assumes a normal prior on the population log relative risk centred at 0 and the DEFAULT
 ##' value sets the variance of this distribution to 0.04, equivalent to a 95\%  belief that the true relative risk
 ##' is in the range of 0.66-1.5 at any causal variant.
+##' @param log.p if FALSE (DEFAULT), p is a p value. If TRUE, p is a log(p) value.  Use this if your dataset holds p values too small to be accurately stored without using logs
 ##' @return a vector of posterior probabilities.
 ##' @export
 ##' @author Olly Burren, Chris Wallace
 
-wakefield_pp <- function(p,f, N, s,pi_i=1e-4,sd.prior=0.2) {
+wakefield_pp <- function(p,f, N, s,pi_i=1e-4,sd.prior=0.2,log.p=FALSE) {
     if(length(p) != length(f))
       stop("p and f must be vectors of the same size")
     # compute V
     V <- 1 / (2 * N * f * (1 - f) * s * (1 - s))
     # convert p vals to z
-    z <- stats::qnorm(0.5 * p, lower.tail = FALSE)
+    z <- stats::qnorm(0.5 * p, lower.tail = FALSE,log.p=log.p)
     ## Shrinkage factor: ratio of the prior variance to the total variance
     r <- sd.prior^2 / (sd.prior^2 + V)
     ## Approximate BF
