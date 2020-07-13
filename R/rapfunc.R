@@ -289,6 +289,7 @@ pgs.file.preprocess  <- function(dataset, blockfile="ld.blocks.RDS", ref=NULL){
 ##' @param N1 a scalar representing the number of cases in the case-control study. If NULL (default), quantitative trait will be assumed
 ##' @param pi_i a scalar representing the prior probability (DEFAULT \eqn{1 \times 10^{-4}})
 ##' @param sd.prior a scalar representing our prior expectation of \eqn{\beta} (DEFAULT 0.2)
+##' @param log.p if FALSE (DEFAULT), p is a p value. If TRUE, p is a log(p) value.  Use this if your dataset holds p values too small to be accurately stored without using logs
 ##' @param filt_threshold a scalar indicating the ppi threshold to filter the dataset after PGS computation. If NULL (Default), nothresholding will be applied
 ##' @param recalc a logical indicating if weights should be recalculated after thresholding. If TRUE, \code{filt_threshold} should be defined
 ##' @param forsAUC a logical indicating if output should be in sAUC evaluation format as we used it for the paper.
@@ -297,7 +298,7 @@ pgs.file.preprocess  <- function(dataset, blockfile="ld.blocks.RDS", ref=NULL){
 ##' @export
 ##' @author Guillermo Reales, Chris Wallace
 
-computePGS <- function(ds, N0,N1=NULL,pi_i= 1e-04, sd.prior=0.2, filt_threshold = NULL, recalc=FALSE, forsAUC=FALSE, altformat=FALSE){
+computePGS <- function(ds, N0,N1=NULL,pi_i= 1e-04, sd.prior=0.2, log.p=FALSE, filt_threshold = NULL, recalc=FALSE, forsAUC=FALSE, altformat=FALSE){
 
 	if(is.null(N1)){
 		if(is.numeric(N0) && length(N0) == 1) { # In case N0 is supplied
@@ -329,20 +330,20 @@ computePGS <- function(ds, N0,N1=NULL,pi_i= 1e-04, sd.prior=0.2, filt_threshold 
 			message("Computing PGS for a case-control dataset. Both N0 and N1 columns provided.")
 			Nco  <- N0
 			Nca <- N1
-			ds[,ppi:=wakefield_pp(p = P, f = ALT_FREQ, N=get(Nco)+get(Nca), s = get(Nca)/(get(Nco)+get(Nca)), pi_i, sd.prior), by = "ld.block"][, weight:=ppi*BETA]	
+			ds[,ppi:=wakefield_pp(p = P, f = ALT_FREQ, N=get(Nco)+get(Nca), s = get(Nca)/(get(Nco)+get(Nca)), pi_i, sd.prior, log.p), by = "ld.block"][, weight:=ppi*BETA]	
 				if(!is.null(filt_threshold)){
 					ds  <- ds[ds$ppi > filt_threshold,]
 				if(recalc){
-					ds[,ppi:=wakefield_pp(p = P, f = ALT_FREQ, N= get(Nco)+get(Nca) , s = get(Nca)/(get(Nca)+get(Nca)), pi_i = 1e-04, sd.prior=0.2), by = "ld.block"][, weight:=ppi*BETA]
+					ds[,ppi:=wakefield_pp(p = P, f = ALT_FREQ, N= get(Nco)+get(Nca) , s = get(Nca)/(get(Nca)+get(Nca)), pi_i, sd.prior, log.p), by = "ld.block"][, weight:=ppi*BETA]
 				}
 				}
 		}else{
 			message("Computing PGS for a case-control dataset, with ", N0," controls, and ", N1, " cases.")
-			ds[,ppi:=wakefield_pp(p = P, f = ALT_FREQ, N= N0+N1, s = N1/(N0+N1), pi_i, sd.prior), by = "ld.block"][, weight:=ppi*BETA]	
+			ds[,ppi:=wakefield_pp(p = P, f = ALT_FREQ, N= N0+N1, s = N1/(N0+N1), pi_i, sd.prior, log.p), by = "ld.block"][, weight:=ppi*BETA]	
 				if(!is.null(filt_threshold)){
 					ds  <- ds[ds$ppi > filt_threshold,]
 				if(recalc){
-					ds[,ppi:=wakefield_pp(p = P, f = ALT_FREQ, N= N0+N1 , s = N1/(N0+N1), pi_i = 1e-04, sd.prior=0.2), by = "ld.block"][, weight:=ppi*BETA]
+					ds[,ppi:=wakefield_pp(p = P, f = ALT_FREQ, N= N0+N1 , s = N1/(N0+N1), pi_i, sd.prior, log.p), by = "ld.block"][, weight:=ppi*BETA]
 				}
 				}
 		  }	

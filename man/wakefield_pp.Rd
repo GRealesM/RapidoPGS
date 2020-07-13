@@ -5,7 +5,7 @@
 \title{compute posterior probabilities using Wakefield's approximate Bayes Factors
 \code{wakefield_pp} computes posterior probabilities for a given SNP to be causal for a given SNP under the assumption of a single causal variant.}
 \usage{
-wakefield_pp(p, f, N, s, pi_i = 1e-04, sd.prior = 0.2)
+wakefield_pp(p, f, N, s, pi_i = 1e-04, sd.prior = 0.2, log.p = FALSE)
 }
 \arguments{
 \item{p}{a vector of univariate pvalues from a GWAS}
@@ -22,6 +22,8 @@ wakefield_pp(p, f, N, s, pi_i = 1e-04, sd.prior = 0.2)
 The method assumes a normal prior on the population log relative risk centred at 0 and the DEFAULT
 value sets the variance of this distribution to 0.04, equivalent to a 95\\%  belief that the true relative risk
 is in the range of 0.66-1.5 at any causal variant.}
+
+\item{log.p}{if FALSE (DEFAULT), p is a p value. If TRUE, p is a log(p) value.  Use this if your dataset holds p values too small to be accurately stored without using logs}
 }
 \value{
 a vector of posterior probabilities.

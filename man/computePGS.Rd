@@ -11,6 +11,7 @@ computePGS(
   N1 = NULL,
   pi_i = 1e-04,
   sd.prior = 0.2,
+  log.p = FALSE,
   filt_threshold = NULL,
   recalc = FALSE,
   forsAUC = FALSE,
@@ -27,6 +28,8 @@ computePGS(
 \item{pi_i}{a scalar representing the prior probability (DEFAULT \eqn{1 \times 10^{-4}})}
 
 \item{sd.prior}{a scalar representing our prior expectation of \eqn{\beta} (DEFAULT 0.2)}
+
+\item{log.p}{if FALSE (DEFAULT), p is a p value. If TRUE, p is a log(p) value.  Use this if your dataset holds p values too small to be accurately stored without using logs}
 
 \item{filt_threshold}{a scalar indicating the ppi threshold to filter the dataset after PGS computation. If NULL (Default), nothresholding will be applied}
 
