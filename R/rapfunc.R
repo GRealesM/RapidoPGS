@@ -330,6 +330,9 @@ computePGS <- function(ds, N0,N1=NULL,pi_i= 1e-04, sd.prior=0.2, log.p=FALSE, fi
 			message("Computing PGS for a case-control dataset. Both N0 and N1 columns provided.")
 			Nco  <- N0
 			Nca <- N1
+			if(log.p){
+				ds[,P:=pnorm(-abs(BETA/SE),log.p=TRUE)*2]	
+			}
 			ds[,ppi:=wakefield_pp(p = P, f = ALT_FREQ, N=get(Nco)+get(Nca), s = get(Nca)/(get(Nco)+get(Nca)), pi_i, sd.prior, log.p), by = "ld.block"][, weight:=ppi*BETA]	
 				if(!is.null(filt_threshold)){
 					ds  <- ds[ds$ppi > filt_threshold,]
@@ -339,6 +342,9 @@ computePGS <- function(ds, N0,N1=NULL,pi_i= 1e-04, sd.prior=0.2, log.p=FALSE, fi
 				}
 		}else{
 			message("Computing PGS for a case-control dataset, with ", N0," controls, and ", N1, " cases.")
+			if(log.p){
+				ds[,P:=pnorm(-abs(BETA/SE),log.p=TRUE)*2]	
+			}
 			ds[,ppi:=wakefield_pp(p = P, f = ALT_FREQ, N= N0+N1, s = N1/(N0+N1), pi_i, sd.prior, log.p), by = "ld.block"][, weight:=ppi*BETA]	
 				if(!is.null(filt_threshold)){
 					ds  <- ds[ds$ppi > filt_threshold,]

@@ -1,10 +1,10 @@
 Package: RapidoPGS
-Title: A Rapido and light package to compute Polygenig Risk Scores
+Title: A Rápido and light package to compute Polygenig Risk Scores
 Version: 0.1.0.0000
 Authors@R:  c(
     person("Guillermo","Reales", role = c("aut", "cre"), email = "gr440@cam.ac.uk",  comment = c(ORCID = "0000-0001-9993-3916")),
     person("Chris", "Wallace", role = "aut", email = "cew54@cam.ac.uk", comment = c(ORCID = "0000-0001-9755-1703")))
-Description: What the package does (one paragraph).
+Description: RápidoPGS quickly computes polygenic scores from GWAS summary statistics of either case-control or quantitative traits, without LD matrix computation or parameter tuning.
 License: GPL-3
 Depends: R (>= 3.6.1), data.table, GenomicRanges
 Imports: mvtnorm
