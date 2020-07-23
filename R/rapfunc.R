@@ -329,6 +329,7 @@ gwascat.download <- function(ID, filenum = NULL, hm_only=TRUE){
 		hmcols <- grep("hm_",names(ds), value=TRUE)
 		ds  <- ds[,..hmcols]
 		}
+		return(ds)
 }
 
 
