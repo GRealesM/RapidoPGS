@@ -6,8 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Compute PGS from GWAS summary statistics using posteriors from Wakefield's approximate Bayes Factors
-'<code>computePGS</code> computes PGS from a from GWAS summary statistics using posteriors from Wakefield's approximate Bayes Factors — computePGS • RápidoPGS</title>
+<title>Compute PGS from GWAS summary statistics using posteriors from Wakefield's approximate Bayes Factors — computePGS • RápidoPGS</title>
 
 
 <!-- jquery -->
@@ -40,13 +39,8 @@
 
 
 
-<meta property="og:title" content="Compute PGS from GWAS summary statistics using posteriors from Wakefield's approximate Bayes Factors
-'<code>computePGS</code> computes PGS from a from GWAS summary statistics using posteriors from Wakefield's approximate Bayes Factors — computePGS" />
-<meta property="og:description" content="Main RápidoPGS function. This function will take a GWAS summary statistic dataset as an input,
-will assign align it to a reference panel file (if provided), then it will assign
-SNPs to LD blocks and compute Wakefield's ppi by LD block, then will use it
-to generate PGS weights by multiplying those posteriors by effect sizes (\(\beta\)).
-Optionally, it will filter SNPs by a custom filter on ppi and then recalculate weights, to improve accuracy." />
+<meta property="og:title" content="Compute PGS from GWAS summary statistics using posteriors from Wakefield's approximate Bayes Factors — computePGS" />
+<meta property="og:description" content="'computePGS computes PGS from a from GWAS summary statistics using posteriors from Wakefield's approximate Bayes Factors" />
 
 
 
@@ -78,7 +72,7 @@ Optionally, it will filter SNPs by a custom filter on ppi and then recalculate w
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RápidoPGS</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.1</span>
       </span>
     </div>
 
@@ -121,30 +115,25 @@ Optionally, it will filter SNPs by a custom filter on ppi and then recalculate w
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Compute PGS from GWAS summary statistics using posteriors from Wakefield's approximate Bayes Factors
-'<code>computePGS</code> computes PGS from a from GWAS summary statistics using posteriors from Wakefield's approximate Bayes Factors</h1>
+    <h1>Compute PGS from GWAS summary statistics using posteriors from Wakefield's approximate Bayes Factors</h1>
     
     <div class="hidden name"><code>computePGS.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Main RápidoPGS function. This function will take a GWAS summary statistic dataset as an input,
-will assign align it to a reference panel file (if provided), then it will assign
-SNPs to LD blocks and compute Wakefield's ppi by LD block, then will use it
-to generate PGS weights by multiplying those posteriors by effect sizes (\(\beta\)).
-Optionally, it will filter SNPs by a custom filter on ppi and then recalculate weights, to improve accuracy.</p>
+    <p>'<code>computePGS</code> computes PGS from a from GWAS summary statistics using posteriors from Wakefield's approximate Bayes Factors</p>
     </div>
 
     <pre class="usage"><span class='fu'>computePGS</span>(
-  <span class='no'>ds</span>,
+  <span class='no'>data</span>,
   <span class='no'>N0</span>,
   <span class='kw'>N1</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>build</span> <span class='kw'>=</span> <span class='st'>"hg19"</span>,
   <span class='kw'>pi_i</span> <span class='kw'>=</span> <span class='fl'>1e-04</span>,
-  <span class='kw'>sd.prior</span> <span class='kw'>=</span> <span class='fl'>0.2</span>,
+  <span class='kw'>sd.prior</span> <span class='kw'>=</span> <span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/NULL.html'>is.null</a></span>(<span class='no'>N1</span>)) {     <span class='fl'>0.15</span> } <span class='kw'>else</span> {     <span class='fl'>0.2</span> },
   <span class='kw'>log.p</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>filt_threshold</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>recalc</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>recalc</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>reference</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>forsAUC</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>altformat</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
@@ -154,61 +143,91 @@ Optionally, it will filter SNPs by a custom filter on ppi and then recalculate w
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>ds</th>
-      <td><p>a data.table containing GWAS summary statistic dataset with all information, including ld.blocks. Usually an output from <code>pgs.file.preprocess</code>.</p></td>
+      <th>data</th>
+      <td><p>a data.table containing GWAS summary statistic dataset
+with all information, including ld.blocks. Usually an output
+from <code>pgs.file.preprocess</code>.</p></td>
     </tr>
     <tr>
       <th>N0</th>
-      <td><p>a scalar representing the number of controls in the study (or the number of subjects in quantitative trait GWAS).</p></td>
+      <td><p>a scalar representing the number of controls in the
+study (or the number of subjects in quantitative trait GWAS).</p></td>
     </tr>
     <tr>
       <th>N1</th>
-      <td><p>a scalar representing the number of cases in the case-control study. If NULL (default), quantitative trait will be assumed.</p></td>
+      <td><p>a scalar representing the number of cases in the
+case-control study. If NULL (default), quantitative trait will
+be assumed.</p></td>
     </tr>
     <tr>
       <th>build</th>
-      <td><p>a string containing the genome build of the dataset, either "hg19" (for hg19/GRCh37) or "hg38" (hg38/GRCh38). Default "hg19".</p></td>
+      <td><p>a string containing the genome build of the dataset,
+either "hg19" (for hg19/GRCh37) or "hg38" (hg38/GRCh38). Default
+"hg19".</p></td>
     </tr>
     <tr>
       <th>pi_i</th>
-      <td><p>a scalar representing the prior probability (DEFAULT \(1 \times 10^{-4}\)).</p></td>
+      <td><p>a scalar representing the prior probability (DEFAULT
+\(1 \times 10^{-4}\)).</p></td>
     </tr>
     <tr>
       <th>sd.prior</th>
-      <td><p>a scalar representing our prior expectation of \(\beta\) (DEFAULT 0.2).</p></td>
+      <td><p>the prior specifies that BETA at causal SNPs
+follows a centred normal distribution with standard deviation
+sd.prior. Sensible and widely used DEFAULTs are 0.2 for case
+control traits, and 0.15 * var(trait) for quantitative (selected
+if N1 is NULL).</p></td>
     </tr>
     <tr>
       <th>log.p</th>
-      <td><p>if FALSE (DEFAULT), p is a p value. If TRUE, p is a log(p) value.  Use this if your dataset holds p values too small to be accurately stored without using logs.</p></td>
+      <td><p>if FALSE (DEFAULT), p is a p value. If TRUE, p is a
+log(p) value. Use this if your dataset holds p values too small
+to be accurately stored without using logs.</p></td>
     </tr>
     <tr>
       <th>filt_threshold</th>
-      <td><p>a scalar indicating the ppi threshold (if <code>filt_threshold</code> &lt; 1) or the top SNPs by absolute weights to filter the dataset after PGS computation. If NULL (Default), no thresholding will be applied.</p></td>
+      <td><p>a scalar indicating the ppi threshold (if
+<code>filt_threshold</code> &lt; 1) or the number of top SNPs by absolute
+weights (if <code>filt_threshold</code> &gt; 1) to filter the dataset
+after PGS computation. If NULL (Default), no thresholding will
+be applied.</p></td>
     </tr>
     <tr>
       <th>recalc</th>
-      <td><p>a logical indicating if weights should be recalculated after thresholding. If TRUE, <code>filt_threshold</code> should be defined.</p></td>
+      <td><p>a logical indicating if weights should be
+recalculated after thresholding. Only relevant if <code>filt_threshold</code>
+is defined.</p></td>
     </tr>
     <tr>
       <th>reference</th>
-      <td><p>a string indicating the reference file SNPs should be filtered and aligned to.</p></td>
+      <td><p>a string indicating the path of the reference file
+SNPs should be filtered and aligned to, see above.</p></td>
     </tr>
     <tr>
       <th>forsAUC</th>
-      <td><p>a logical indicating if output should be in sAUC evaluation format as we used it for the paper.</p></td>
+      <td><p>a logical indicating if output should be in sAUC
+evaluation format as we used it for the paper.</p></td>
     </tr>
     <tr>
       <th>altformat</th>
-      <td><p>a logical indicating if output should be in a format containing pid (chr:pos), ALT, and weights only. Default FALSE</p></td>
+      <td><p>a logical indicating if output should be in a
+format containing pid (chr:pos), ALT, and weights only. Default
+FALSE</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a data.table containing the formatted sumstat dataset with computed PGS weights.</p>
+    <p>a data.table containing the formatted sumstat dataset with
+computed PGS weights.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Alternatively, if filt_threshold is larger than one, RápidoPGS will select the top
+    <p>Main RápidoPGS function. This function will take a GWAS summary statistic dataset as an input,
+will assign align it to a reference panel file (if provided), then it will assign
+SNPs to LD blocks and compute Wakefield's ppi by LD block, then will use it
+to generate PGS weights by multiplying those posteriors by effect sizes (\(\beta\)).
+Optionally, it will filter SNPs by a custom filter on ppi and then recalculate weights, to improve accuracy.</p>
+<p>Alternatively, if filt_threshold is larger than one, RápidoPGS will select the top
 <code>filt_threshold</code> SNPs by absolute weights (note, not ppi but weights).</p>
 <p>The GWAS summary statistics file to compute PGS using our method must contain the following minimum columns, with these exact column names:
 CHR: Chromosome
@@ -219,9 +238,10 @@ ALT: Alternative, or effect allele, the one \(\beta\) refers to
 BETA: Beta (or log(OR)), or effect sizes.
 SE: Standard error of \(\beta\)
 P: P-values for the association test
-ALT_FREQ: Minor/ALT allele frequency in the tested population, or in a close population from a reference panel. No problem it flipped.</p>
-<p>If a reference is provided. It should have 4 columns: CHR, BP, SNPID, REF, and ALT.
-In both files, column order does not matter.</p>
+ALT_FREQ: Minor/ALT allele frequency in the tested population, or in a close population from a reference panel.</p>
+<p>If a reference is provided. It should have 4 columns: CHR, BP,
+SNPID, REF, and ALT. Also, it should be in the same build as
+the summary statistics. In both files, column order does not matter.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

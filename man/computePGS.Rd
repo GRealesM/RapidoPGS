@@ -13,7 +13,7 @@ computePGS(
   sd.prior = if (is.null(N1)) {     0.15 } else {     0.2 },
   log.p = FALSE,
   filt_threshold = NULL,
-  recalc = FALSE,
+  recalc = TRUE,
   reference = NULL,
   forsAUC = FALSE,
   altformat = FALSE
@@ -55,11 +55,11 @@ after PGS computation. If NULL (Default), no thresholding will
 be applied.}
 
 \item{recalc}{a logical indicating if weights should be
-recalculated after thresholding. If TRUE, \code{filt_threshold}
-should be defined.}
+recalculated after thresholding. Only relevant if \code{filt_threshold}
+is defined.}
 
-\item{reference}{a string indicating the reference file SNPs
-should be filtered and aligned to.}
+\item{reference}{a string indicating the path of the reference file
+SNPs should be filtered and aligned to, see above.}
 
 \item{forsAUC}{a logical indicating if output should be in sAUC
 evaluation format as we used it for the paper.}
@@ -94,10 +94,11 @@ ALT: Alternative, or effect allele, the one \eqn{\beta} refers to
 BETA: Beta (or log(OR)), or effect sizes.
 SE: Standard error of \eqn{\beta}
 P: P-values for the association test
-ALT_FREQ: Minor/ALT allele frequency in the tested population, or in a close population from a reference panel. No problem it flipped.
+ALT_FREQ: Minor/ALT allele frequency in the tested population, or in a close population from a reference panel.
 
 If a reference is provided. It should have 4 columns: CHR, BP,
-SNPID, REF, and ALT. In both files, column order does not matter.
+SNPID, REF, and ALT. Also, it should be in the same build as
+the summary statistics. In both files, column order does not matter.
 }
 \author{
 Guillermo Reales, Chris Wallace

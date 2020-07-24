@@ -8,7 +8,6 @@ NULL
 ##'
 ##' @param x a vector of logs to sum
 ##' @return a scalar
-##' @export
 ##' @author Chris Wallace
 logsum <- function(x) {
     my.max <- max(x) ##take out the maximum value in log form)
@@ -29,7 +28,6 @@ logsum <- function(x) {
 ##' @param maf vector of MAF (same length as vbeta)
 ##' @param n sample size
 ##' @return estimated standard deviation of Y
-##' @export
 ##' @author Chris Wallace
 sdY.est <- function(vbeta, maf, n) {
   warning("estimating sdY from maf and varbeta, please directly supply sdY if known")
@@ -58,7 +56,6 @@ sdY.est <- function(vbeta, maf, n) {
 ##' value sets the variance of this distribution to 0.04, equivalent to a 95\%  belief that the true relative risk
 ##' is in the range of 0.66-1.5 at any causal variant.
 ##' @return a vector of posterior probabilities.
-##' @export
 ##' @author Guillermo Reales, Chris Wallace
 wakefield_pp_quant <- function(beta, se.beta, sdY, sd.prior=0.15, pi_i=1e-4) { 
   # compute V
@@ -95,7 +92,6 @@ wakefield_pp_quant <- function(beta, se.beta, sdY, sd.prior=0.15, pi_i=1e-4) {
 ##' is in the range of 0.66-1.5 at any causal variant.
 ##' @param log.p if FALSE (DEFAULT), p is a p value. If TRUE, p is a log(p) value.  Use this if your dataset holds p values too small to be accurately stored without using logs
 ##' @return a vector of posterior probabilities.
-##' @export
 ##' @author Olly Burren, Chris Wallace
 
 wakefield_pp <- function(p,f, N, s,pi_i=1e-4,sd.prior=0.2,log.p=FALSE) {
@@ -139,10 +135,11 @@ wakefield_pp <- function(p,f, N, s,pi_i=1e-4,sd.prior=0.2,log.p=FALSE) {
 ##' BETA: Beta (or log(OR)), or effect sizes.
 ##' SE: Standard error of \eqn{\beta}
 ##' P: P-values for the association test
-##' ALT_FREQ: Minor/ALT allele frequency in the tested population, or in a close population from a reference panel. No problem it flipped.
+##' ALT_FREQ: Minor/ALT allele frequency in the tested population, or in a close population from a reference panel.
 ##'
 ##' If a reference is provided. It should have 4 columns: CHR, BP,
-##' SNPID, REF, and ALT. In both files, column order does not matter.
+##' SNPID, REF, and ALT. Also, it should be in the same build as 
+##' the summary statistics. In both files, column order does not matter.
 ##' @param data a data.table containing GWAS summary statistic dataset
 ##'   with all information, including ld.blocks. Usually an output
 ##'   from \code{pgs.file.preprocess}.
@@ -170,10 +167,10 @@ wakefield_pp <- function(p,f, N, s,pi_i=1e-4,sd.prior=0.2,log.p=FALSE) {
 ##'   after PGS computation. If NULL (Default), no thresholding will
 ##'   be applied.
 ##' @param recalc a logical indicating if weights should be
-##'   recalculated after thresholding. If TRUE, \code{filt_threshold}
-##'   should be defined.
-##' @param reference a string indicating the reference file SNPs
-##'   should be filtered and aligned to.
+##'   recalculated after thresholding. Only relevant if \code{filt_threshold}
+##'   is defined.
+##' @param reference a string indicating the path of the reference file 
+##'   SNPs should be filtered and aligned to, see above.
 ##' @param forsAUC a logical indicating if output should be in sAUC
 ##'   evaluation format as we used it for the paper.
 ##' @param altformat a logical indicating if output should be in a
@@ -181,7 +178,10 @@ wakefield_pp <- function(p,f, N, s,pi_i=1e-4,sd.prior=0.2,log.p=FALSE) {
 ##'   FALSE
 ##' @return a data.table containing the formatted sumstat dataset with
 ##'   computed PGS weights.
-##' @import data.table bigsnpr GenomicRanges
+##' @import data.table 
+##' @importFrom bigsnpr snp_match
+##' @importFrom GenomicRanges GRanges findOverlaps
+##' @importFrom IRanges IRanges
 ##' @export
 ##' @author Guillermo Reales, Chris Wallace
 
@@ -193,7 +193,7 @@ computePGS <- function(data,
                        sd.prior=if(is.null(N1)) { 0.15 } else { 0.2 },
                        log.p=FALSE,
                        filt_threshold = NULL,
-                       recalc=FALSE,
+                       recalc=TRUE,
                        reference=NULL,
                        forsAUC=FALSE,
                        altformat=FALSE){
@@ -205,6 +205,7 @@ computePGS <- function(data,
          paste(setdiff(mincol,names(data)), collapse=", "))
 
   ds <- copy(data) # avoid modifying input data.table
+  ds  <- na.omit(ds, cols=c("CHR","BP", "BETA", "SE", "P","ALT_FREQ")) # Remove NA in relevant columns
   ## First step, align to reference, if reference is provided
 	if(!is.null(reference)){
           ## Next step is to filter and align our alleles and their effects to the hapmap3 reference, which I have already formatted for our purposes.
@@ -235,7 +236,6 @@ computePGS <- function(data,
 			stop("RapidoPGS only accepts hg19 or hg38 at the moment, please check.")
 		}		
 	message("Assigning LD blocks...")
-	ds  <- na.omit(ds, cols=c("CHR","BP"))
 	snpranges <- GRanges(seqnames=paste("chr",ds$CHR, sep=""), ranges=IRanges(ds$BP, end=ds$BP, names=ds$SNPID), strand="*")
         ds[,ld.block:=findOverlaps(snpranges, blranges, select='last')]
 	message("Done!")
@@ -269,7 +269,7 @@ computePGS <- function(data,
       message("Computing PGS for a case-control dataset. Both N0 and N1 columns provided.")
       Nco  <- N0
       Nca <- N1
-      ds <- na.omit(ds, cols=c("P","ALT_FREQ", N0,N1))
+      ds <- na.omit(ds, cols=c(N0,N1))
       if(log.p){
         ds[,P:=pnorm(-abs(BETA/SE),log.p=TRUE)*2]	
       }
@@ -287,7 +287,6 @@ computePGS <- function(data,
       }
     }else{
       message("Computing PGS for a case-control dataset, with ", N0," controls, and ", N1, " cases.")
-      ds <- na.omit(ds, cols=c("P","ALT_FREQ"))
       if(log.p){
         ds[,P:=pnorm(-abs(BETA/SE),log.p=TRUE)*2]	
       }

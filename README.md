@@ -16,6 +16,6 @@ install_github('GRealesM/RapidoPGS')
 
 # Documentation
 
-Full documentation and vignettes are available in the [website](https://GRealesM.github.io/cupcake).
+Full documentation and vignettes are available in the [website](https://GRealesM.github.io/RapidoPGS).
 
 
