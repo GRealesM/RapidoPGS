@@ -2,16 +2,15 @@
 % Please edit documentation in R/rapfunc.R
 \name{computePGS}
 \alias{computePGS}
-\title{Compute PGS from GWAS summary statistics using posteriors from Wakefield's approximate Bayes Factors
-'\code{computePGS} computes PGS from a from GWAS summary statistics using posteriors from Wakefield's approximate Bayes Factors}
+\title{Compute PGS from GWAS summary statistics using posteriors from Wakefield's approximate Bayes Factors}
 \usage{
 computePGS(
-  ds,
+  data,
   N0,
   N1 = NULL,
   build = "hg19",
   pi_i = 1e-04,
-  sd.prior = 0.2,
+  sd.prior = if (is.null(N1)) {     0.15 } else {     0.2 },
   log.p = FALSE,
   filt_threshold = NULL,
   recalc = FALSE,
@@ -21,41 +20,68 @@ computePGS(
 )
 }
 \arguments{
-\item{ds}{a data.table containing GWAS summary statistic dataset with all information, including ld.blocks. Usually an output from \code{pgs.file.preprocess}.}
+\item{data}{a data.table containing GWAS summary statistic dataset
+with all information, including ld.blocks. Usually an output
+from \code{pgs.file.preprocess}.}
 
-\item{N0}{a scalar representing the number of controls in the study (or the number of subjects in quantitative trait GWAS).}
+\item{N0}{a scalar representing the number of controls in the
+study (or the number of subjects in quantitative trait GWAS).}
 
-\item{N1}{a scalar representing the number of cases in the case-control study. If NULL (default), quantitative trait will be assumed.}
+\item{N1}{a scalar representing the number of cases in the
+case-control study. If NULL (default), quantitative trait will
+be assumed.}
 
-\item{build}{a string containing the genome build of the dataset, either "hg19" (for hg19/GRCh37) or "hg38" (hg38/GRCh38). Default "hg19".}
+\item{build}{a string containing the genome build of the dataset,
+either "hg19" (for hg19/GRCh37) or "hg38" (hg38/GRCh38). Default
+"hg19".}
 
-\item{pi_i}{a scalar representing the prior probability (DEFAULT \eqn{1 \times 10^{-4}}).}
+\item{pi_i}{a scalar representing the prior probability (DEFAULT
+\eqn{1 \times 10^{-4}}).}
 
-\item{sd.prior}{a scalar representing our prior expectation of \eqn{\beta} (DEFAULT 0.2).}
+\item{sd.prior}{the prior specifies that BETA at causal SNPs
+follows a centred normal distribution with standard deviation
+sd.prior. Sensible and widely used DEFAULTs are 0.2 for case
+control traits, and 0.15 * var(trait) for quantitative (selected
+if N1 is NULL).}
 
-\item{log.p}{if FALSE (DEFAULT), p is a p value. If TRUE, p is a log(p) value.  Use this if your dataset holds p values too small to be accurately stored without using logs.}
+\item{log.p}{if FALSE (DEFAULT), p is a p value. If TRUE, p is a
+log(p) value. Use this if your dataset holds p values too small
+to be accurately stored without using logs.}
 
-\item{filt_threshold}{a scalar indicating the ppi threshold (if \code{filt_threshold} < 1) or the top SNPs by absolute weights to filter the dataset after PGS computation. If NULL (Default), no thresholding will be applied.}
+\item{filt_threshold}{a scalar indicating the ppi threshold (if
+\code{filt_threshold} < 1) or the number of top SNPs by absolute
+weights (if \code{filt_threshold} > 1) to filter the dataset
+after PGS computation. If NULL (Default), no thresholding will
+be applied.}
 
-\item{recalc}{a logical indicating if weights should be recalculated after thresholding. If TRUE, \code{filt_threshold} should be defined.}
+\item{recalc}{a logical indicating if weights should be
+recalculated after thresholding. If TRUE, \code{filt_threshold}
+should be defined.}
 
-\item{reference}{a string indicating the reference file SNPs should be filtered and aligned to.}
+\item{reference}{a string indicating the reference file SNPs
+should be filtered and aligned to.}
 
-\item{forsAUC}{a logical indicating if output should be in sAUC evaluation format as we used it for the paper.}
+\item{forsAUC}{a logical indicating if output should be in sAUC
+evaluation format as we used it for the paper.}
 
-\item{altformat}{a logical indicating if output should be in a format containing pid (chr:pos), ALT, and weights only. Default FALSE}
+\item{altformat}{a logical indicating if output should be in a
+format containing pid (chr:pos), ALT, and weights only. Default
+FALSE}
 }
 \value{
-a data.table containing the formatted sumstat dataset with computed PGS weights.
+a data.table containing the formatted sumstat dataset with
+computed PGS weights.
 }
 \description{
+'\code{computePGS} computes PGS from a from GWAS summary statistics using posteriors from Wakefield's approximate Bayes Factors
+}
+\details{
 Main RápidoPGS function. This function will take a GWAS summary statistic dataset as an input,
 will assign align it to a reference panel file (if provided), then it will assign
 SNPs to LD blocks and compute Wakefield's ppi by LD block, then will use it
 to generate PGS weights by multiplying those posteriors by effect sizes (\eqn{\beta}).
 Optionally, it will filter SNPs by a custom filter on ppi and then recalculate weights, to improve accuracy.
-}
-\details{
+
 Alternatively, if filt_threshold is larger than one, RápidoPGS will select the top
 \code{filt_threshold} SNPs by absolute weights (note, not ppi but weights).
 
@@ -70,8 +96,8 @@ SE: Standard error of \eqn{\beta}
 P: P-values for the association test
 ALT_FREQ: Minor/ALT allele frequency in the tested population, or in a close population from a reference panel. No problem it flipped.
 
-If a reference is provided. It should have 4 columns: CHR, BP, SNPID, REF, and ALT.
-In both files, column order does not matter.
+If a reference is provided. It should have 4 columns: CHR, BP,
+SNPID, REF, and ALT. In both files, column order does not matter.
 }
 \author{
 Guillermo Reales, Chris Wallace

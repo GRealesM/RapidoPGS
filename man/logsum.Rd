@@ -17,5 +17,5 @@ Sums logs without loss of precision
 This function is verbatim of its namesake in cupcake package (github.com/ollyburren/cupcake/)
 }
 \author{
-Olly Burren, Chris Wallace
+Chris Wallace
 }
