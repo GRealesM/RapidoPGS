@@ -1,3 +1,6 @@
+##' @importFrom stats coef lm na.omit pnorm
+NULL
+
 ##' Helper function to sum logs without loss of precision
 ##'
 ##' Sums logs without loss of precision
