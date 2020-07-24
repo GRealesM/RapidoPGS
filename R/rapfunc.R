@@ -6,7 +6,7 @@
 ##' @param x a vector of logs to sum
 ##' @return a scalar
 ##' @export
-##' @author Olly Burren, Chris Wallace
+##' @author Chris Wallace
 logsum <- function(x) {
     my.max <- max(x) ##take out the maximum value in log form)
     my.res <- my.max + log(sum(exp(x - my.max )))
@@ -156,7 +156,18 @@ wakefield_pp <- function(p,f, N, s,pi_i=1e-4,sd.prior=0.2,log.p=FALSE) {
 ##' @export
 ##' @author Guillermo Reales, Chris Wallace
 
-computePGS <- function(ds, N0,N1=NULL, build = "hg19", pi_i= 1e-04, sd.prior=0.2, log.p=FALSE, filt_threshold = NULL, recalc=FALSE, reference=NULL, forsAUC=FALSE, altformat=FALSE){
+computePGS <- function(ds,
+                       N0,
+                       N1=NULL,
+                       build = "hg19",
+                       pi_i= 1e-04,
+                       sd.prior=if(is.null(N1)) { 0.15 } else { 0.2 },
+                       log.p=FALSE,
+                       filt_threshold = NULL,
+                       recalc=FALSE,
+                       reference=NULL,
+                       forsAUC=FALSE,
+                       altformat=FALSE){
 	
 	# Here's a list of columns that the dataset must have, otherwise it will fail
 	mincol <- c("CHR","BP", "REF","ALT","BETA", "SE", "P", "ALT_FREQ", "SNPID")
@@ -198,79 +209,77 @@ computePGS <- function(ds, N0,N1=NULL, build = "hg19", pi_i= 1e-04, sd.prior=0.2
 	message("Done!")
 	}
 
-	if(is.null(N1)){
-		if(is.numeric(N0) && length(N0) == 1) { # In case N0 is supplied
-		message("N1 not supplied. Assuming quantitative trait with ", N0, " individuals. Computing PGS.")
-		ds[,sdY:=sdY.est(vbeta=SE^2, maf=ALT_FREQ, n=N0)][,ppi:=wakefield_pp_quant(BETA,SE,sdY,sd.prior), by="ld.block"][,weight:=ppi*BETA]
+  if(is.null(N1)){
+    if(is.numeric(N0) && length(N0) == 1) { # In case N0 is supplied
+      message("N1 not supplied. Assuming quantitative trait with ", N0, " individuals. Computing PGS.")
+      ds[,sdY:=sdY.est(vbeta=SE^2, maf=ALT_FREQ, n=N0)][,ppi:=wakefield_pp_quant(BETA,SE,sdY,sd.prior), by="ld.block"][,weight:=ppi*BETA]
+      if(!is.null(filt_threshold)){
+        ds  <- ds[ds$ppi > filt_threshold,]
+        if(recalc){
+          ds[,sdY:=sdY.est(vbeta=SE^2, maf=ALT_FREQ, n=N0)][,ppi:=wakefield_pp_quant(BETA,SE,sdY,sd.prior), by="ld.block"][,weight:=ppi*BETA]		
+        }
+      }
+    } else{ # In case column name is supplied
+      if(is.character(N0) && length(N0) == 1){
+        Nco <- N0
+        message("N1 not supplied.  Assuming quantitative trait with possibly multiple N, supplied by column ", Nco,". Mmax N: ", max(ds[,get(Nco)]), ", min N = ", min(ds[,get(Nco)]), ", and mean N: ",mean(ds[,get(Nco)]), ". Computing PGS.")
+        ds[,sdY:=sdY.est(vbeta=SE^2, maf=ALT_FREQ, n=get(Nco))][,ppi:=wakefield_pp_quant(BETA,SE,sdY,sd.prior), by="ld.block"][,weight:=ppi*BETA]
 	if(!is.null(filt_threshold)){
-		ds  <- ds[ds$ppi > filt_threshold,]
-		if(recalc){
-		ds[,sdY:=sdY.est(vbeta=SE^2, maf=ALT_FREQ, n=N0)][,ppi:=wakefield_pp_quant(BETA,SE,sdY,sd.prior), by="ld.block"][,weight:=ppi*BETA]		
-		}
+          ds  <- ds[ds$ppi > filt_threshold,]
+          if(recalc){
+            ds[,sdY:=sdY.est(vbeta=SE^2, maf=ALT_FREQ, n=get(Nco))][,ppi:=wakefield_pp_quant(BETA,SE,sdY,sd.prior), by="ld.block"][,weight:=ppi*BETA]		
+          }
 	}
-
-		} else{ # In case column name is supplied
-		if(is.character(N0) && length(N0) == 1){
-		Nco <- N0
-		message("N1 not supplied.  Assuming quantitative trait with multiple N, supplied by column ", Nco,". Mmax N: ", max(ds[,get(Nco)]), ", min N = ", min(ds[,get(Nco)]), ", and mean N: ",mean(ds[,get(Nco)]), ". Computing PGS.")
-		ds[,sdY:=sdY.est(vbeta=SE^2, maf=ALT_FREQ, n=get(Nco))][,ppi:=wakefield_pp_quant(BETA,SE,sdY,sd.prior), by="ld.block"][,weight:=ppi*BETA]
-	if(!is.null(filt_threshold)){
-		ds  <- ds[ds$ppi > filt_threshold,]
-		if(recalc){
-		ds[,sdY:=sdY.est(vbeta=SE^2, maf=ALT_FREQ, n=get(Nco))][,ppi:=wakefield_pp_quant(BETA,SE,sdY,sd.prior), by="ld.block"][,weight:=ppi*BETA]		
-		}
-
-	}
-		}
-		}
-	} else  { # If both are supplied
-		if(is.character(N0) && is.character(N1)){
-			message("Computing PGS for a case-control dataset. Both N0 and N1 columns provided.")
-			Nco  <- N0
-			Nca <- N1
-			ds <- na.omit(ds, cols=c("P","ALT_FREQ", N0,N1))
-			if(log.p){
-				ds[,P:=pnorm(-abs(BETA/SE),log.p=TRUE)*2]	
-			}
-			ds[,ppi:=wakefield_pp(p = P, f = ALT_FREQ, N=get(Nco)+get(Nca), s = get(Nca)/(get(Nco)+get(Nca)), pi_i, sd.prior, log.p), by = "ld.block"][, weight:=ppi*BETA]	
-			if(!is.null(filt_threshold)){
-				if(filt_threshold < 1){
-					ds  <- ds[ds$ppi > filt_threshold,]
-				} else {
-					ds <- ds[order(-rank(abs(weight))),][1:filt_threshold,] 
-				}
-
-				if(recalc){
-					ds[,ppi:=wakefield_pp(p = P, f = ALT_FREQ, N= get(Nco)+get(Nca) , s = get(Nca)/(get(Nca)+get(Nca)), pi_i, sd.prior, log.p), by = "ld.block"][, weight:=ppi*BETA]
-				}
-			}
-		}else{
-			message("Computing PGS for a case-control dataset, with ", N0," controls, and ", N1, " cases.")
-			ds <- na.omit(ds, cols=c("P","ALT_FREQ"))
-			if(log.p){
-				ds[,P:=pnorm(-abs(BETA/SE),log.p=TRUE)*2]	
-			}
-			ds[,ppi:=wakefield_pp(p = P, f = ALT_FREQ, N= N0+N1, s = N1/(N0+N1), pi_i, sd.prior, log.p), by = "ld.block"][, weight:=ppi*BETA]	
-				if(!is.null(filt_threshold)){
-					if(filt_threshold < 1){
-						ds  <- ds[ds$ppi > filt_threshold,]
-					} else {
-						ds <- ds[order(-rank(abs(weight))),][1:filt_threshold,] 
-					}	
-					if(recalc){
-						ds[,ppi:=wakefield_pp(p = P, f = ALT_FREQ, N= N0+N1 , s = N1/(N0+N1), pi_i, sd.prior, log.p), by = "ld.block"][, weight:=ppi*BETA]
-					}
-				}
-		  }	
-		}
-	if(forsAUC){
-		ds[,pid:=paste(CHR,BP,sep=":")]
-		ds <- ds[,c("pid", "ALT", "weight")]
-	}
-	if(altformat){
-		ds  <- ds[,c("SNPID", "ALT", "weight")]
-	}
-	return(ds)
+      }
+    }
+  } else  { # If both are supplied
+    if(is.character(N0) && is.character(N1)){
+      message("Computing PGS for a case-control dataset. Both N0 and N1 columns provided.")
+      Nco  <- N0
+      Nca <- N1
+      ds <- na.omit(ds, cols=c("P","ALT_FREQ", N0,N1))
+      if(log.p){
+        ds[,P:=pnorm(-abs(BETA/SE),log.p=TRUE)*2]	
+      }
+      ds[,ppi:=wakefield_pp(p = P, f = ALT_FREQ, N=get(Nco)+get(Nca), s = get(Nca)/(get(Nco)+get(Nca)), pi_i, sd.prior, log.p), by = "ld.block"][, weight:=ppi*BETA]	
+      if(!is.null(filt_threshold)){
+        if(filt_threshold < 1){
+          ds  <- ds[ds$ppi > filt_threshold,]
+        } else {
+          ds <- ds[order(-rank(abs(weight))),][1:filt_threshold,] 
+        }
+        
+        if(recalc){
+          ds[,ppi:=wakefield_pp(p = P, f = ALT_FREQ, N= get(Nco)+get(Nca) , s = get(Nca)/(get(Nca)+get(Nca)), pi_i, sd.prior, log.p), by = "ld.block"][, weight:=ppi*BETA]
+        }
+      }
+    }else{
+      message("Computing PGS for a case-control dataset, with ", N0," controls, and ", N1, " cases.")
+      ds <- na.omit(ds, cols=c("P","ALT_FREQ"))
+      if(log.p){
+        ds[,P:=pnorm(-abs(BETA/SE),log.p=TRUE)*2]	
+      }
+      ds[,ppi:=wakefield_pp(p = P, f = ALT_FREQ, N= N0+N1, s = N1/(N0+N1), pi_i, sd.prior, log.p), by = "ld.block"][, weight:=ppi*BETA]	
+      if(!is.null(filt_threshold)){
+        if(filt_threshold < 1){
+          ds  <- ds[ds$ppi > filt_threshold,]
+        } else {
+          ds <- ds[order(-rank(abs(weight))),][1:filt_threshold,] 
+        }	
+        if(recalc){
+          ds[,ppi:=wakefield_pp(p = P, f = ALT_FREQ, N= N0+N1 , s = N1/(N0+N1), pi_i, sd.prior, log.p), by = "ld.block"][, weight:=ppi*BETA]
+        }
+      }
+    }	
+  }
+  if(forsAUC){
+    ds[,pid:=paste(CHR,BP,sep=":")]
+    ds <- ds[,c("pid", "ALT", "weight")]
+  }
+  if(altformat){
+    ds  <- ds[,c("SNPID", "ALT", "weight")]
+  }
+  return(ds)
 }	
 
 ##' Retrieve GWAS summary datasets from GWAS catalog
