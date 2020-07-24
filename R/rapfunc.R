@@ -115,6 +115,7 @@ wakefield_pp <- function(p,f, N, s,pi_i=1e-4,sd.prior=0.2,log.p=FALSE) {
 
 
 ##' Compute PGS from GWAS summary statistics using posteriors from Wakefield's approximate Bayes Factors
+##' 
 ##' '\code{computePGS} computes PGS from a from GWAS summary statistics using posteriors from Wakefield's approximate Bayes Factors
 ##' 
 ##' Main RápidoPGS function. This function will take a GWAS summary statistic dataset as an input,
@@ -137,26 +138,51 @@ wakefield_pp <- function(p,f, N, s,pi_i=1e-4,sd.prior=0.2,log.p=FALSE) {
 ##' P: P-values for the association test
 ##' ALT_FREQ: Minor/ALT allele frequency in the tested population, or in a close population from a reference panel. No problem it flipped.
 ##'
-##' If a reference is provided. It should have 4 columns: CHR, BP, SNPID, REF, and ALT.
-##' In both files, column order does not matter.
-##' @param ds a data.table containing GWAS summary statistic dataset with all information, including ld.blocks. Usually an output from \code{pgs.file.preprocess}.
-##' @param N0 a scalar representing the number of controls in the study (or the number of subjects in quantitative trait GWAS).
-##' @param N1 a scalar representing the number of cases in the case-control study. If NULL (default), quantitative trait will be assumed.
-##' @param build a string containing the genome build of the dataset, either "hg19" (for hg19/GRCh37) or "hg38" (hg38/GRCh38). Default "hg19". 
-##' @param pi_i a scalar representing the prior probability (DEFAULT \eqn{1 \times 10^{-4}}).
-##' @param sd.prior a scalar representing our prior expectation of \eqn{\beta} (DEFAULT 0.2).
-##' @param log.p if FALSE (DEFAULT), p is a p value. If TRUE, p is a log(p) value.  Use this if your dataset holds p values too small to be accurately stored without using logs.
-##' @param filt_threshold a scalar indicating the ppi threshold (if \code{filt_threshold} < 1) or the top SNPs by absolute weights to filter the dataset after PGS computation. If NULL (Default), no thresholding will be applied.
-##' @param recalc a logical indicating if weights should be recalculated after thresholding. If TRUE, \code{filt_threshold} should be defined.
-##' @param reference a string indicating the reference file SNPs should be filtered and aligned to.
-##' @param forsAUC a logical indicating if output should be in sAUC evaluation format as we used it for the paper.
-##' @param altformat a logical indicating if output should be in a format containing pid (chr:pos), ALT, and weights only. Default FALSE
-##' @return a data.table containing the formatted sumstat dataset with computed PGS weights.
-##' @import data.table bigsnpr GenomicRanges  
+##' If a reference is provided. It should have 4 columns: CHR, BP,
+##' SNPID, REF, and ALT. In both files, column order does not matter.
+##' @param data a data.table containing GWAS summary statistic dataset
+##'   with all information, including ld.blocks. Usually an output
+##'   from \code{pgs.file.preprocess}.
+##' @param N0 a scalar representing the number of controls in the
+##'   study (or the number of subjects in quantitative trait GWAS).
+##' @param N1 a scalar representing the number of cases in the
+##'   case-control study. If NULL (default), quantitative trait will
+##'   be assumed.
+##' @param build a string containing the genome build of the dataset,
+##'   either "hg19" (for hg19/GRCh37) or "hg38" (hg38/GRCh38). Default
+##'   "hg19".
+##' @param pi_i a scalar representing the prior probability (DEFAULT
+##'   \eqn{1 \times 10^{-4}}).
+##' @param sd.prior the prior specifies that BETA at causal SNPs
+##'   follows a centred normal distribution with standard deviation
+##'   sd.prior. Sensible and widely used DEFAULTs are 0.2 for case
+##'   control traits, and 0.15 * var(trait) for quantitative (selected
+##'   if N1 is NULL).
+##' @param log.p if FALSE (DEFAULT), p is a p value. If TRUE, p is a
+##'   log(p) value. Use this if your dataset holds p values too small
+##'   to be accurately stored without using logs.
+##' @param filt_threshold a scalar indicating the ppi threshold (if
+##'   \code{filt_threshold} < 1) or the number of top SNPs by absolute
+##'   weights (if \code{filt_threshold} > 1) to filter the dataset
+##'   after PGS computation. If NULL (Default), no thresholding will
+##'   be applied.
+##' @param recalc a logical indicating if weights should be
+##'   recalculated after thresholding. If TRUE, \code{filt_threshold}
+##'   should be defined.
+##' @param reference a string indicating the reference file SNPs
+##'   should be filtered and aligned to.
+##' @param forsAUC a logical indicating if output should be in sAUC
+##'   evaluation format as we used it for the paper.
+##' @param altformat a logical indicating if output should be in a
+##'   format containing pid (chr:pos), ALT, and weights only. Default
+##'   FALSE
+##' @return a data.table containing the formatted sumstat dataset with
+##'   computed PGS weights.
+##' @import data.table bigsnpr GenomicRanges
 ##' @export
 ##' @author Guillermo Reales, Chris Wallace
 
-computePGS <- function(ds,
+computePGS <- function(data,
                        N0,
                        N1=NULL,
                        build = "hg19",
@@ -169,13 +195,16 @@ computePGS <- function(ds,
                        forsAUC=FALSE,
                        altformat=FALSE){
 	
-	# Here's a list of columns that the dataset must have, otherwise it will fail
-	mincol <- c("CHR","BP", "REF","ALT","BETA", "SE", "P", "ALT_FREQ", "SNPID")
-	if(!all(mincol %in% names(ds))) stop("All minimum columns should be present in the summary statistics dataset. Please check, missing columns: ", paste(setdiff(mincol,names(ds)), collapse=", "))
+  ## Here's a list of columns that the dataset must have, otherwise it will fail
+  mincol <- c("CHR","BP", "REF","ALT","BETA", "SE", "P", "ALT_FREQ", "SNPID")
+  if(!all(mincol %in% names(data)))
+    stop("All minimum columns should be present in the summary statistics dataset. Please check, missing columns: ",
+         paste(setdiff(mincol,names(data)), collapse=", "))
 
-	# First step, align to reference, if reference is provided
+  ds <- copy(data) # avoid modifying input data.table
+  ## First step, align to reference, if reference is provided
 	if(!is.null(reference)){
-	# Next step is to filter and align our alleles and their effects to the hapmap3 reference, which I have already formatted for our purposes.
+          ## Next step is to filter and align our alleles and their effects to the hapmap3 reference, which I have already formatted for our purposes.
 	message("Filtering SNPs...")
 	refset <- fread(reference)
 	mincolref <- c("CHR","BP", "SNPID", "REF","ALT")

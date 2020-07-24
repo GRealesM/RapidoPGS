@@ -11,7 +11,7 @@ computePGS(
   N1 = NULL,
   build = "hg19",
   pi_i = 1e-04,
-  sd.prior = 0.2,
+  sd.prior = if (is.null(N1)) {     0.15 } else {     0.2 },
   log.p = FALSE,
   filt_threshold = NULL,
   recalc = FALSE,
