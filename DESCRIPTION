@@ -1,5 +1,5 @@
 Package: RapidoPGS
-Title: A Rápido and light package to compute Polygenic Risk Scores
+Title: A Fast and Light Package to Compute Polygenic Risk Scores
 Version: 1.0.1
 Authors@R: c(
     person("Guillermo","Reales", role = c("aut", "cre"), email = "gr440@cam.ac.uk",  comment = c(ORCID = "0000-0001-9993-3916")),
