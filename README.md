@@ -10,7 +10,7 @@ This package allows to quickly (*rápido* is Spanish for "fast") compute polygen
 # Installation
 
 ```
-library(devtools)
+library(remotes)
 install_github('GRealesM/RapidoPGS')
 ```
 
