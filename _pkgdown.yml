@@ -1,0 +1,7 @@
+title: RápidoPGS
+url: http://GRealesM.github.io/RapidoPGS
+template:
+  params:
+    bootswatch: simplex
+news:
+destination: docs

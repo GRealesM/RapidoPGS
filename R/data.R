@@ -51,4 +51,4 @@
 #' }
 #' @source \url{ftp://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/MichailidouK_29059683_GCST004988/harmonised/29059683-GCST004988-EFO_0000305.h.tsv.gz} 
 #' 
-"michailidou.subset"
+"michailidou"

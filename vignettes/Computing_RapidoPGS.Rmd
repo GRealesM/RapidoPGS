@@ -17,79 +17,20 @@ RápidoPGS is a tool to quickly compute polygenic scores (PGS) from GWAS summary
 Input GWAS summary statistics datasets should have a minimum set of columns, 
 with these names, but in any order:
 
-
----
-title: "Computing a PGS using RápidoPGS and GWAS catalog"
-author: "Guillermo Reales"
-date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Computing a PGS using RápidoPGS and GWAS catalog}
-  %\VignetteEngine{knitr::rmarkdown}
-  \usepackage[utf8]{inputenc}
-
----
-
-# Introduction
-
-RápidoPGS is a tool to quickly compute polygenic scores (PGS) from GWAS summary statistics datasets from either case-control (eg. asthma) or quantitative traits (eg. height and BMI).
-
-Input GWAS summary statistics datasets should have a minimum set of columns, 
-with these names, but in any order:
-
----
-title: "Computing a PGS using RápidoPGS and GWAS catalog"
-author: "Guillermo Reales"
-date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Computing a PGS using RápidoPGS and GWAS catalog}
-  %\VignetteEngine{knitr::rmarkdown}
-  \usepackage[utf8]{inputenc}
-
----
-
-# Introduction
-
-RápidoPGS is a tool to quickly compute polygenic scores (PGS) from GWAS summary statistics datasets from either case-control (eg. asthma) or quantitative traits (eg. height and BMI).
-
-Input GWAS summary statistics datasets should have a minimum set of columns, 
-with these names, but in any order:
-
-
----
-title: "Computing a PGS using RápidoPGS and GWAS catalog"
-author: "Guillermo Reales"
-date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Computing a PGS using RápidoPGS and GWAS catalog}
-  %\VignetteEngine{knitr::rmarkdown}
-  \usepackage[utf8]{inputenc}
-
----
-
-# Introduction
-
-RápidoPGS is a tool to quickly compute polygenic scores (PGS) from GWAS summary statistics datasets from either case-control (eg. asthma) or quantitative traits (eg. height and BMI). It also provides a wrapper to retrieve public, harmonised data from GWAS catalog, which use we'll demonstrate in this vignette, too.
-
-Input GWAS summary statistics datasets should have a minimum set of columns, 
-with these names, but in any order:
-
-* CHR: Chromosome 
-* BP: Base position (in GRCh37/hg19 or GRCh38/hg38). If using hg38, use build = "hg38" in parameters.
-* SNPID: rsids, or SNP identifiers. If not available, they can be anything (eg. CHR_BP).
-* REF: Reference, or non-effect allele
-* ALT: Alternative, or effect allele, the one \eqn{\beta} refers to
-* BETA: $\beta$ (or log(OR)), or effect sizes.
-* SE: Standard error of $\beta$
-* P: P-values for the association test
-* ALT_FREQ: Minor/ALT allele frequency in the tested population, or in a close population from a reference panel. No problem it flipped.
+* **CHR**: Chromosome 
+* **BP**: Base position (in GRCh37/hg19 or GRCh38/hg38). If using hg38, use build = "hg38" in parameters.
+* **SNPID**: rsids, or SNP identifiers. If not available, they can be anything (eg. CHR_BP).
+* **REF**: Reference, or non-effect allele
+* **ALT**: Alternative, or effect allele, the one \eqn{\beta} refers to
+* **BETA**: $\beta$ (or log(OR)), or effect sizes.
+* **SE**: Standard error of $\beta$
+* **P**: P-values for the association test
+* **ALT_FREQ**: Minor/ALT allele frequency in the tested population, or in a close population from a reference panel. No problem it flipped.
 
 
 # Installation of RápidoPGS
 
-RápidoPGS is currently available in GitHub, so we can install it using the following code (note: If you don't have `devtools` installed, please install it first:
+RápidoPGS is currently available in GitHub, so we can install it using the following code (Note: If you don't have `devtools` installed, please install it first:
 
 ```{r eval=FALSE}
 library(devtools)
@@ -106,7 +47,7 @@ BiocManager::install("GenomicRanges")
 
 Once installed, let's load it. This will automatically load all required dependencies.
 
-```{r}
+```{r message=FALSE, warning = FALSE}
 library(RapidoPGS)
 ```
 
@@ -121,16 +62,94 @@ We use it's PubMed ID (29059683), and set `hm_only = FALSE` to get all columns.
 It's a big file, so it may take a while to download. 
 Note that in this particular case we chose a study that contained a single dataset. In other cases there may be more than one. In that case `gwascat.download` will prompt you with the list of available options, prompting their accession numbers, and asking you to choose a file by its number in the list, if running interactively. If you want to run `gwascat.download` automatically, and you know the number already, you can supply it using `filenum` argument, so R won't bug you.
 
-```{r eval FALSE}
+```{r eval =FALSE}
 ds <- gwascat.download(29059683, hm_only = FALSE)
 ```
-Alternatively, and for illustrative purposes, I took a random subset from this file including 100,000 SNPs from this file, which we'll use in this tutorial. Bear in mind that the final PGS won't be a *valid* model since we randomly removed most of the SNPs
+Alternatively, and for illustrative purposes, I took a random subset from this file including 100,000 SNPs from this file, which we'll use in this tutorial. Bear in mind that the final PGS won't be a *valid* model since we randomly removed most SNPs. It will serve for our teaching purposes, though! ;)
 
 
+```{r}
+ds <- michailidou
+```
 
-The first thing to do is to check what our file looks like.
+
+# Applying quality control to the dataset
+
+The first thing to do is to check what our file looks like. RápidoPGS can handle NAs, but it doesn't quite like them, so that's something to look for.
 
 ```{r}
 summary(ds)
 ```
+In this case, we don't have any missing data, which is fantastic. We'll now prepare the dataset for RápidoPGS. We need to rename columns to something RápidoPGS can understand, and this is easy to do with data.table.
 
+```{r}
+setnames(ds, old = c("hm_rsid", "hm_chrom", "hm_pos", "hm_other_allele", "hm_effect_allele", "hm_beta", "hm_effect_allele_frequency", "standard_error", "p_value"), new=c("SNPID","CHR", "BP","REF", "ALT", "BETA", "ALT_FREQ", "SE", "P"))
+```
+
+Now another thing to consider: RápidoPGS use only autosomes, so it's wise to remove X or Y chromosomes at this step.
+
+```{r}
+ds <- ds[CHR != "X",]
+```
+
+
+# Computing PGS using RápidoPGS
+
+Now we have applied QC to our dataset, we can now compute our PGS!
+We can easily do that applying the next command, but bear in mind that, since we used harmonised columns, the build is **hg38**, so we must tell RápidoPGS about that.
+
+We should also provide the number of controls (N0) and cases (N1) for a case-control study.
+Note that if this was a quantitative trait dataset, we should inform total number of individuals only (as N0). Also, if our dataset had columns reporting the number of individuals for each SNP, we can replace N0 (and N1, in case-control datasets) by strings specifying the respective columns (eg. N0 = "Ncontrols", N1 = "Ncases"). By doing so, RápidoPGS will extract this information directly from the columns.
+
+Let's get our hands dirty! Let's compute first a *full* RápidoPGS model. 
+Since it is in build hg38, we need to specify it. However, since we don't need our PGS aligned to any external reference, we can omit `reference` argument. If that was the case, we should use a string with the path to the reference file, which like our summary statistics dataset, should have five columns (CHR, BP, REF, ALT, and SNPID) and be in the **same build** as our summary statistics dataset. RápidoPGS currently supports **hg19** and **hg38** builds.
+
+```{r}
+full_PGS <- computePGS(ds, N0= 119078 ,N1=137045, build = "hg38")
+```
+
+Well, that was *rápido*! With increasingly big datasets, it will take a bit longer, of course.
+
+Let's take a look.
+
+```{r}
+head(full_PGS)
+```
+
+We see three new columns: **ld.block** corresponds to the number of LD block assigned to the SNP (see manuscript for more details of where this comes from), **ppi** is the Wakefield's posterior that the SNP is causal, and **weight** is the weighted effect size by its corresponding posterior - and the column we're interested in.
+
+Note that our input dataset has those three new columns, too. We could delete them, but keeping `ld.block` is useful, as we can omit the LD block assignment in subsequent PGS creation using the same summary statistics dataset (which can take some time for big datasets). 
+
+Let's see how this work in practice!
+
+## Applying different thresholds
+
+Imagine that we have too many SNPs and we want to use a threshold (eg. keep only SNPs with ppi larger than $1e^{-4}$, a reasonable threshold) or we want the 100 SNPs with largest weights (in either way).
+
+We can do that using RápidoPGS, let's see how by using a $1e^{-4}$ threshold.
+
+```{r}
+PGS_1e4 <- computePGS(ds, N0= 119078 ,N1=137045, build = "hg38", filt_threshold = 1e-4)
+head(PGS_1e4)
+```
+For accuracy reasons, we recommend recomputing the PGS after the threshold was applied:
+
+```{r}
+PGS_1e4_recalc <- computePGS(ds, N0= 119078 ,N1=137045, build = "hg38", filt_threshold = 1e-4, recalc = TRUE)
+head(PGS_1e4_recalc)
+```
+
+And what if we want the *top10* SNPs? Just change the `filt_threshold` argument. If it's larger than 1, RápidoPGS will understand that you want a top list, rather than a thresholded result.
+
+```{r}
+PGS_top10 <- computePGS(ds, N0= 119078 ,N1=137045, build = "hg38", filt_threshold = 10)
+head(PGS_top10)
+```
+
+So those are examples of basic *RápidoPGS* usage! There are more advanced options regarding priors (by the way, we use sd.prior = 0.2 (Default) for case-control traits, and 0.15 for quantitative), use of log(P) when P-values are too small to compute PGS succesfully, and output formats, but that's a topic for a future vignette. Drop us a line if you encounter problems, and we'll be happy to help.
+
+
+Good luck!
+
+
+Guillermo
