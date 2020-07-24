@@ -1,6 +1,6 @@
 # RápidoPGS
 
-**A rapido and lightweight method to compute Polygenic Risk Scores.**
+**A *rápido* and lightweight method to compute Polygenic Risk Scores.**
 
 Last update: 2020-07-24
 

@@ -10,7 +10,7 @@ gwascat.download(ID, filenum = NULL, hm_only = TRUE)
 \arguments{
 \item{ID}{a numeric. A PubMed ID (PMID) reference number from a GWAS paper.}
 
-\item{filenum}{a numeric. If multiple files are available, which one to choose? if NULL (default), R will prompt an interactive prompt, asking for the number.}
+\item{filenum}{a numeric. If multiple files are available, which one to choose? If NULL (DEFAULT), R will prompt an interactive prompt, asking for the number.}
 
 \item{hm_only}{a logical. Should GWAS catalog harmonised columns be retained?}
 }

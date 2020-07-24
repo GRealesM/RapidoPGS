@@ -145,29 +145,29 @@
     <tr>
       <th>data</th>
       <td><p>a data.table containing GWAS summary statistic dataset
-with all information, including ld.blocks. Usually an output
-from <code>pgs.file.preprocess</code>.</p></td>
+with all required information.</p></td>
     </tr>
     <tr>
       <th>N0</th>
       <td><p>a scalar representing the number of controls in the
-study (or the number of subjects in quantitative trait GWAS).</p></td>
+study (or the number of subjects in quantitative trait GWAS),
+or a string indicating the column name containing it.</p></td>
     </tr>
     <tr>
       <th>N1</th>
       <td><p>a scalar representing the number of cases in the
-case-control study. If NULL (default), quantitative trait will
-be assumed.</p></td>
+case-control study, or a string indicating the column name containing it.
+If NULL (DEFAULT), quantitative trait will be assumed.</p></td>
     </tr>
     <tr>
       <th>build</th>
       <td><p>a string containing the genome build of the dataset,
-either "hg19" (for hg19/GRCh37) or "hg38" (hg38/GRCh38). Default
+either "hg19" (for hg19/GRCh37) or "hg38" (hg38/GRCh38). DEFAULT
 "hg19".</p></td>
     </tr>
     <tr>
       <th>pi_i</th>
-      <td><p>a scalar representing the prior probability (DEFAULT
+      <td><p>a scalar representing the prior probability (DEFAULT:
 \(1 \times 10^{-4}\)).</p></td>
     </tr>
     <tr>
@@ -188,8 +188,8 @@ to be accurately stored without using logs.</p></td>
       <th>filt_threshold</th>
       <td><p>a scalar indicating the ppi threshold (if
 <code>filt_threshold</code> &lt; 1) or the number of top SNPs by absolute
-weights (if <code>filt_threshold</code> &gt; 1) to filter the dataset
-after PGS computation. If NULL (Default), no thresholding will
+weights (if <code>filt_threshold</code> &gt;= 1) to filter the dataset
+after PGS computation. If NULL (DEFAULT), no thresholding will
 be applied.</p></td>
     </tr>
     <tr>
@@ -201,7 +201,7 @@ is defined.</p></td>
     <tr>
       <th>reference</th>
       <td><p>a string indicating the path of the reference file
-SNPs should be filtered and aligned to, see above.</p></td>
+SNPs should be filtered and aligned to, see Details.</p></td>
     </tr>
     <tr>
       <th>forsAUC</th>
@@ -211,14 +211,14 @@ evaluation format as we used it for the paper.</p></td>
     <tr>
       <th>altformat</th>
       <td><p>a logical indicating if output should be in a
-format containing pid (chr:pos), ALT, and weights only. Default
+format containing pid (chr:pos), ALT, and weights only. DEFAULT
 FALSE</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a data.table containing the formatted sumstat dataset with
+    <p>a data.table containing the formatted sumstats dataset with
 computed PGS weights.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
@@ -229,17 +229,20 @@ to generate PGS weights by multiplying those posteriors by effect sizes (\(\beta
 Optionally, it will filter SNPs by a custom filter on ppi and then recalculate weights, to improve accuracy.</p>
 <p>Alternatively, if filt_threshold is larger than one, RápidoPGS will select the top
 <code>filt_threshold</code> SNPs by absolute weights (note, not ppi but weights).</p>
-<p>The GWAS summary statistics file to compute PGS using our method must contain the following minimum columns, with these exact column names:
-CHR: Chromosome
-BP: Base position (in GRCh37/hg19 or GRCh38/hg38). If using hg38, use build = "hg38" in parameters.
-SNPID: rsids, or SNP identifiers. If not available, they can be anything (eg. CHR_BP).
-REF: Reference, or non-effect allele
-ALT: Alternative, or effect allele, the one \(\beta\) refers to
-BETA: Beta (or log(OR)), or effect sizes.
-SE: Standard error of \(\beta\)
-P: P-values for the association test
-ALT_FREQ: Minor/ALT allele frequency in the tested population, or in a close population from a reference panel.</p>
-<p>If a reference is provided. It should have 4 columns: CHR, BP,
+<p>The GWAS summary statistics file to compute PGS using our method must contain the following minimum columns, with these exact column names:</p><dl'>
+<dt>CHR</dt><dd><p>Chromosome</p></dd>
+<dt>BP</dt><dd><p>Base position (in GRCh37/hg19 or GRCh38/hg38). If using hg38, use build = "hg38" in parameters</p></dd>
+<dt>SNPID</dt><dd><p>rsids, or SNP identifiers. If not available, they can be anything (eg. CHR_BP)</p></dd>
+<dt>REF</dt><dd><p>Reference, or non-effect allele</p></dd>
+<dt>ALT</dt><dd><p>Alternative, or effect allele, the one \(\beta\) refers to</p></dd>
+<dt>ALT_FREQ</dt><dd><p>Minor/ALT allele frequency in the tested population, or in a close population from a reference panel</p></dd>
+<dt>BETA</dt><dd><p>\(\beta\) (or log(OR)), or effect sizes</p></dd>
+<dt>SE</dt><dd><p>standard error of \(\beta\)</p></dd>
+<dt>P</dt><dd><p>P-value for the association test</p></dd>
+
+</dl>
+
+<p>If a reference is provided. It should have 5 columns: CHR, BP,
 SNPID, REF, and ALT. Also, it should be in the same build as
 the summary statistics. In both files, column order does not matter.</p>
 

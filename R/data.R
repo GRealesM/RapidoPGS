@@ -1,7 +1,7 @@
 #' LD block architecture for European populations (hg19).
 #'
 #' A GRanges object containing the LD block for European ancestry, in hg19 build.
-#' This dataset was obtained from Belisa and Pickrell (2016), in bed format,
+#' This dataset was obtained from \href{https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4731402/}{Belisa and Pickrell (2016)}, in bed format,
 #' then converted to GRanges. See manuscript for more details.
 #'
 #' @format A GRanges object containing 1703 ranges
@@ -17,7 +17,7 @@
 #' LD block architecture for European populations (hg38).
 #'
 #' A GRanges object containing the LD block for European ancestry, in hg38 build.
-#' This dataset was obtained from Belisa and Pickrell (2016), in bed format,
+#' This dataset was obtained from \href{https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4731402/}{Belisa and Pickrell (2016)}, in bed format,
 #' then liftovered to hg38 using UCSC liftOver tool, then converted to GRanges. 
 #' See manuscript for more details.
 #'
@@ -33,11 +33,11 @@
 
 #' Subset of Michailidou BRCA GWAS sumstat dataset.
 #'
-#' A data.table containing a subset of Michailidou et al., 2017 breast cancer summary statistic dataset, in hg38 build.
+#' A data.table containing a subset of \href{https://www.nature.com/articles/nature24284/}{Michailidou et al., 2017} breast cancer summary statistic dataset, in hg38 build.
 #' This dataset is freely available in GWAS catalog (see link below). I removed unnecessary and all-missing columns, and rows
 #' with missing data at hm_beta and hm_effect_allele_frequency, and took a random sample of 100,000 SNPs without replacement.
 #'
-#' @format A data.table object containing 100000 SNPs
+#' @format A data.table object containing 100,000 SNPs
 #' \describe{
 #'   \item{hm_rsid}{rsids, or SNP ids}
 #'   \item{hm_chrom}{chromosome}

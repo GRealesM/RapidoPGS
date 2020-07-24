@@ -5,7 +5,7 @@
 \alias{michailidou}
 \title{Subset of Michailidou BRCA GWAS sumstat dataset.}
 \format{
-A data.table object containing 100000 SNPs
+A data.table object containing 100,000 SNPs
 \describe{
 \item{hm_rsid}{rsids, or SNP ids}
 \item{hm_chrom}{chromosome}
@@ -25,7 +25,7 @@ A data.table object containing 100000 SNPs
 michailidou
 }
 \description{
-A data.table containing a subset of Michailidou et al., 2017 breast cancer summary statistic dataset, in hg38 build.
+A data.table containing a subset of \href{https://www.nature.com/articles/nature24284/}{Michailidou et al., 2017} breast cancer summary statistic dataset, in hg38 build.
 This dataset is freely available in GWAS catalog (see link below). I removed unnecessary and all-missing columns, and rows
 with missing data at hm_beta and hm_effect_allele_frequency, and took a random sample of 100,000 SNPs without replacement.
 }
