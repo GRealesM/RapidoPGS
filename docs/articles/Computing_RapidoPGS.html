@@ -85,7 +85,7 @@
       <h1 data-toc-skip>Computing a PGS using RápidoPGS and GWAS catalog</h1>
                         <h4 class="author">Guillermo Reales</h4>
             
-            <h4 class="date">2020-07-26</h4>
+            <h4 class="date">2020-07-27</h4>
       
       
       <div class="hidden name"><code>Computing_RapidoPGS.Rmd</code></div>
@@ -282,7 +282,12 @@
 ## 5:   1  0.1038
 ## 6:   1 -0.0914</code></pre>
 <p>So those are examples of basic <em>RápidoPGS</em> usage!</p>
-<p>There are more advanced options: - RápidoPGS uses a Bayesian fine mapping method to generate the PPI that requires specifying a prior on the distribution of BETA at causal variants. We use a normal prior with 0 mean and sd either 0.2 (Default) for case-control traits, or 0.15 * var(trait) for quantitative). - when P-values are too small to be stored accurately in floating point, you can supply log(p) instead - different output formats are available but these are topics for a future vignette, and documented in the help for each function.</p>
+<p>There are more advanced options:</p>
+<ul>
+<li>RápidoPGS uses a Bayesian fine mapping method to generate the PPI that requires specifying a prior on the distribution of BETA at causal variants. We use a normal prior with 0 mean and sd either 0.2 (Default) for case-control traits, or 0.15 * var(trait) for quantitative).</li>
+<li>when P-values are too small to be stored accurately in floating point, you can supply log(p) instead</li>
+<li>different output formats are available but these are topics for a future vignette, and documented in the help for each function.</li>
+</ul>
 <p>Drop us a line if you encounter problems, and we’ll be happy to help.</p>
 <p>Good luck!</p>
 <p>Guillermo</p>
