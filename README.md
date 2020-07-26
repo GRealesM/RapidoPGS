@@ -1,3 +1,5 @@
+# RapidoPGS <a href='http://GRealesM.github.io/RapidoPGS'><img src='man/figures/logo.png' align="right" height="190.5" /></a>
+
 # RápidoPGS
 
 **A *rápido* and lightweight method to compute Polygenic Risk Scores.**
