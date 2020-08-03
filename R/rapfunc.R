@@ -186,7 +186,22 @@ wakefield_pp <- function(p,f, N, s,pi_i=1e-4,sd.prior=0.2,log.p=FALSE) {
 ##' @importFrom IRanges IRanges
 ##' @export
 ##' @author Guillermo Reales, Chris Wallace
-
+##' @examples
+##' sumstats <- data.table(SNPID=c("rs139096444","rs3843766","rs61977545", "rs544733737",
+##'			"rs2177641", "rs183491817", "rs72995775","rs78598863", "rs1411315"), 
+##'			CHR=c("4","20","14","2","4","6","6","21","13"), 
+##'			BP=c(1479959, 13000913, 29107209, 203573414, 57331393, 11003529, 149256398, 
+##'					25630085, 79166661), 
+##'			REF=c("C","C","C","T","G","C","C","G","T"), 
+##'			ALT=c("A","T","T","A","A","A","T","A","C"), 
+##'			ALT_FREQ=c(0.2611,0.4482,0.0321,0.0538,0.574,0.0174,0.0084,0.0304,0.7528),
+##'			BETA=c(0.012,0.0079,0.0224,0.0033,0.0153,0.058,0.0742,0.001,-0.0131),
+##'			SE=c(0.0099,0.0066,0.0203,0.0171,0.0063,0.0255,0.043,0.0188,0.0074),
+##'			P=c(0.2237,0.2316,0.2682,0.8477,0.01473,0.02298,0.08472,0.9573,0.07535))
+##'
+##' PGS  <- computePGS(sumstats,  N0= 119078 ,N1=137045, build = "hg38")
+##'
+	
 computePGS <- function(data,
                        N0,
                        N1=NULL,
@@ -238,7 +253,7 @@ computePGS <- function(data,
 			stop("RapidoPGS only accepts hg19 or hg38 at the moment, please check.")
 		}		
 	message("Assigning LD blocks...")
-	snpranges <- GRanges(seqnames=paste("chr",ds$CHR, sep=""), ranges=IRanges(ds$BP, end=ds$BP, names=ds$SNPID), strand="*")
+	snpranges <- GRanges(seqnames=paste("chr",ds$CHR, sep=""), ranges=IRanges(start=ds$BP, end=ds$BP, names=ds$SNPID), strand="*")
         ds[,ld.block:=findOverlaps(snpranges, blranges, select='last')]
 	message("Done!")
 	}
@@ -333,6 +348,13 @@ computePGS <- function(data,
 ##' @import data.table curl RCurl
 ##' @export
 ##' @author Guillermo Reales
+##' @examples 
+##' 
+##' \dontrun{
+##'	ds <- gwascat.download(29059683, hm_only = FALSE) # This should work: Michailidou dataset
+##'	wrongds <- gwascat.download(01223247236) # This shouldn't work: The Empress pub phone number
+##'}
+##'
 
 gwascat.download <- function(ID, filenum = NULL, hm_only=TRUE){
 		gwc.manifest <- fread("https://www.ebi.ac.uk/gwas/api/search/downloads/studies_alternative")

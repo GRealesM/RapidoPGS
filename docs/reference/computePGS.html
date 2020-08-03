@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RápidoPGS</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.2</span>
       </span>
     </div>
 
@@ -112,7 +112,12 @@
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/GRealesM/RapidoPGS">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -127,7 +132,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Compute PGS from GWAS summary statistics using posteriors from Wakefield's approximate Bayes Factors</h1>
-    
+    <small class="dont-index">Source: <a href='https://github.com/GRealesM/RapidoPGSR/rapfunc.R'><code>R/rapfunc.R</code></a></small>
     <div class="hidden name"><code>computePGS.Rd</code></div>
     </div>
 
@@ -257,6 +262,21 @@ Optionally, it will filter SNPs by a custom filter on ppi and then recalculate w
 SNPID, REF, and ALT. Also, it should be in the same build as
 the summary statistics. In both files, column order does not matter.</p>
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='no'>sumstats</span> <span class='kw'>&lt;-</span> <span class='fu'>data.table</span>(<span class='kw'>SNPID</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"rs139096444"</span>,<span class='st'>"rs3843766"</span>,<span class='st'>"rs61977545"</span>, <span class='st'>"rs544733737"</span>,
+                <span class='st'>"rs2177641"</span>, <span class='st'>"rs183491817"</span>, <span class='st'>"rs72995775"</span>,<span class='st'>"rs78598863"</span>, <span class='st'>"rs1411315"</span>),
+                <span class='kw'>CHR</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"4"</span>,<span class='st'>"20"</span>,<span class='st'>"14"</span>,<span class='st'>"2"</span>,<span class='st'>"4"</span>,<span class='st'>"6"</span>,<span class='st'>"6"</span>,<span class='st'>"21"</span>,<span class='st'>"13"</span>),
+                <span class='kw'>BP</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1479959</span>, <span class='fl'>13000913</span>, <span class='fl'>29107209</span>, <span class='fl'>203573414</span>, <span class='fl'>57331393</span>, <span class='fl'>11003529</span>, <span class='fl'>149256398</span>,
+                                <span class='fl'>25630085</span>, <span class='fl'>79166661</span>),
+                <span class='kw'>REF</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"C"</span>,<span class='st'>"C"</span>,<span class='st'>"C"</span>,<span class='st'>"T"</span>,<span class='st'>"G"</span>,<span class='st'>"C"</span>,<span class='st'>"C"</span>,<span class='st'>"G"</span>,<span class='st'>"T"</span>),
+                <span class='kw'>ALT</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"A"</span>,<span class='st'>"T"</span>,<span class='st'>"T"</span>,<span class='st'>"A"</span>,<span class='st'>"A"</span>,<span class='st'>"A"</span>,<span class='st'>"T"</span>,<span class='st'>"A"</span>,<span class='st'>"C"</span>),
+                <span class='kw'>ALT_FREQ</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.2611</span>,<span class='fl'>0.4482</span>,<span class='fl'>0.0321</span>,<span class='fl'>0.0538</span>,<span class='fl'>0.574</span>,<span class='fl'>0.0174</span>,<span class='fl'>0.0084</span>,<span class='fl'>0.0304</span>,<span class='fl'>0.7528</span>),
+                <span class='kw'>BETA</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.012</span>,<span class='fl'>0.0079</span>,<span class='fl'>0.0224</span>,<span class='fl'>0.0033</span>,<span class='fl'>0.0153</span>,<span class='fl'>0.058</span>,<span class='fl'>0.0742</span>,<span class='fl'>0.001</span>,-<span class='fl'>0.0131</span>),
+                <span class='kw'>SE</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.0099</span>,<span class='fl'>0.0066</span>,<span class='fl'>0.0203</span>,<span class='fl'>0.0171</span>,<span class='fl'>0.0063</span>,<span class='fl'>0.0255</span>,<span class='fl'>0.043</span>,<span class='fl'>0.0188</span>,<span class='fl'>0.0074</span>),
+                <span class='kw'>P</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.2237</span>,<span class='fl'>0.2316</span>,<span class='fl'>0.2682</span>,<span class='fl'>0.8477</span>,<span class='fl'>0.01473</span>,<span class='fl'>0.02298</span>,<span class='fl'>0.08472</span>,<span class='fl'>0.9573</span>,<span class='fl'>0.07535</span>))
+
+<span class='no'>PGS</span>  <span class='kw'>&lt;-</span> <span class='fu'>computePGS</span>(<span class='no'>sumstats</span>,  <span class='kw'>N0</span><span class='kw'>=</span> <span class='fl'>119078</span> ,<span class='kw'>N1</span><span class='kw'>=</span><span class='fl'>137045</span>, <span class='kw'>build</span> <span class='kw'>=</span> <span class='st'>"hg38"</span>)</div><div class='output co'>#&gt; <span class='message'>Assigning LD blocks...</span></div><div class='output co'>#&gt; <span class='message'>Done!</span></div><div class='output co'>#&gt; <span class='message'>Computing PGS for a case-control dataset, with 119078 controls, and 137045 cases.</span></div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

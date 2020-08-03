@@ -27,6 +27,14 @@ If multiple files are available for the same study, R will prompt an interactive
 dialogue to select a specific file, by number. If you know the number and
 prefer to select it automatically, you can provide it using file argument.
 }
+\examples{
+
+\dontrun{
+ds <- gwascat.download(29059683, hm_only = FALSE) # This should work: Michailidou dataset
+wrongds <- gwascat.download(01223247236) # This shouldn't work: The Empress pub phone number
+}
+
+}
 \author{
 Guillermo Reales
 }

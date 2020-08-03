@@ -102,6 +102,22 @@ If a reference is provided. It should have 5 columns: CHR, BP,
 SNPID, REF, and ALT. Also, it should be in the same build as
 the summary statistics. In both files, column order does not matter.
 }
+\examples{
+sumstats <- data.table(SNPID=c("rs139096444","rs3843766","rs61977545", "rs544733737",
+		"rs2177641", "rs183491817", "rs72995775","rs78598863", "rs1411315"), 
+		CHR=c("4","20","14","2","4","6","6","21","13"), 
+		BP=c(1479959, 13000913, 29107209, 203573414, 57331393, 11003529, 149256398, 
+				25630085, 79166661), 
+		REF=c("C","C","C","T","G","C","C","G","T"), 
+		ALT=c("A","T","T","A","A","A","T","A","C"), 
+		ALT_FREQ=c(0.2611,0.4482,0.0321,0.0538,0.574,0.0174,0.0084,0.0304,0.7528),
+		BETA=c(0.012,0.0079,0.0224,0.0033,0.0153,0.058,0.0742,0.001,-0.0131),
+		SE=c(0.0099,0.0066,0.0203,0.0171,0.0063,0.0255,0.043,0.0188,0.0074),
+		P=c(0.2237,0.2316,0.2682,0.8477,0.01473,0.02298,0.08472,0.9573,0.07535))
+
+PGS  <- computePGS(sumstats,  N0= 119078 ,N1=137045, build = "hg38")
+
+}
 \author{
 Guillermo Reales, Chris Wallace
 }

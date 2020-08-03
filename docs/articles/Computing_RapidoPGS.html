@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RápidoPGS</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.2</span>
       </span>
     </div>
 
@@ -69,7 +69,14 @@
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
-<ul class="nav navbar-nav navbar-right"></ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+  <a href="https://github.com/GRealesM/RapidoPGS">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
 </div>
 <!--/.nav-collapse -->
   </div>
@@ -85,9 +92,9 @@
       <h1 data-toc-skip>Computing a PGS using RápidoPGS and GWAS catalog</h1>
                         <h4 class="author">Guillermo Reales</h4>
             
-            <h4 class="date">2020-07-27</h4>
+            <h4 class="date">2020-08-03</h4>
       
-      
+      <small class="dont-index">Source: <a href="https://github.com/GRealesM/RapidoPGSvignettes/Computing_RapidoPGS.Rmd"><code>vignettes/Computing_RapidoPGS.Rmd</code></a></small>
       <div class="hidden name"><code>Computing_RapidoPGS.Rmd</code></div>
 
     </div>
@@ -130,7 +137,7 @@
     <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"BiocManager"</span>)
 
 <span class="kw pkg">BiocManager</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocManager/man/install.html">install</a></span>(<span class="st">"GenomicRanges"</span>)</pre></body></html></div>
-<p>RápidoPGS is currently available in GitHub, so we can install it using the following code (Note: If you don’t have <code>remotes</code> installed, please install it first:</p>
+<p>RápidoPGS is currently available on GitHub, so we can install it using the following code (Note: If you don’t have <code>remotes</code> installed, please install it first:</p>
 <div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="kw">if</span> (!<span class="fu"><a href="https://rdrr.io/r/base/ns-load.html">requireNamespace</a></span>(<span class="st">"remotes"</span>, <span class="kw">quietly</span> <span class="kw">=</span> <span class="fl">TRUE</span>))
     <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"remotes"</span>)
 <span class="kw pkg">remotes</span><span class="kw ns">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span>(<span class="st">"GRealesM/RapidoPGS"</span>)</pre></body></html></div>
@@ -261,7 +268,7 @@
 ## 4: 0.0005085857 -2.497156e-05
 ## 5: 0.0001827297 -9.374036e-06
 ## 6: 0.0001479511 -5.533371e-06</code></pre>
-<p>And what if we want the <em>top10</em> SNPs? Just change the <code>filt_threshold</code> argument. If it’s larger than 1, RápidoPGS will understand that you want a top list, rather than a thresholded result.</p>
+<p>And what if we want the <em>top 10</em> SNPs? Just change the <code>filt_threshold</code> argument. If it’s larger than 1, RápidoPGS will understand that you want a top list, rather than a thresholded result.</p>
 <div class="sourceCode" id="cb28"><html><body><pre class="r"><span class="no">PGS_top10</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/computePGS.html">computePGS</a></span>(<span class="no">ds</span>, <span class="kw">N0</span><span class="kw">=</span> <span class="fl">119078</span> ,<span class="kw">N1</span><span class="kw">=</span><span class="fl">137045</span>, <span class="kw">build</span> <span class="kw">=</span> <span class="st">"hg38"</span>, <span class="kw">filt_threshold</span> <span class="kw">=</span> <span class="fl">10</span>)</pre></body></html></div>
 <pre><code>## Assigning LD blocks...</code></pre>
 <pre><code>## Done!</code></pre>
