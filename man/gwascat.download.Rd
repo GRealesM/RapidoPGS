@@ -10,7 +10,7 @@ gwascat.download(ID, filenum = NULL, hm_only = TRUE)
 \arguments{
 \item{ID}{a numeric. A PubMed ID (PMID) reference number from a GWAS paper.}
 
-\item{filenum}{a numeric. If multiple files are available, which one to choose? if NULL (default), R will prompt an interactive prompt, asking for the number.}
+\item{filenum}{a numeric. If multiple files are available, which one to choose? If NULL (DEFAULT), R will prompt an interactive prompt, asking for the number.}
 
 \item{hm_only}{a logical. Should GWAS catalog harmonised columns be retained?}
 }
@@ -26,6 +26,14 @@ user to choose if there are more than one, and fetches the dataset.
 If multiple files are available for the same study, R will prompt an interactive
 dialogue to select a specific file, by number. If you know the number and
 prefer to select it automatically, you can provide it using file argument.
+}
+\examples{
+
+\dontrun{
+ds <- gwascat.download(29059683, hm_only = FALSE) # This should work: Michailidou dataset
+wrongds <- gwascat.download(01223247236) # This shouldn't work: The Empress pub phone number
+}
+
 }
 \author{
 Guillermo Reales

@@ -13,7 +13,7 @@ computePGS(
   sd.prior = if (is.null(N1)) {     0.15 } else {     0.2 },
   log.p = FALSE,
   filt_threshold = NULL,
-  recalc = FALSE,
+  recalc = TRUE,
   reference = NULL,
   forsAUC = FALSE,
   altformat = FALSE
@@ -21,21 +21,21 @@ computePGS(
 }
 \arguments{
 \item{data}{a data.table containing GWAS summary statistic dataset
-with all information, including ld.blocks. Usually an output
-from \code{pgs.file.preprocess}.}
+with all required information.}
 
 \item{N0}{a scalar representing the number of controls in the
-study (or the number of subjects in quantitative trait GWAS).}
+study (or the number of subjects in quantitative trait GWAS),
+or a string indicating the column name containing it.}
 
 \item{N1}{a scalar representing the number of cases in the
-case-control study. If NULL (default), quantitative trait will
-be assumed.}
+case-control study, or a string indicating the column name containing it.
+If NULL (DEFAULT), quantitative trait will be assumed.}
 
 \item{build}{a string containing the genome build of the dataset,
-either "hg19" (for hg19/GRCh37) or "hg38" (hg38/GRCh38). Default
+either "hg19" (for hg19/GRCh37) or "hg38" (hg38/GRCh38). DEFAULT
 "hg19".}
 
-\item{pi_i}{a scalar representing the prior probability (DEFAULT
+\item{pi_i}{a scalar representing the prior probability (DEFAULT:
 \eqn{1 \times 10^{-4}}).}
 
 \item{sd.prior}{the prior specifies that BETA at causal SNPs
@@ -50,26 +50,26 @@ to be accurately stored without using logs.}
 
 \item{filt_threshold}{a scalar indicating the ppi threshold (if
 \code{filt_threshold} < 1) or the number of top SNPs by absolute
-weights (if \code{filt_threshold} > 1) to filter the dataset
-after PGS computation. If NULL (Default), no thresholding will
+weights (if \code{filt_threshold} >= 1) to filter the dataset
+after PGS computation. If NULL (DEFAULT), no thresholding will
 be applied.}
 
 \item{recalc}{a logical indicating if weights should be
-recalculated after thresholding. If TRUE, \code{filt_threshold}
-should be defined.}
+recalculated after thresholding. Only relevant if \code{filt_threshold}
+is defined.}
 
-\item{reference}{a string indicating the reference file SNPs
-should be filtered and aligned to.}
+\item{reference}{a string indicating the path of the reference file
+SNPs should be filtered and aligned to, see Details.}
 
 \item{forsAUC}{a logical indicating if output should be in sAUC
 evaluation format as we used it for the paper.}
 
 \item{altformat}{a logical indicating if output should be in a
-format containing pid (chr:pos), ALT, and weights only. Default
+format containing pid (chr:pos), ALT, and weights only. DEFAULT
 FALSE}
 }
 \value{
-a data.table containing the formatted sumstat dataset with
+a data.table containing the formatted sumstats dataset with
 computed PGS weights.
 }
 \description{
@@ -86,18 +86,37 @@ Alternatively, if filt_threshold is larger than one, RápidoPGS will select the 
 \code{filt_threshold} SNPs by absolute weights (note, not ppi but weights).
 
 The GWAS summary statistics file to compute PGS using our method must contain the following minimum columns, with these exact column names:
-CHR: Chromosome
-BP: Base position (in GRCh37/hg19 or GRCh38/hg38). If using hg38, use build = "hg38" in parameters.
-SNPID: rsids, or SNP identifiers. If not available, they can be anything (eg. CHR_BP).
-REF: Reference, or non-effect allele
-ALT: Alternative, or effect allele, the one \eqn{\beta} refers to
-BETA: Beta (or log(OR)), or effect sizes.
-SE: Standard error of \eqn{\beta}
-P: P-values for the association test
-ALT_FREQ: Minor/ALT allele frequency in the tested population, or in a close population from a reference panel. No problem it flipped.
+\describe{
+\item{CHR}{Chromosome}
+\item{BP}{Base position (in GRCh37/hg19 or GRCh38/hg38). If using hg38, use build = "hg38" in parameters}
+\item{SNPID}{rsids, or SNP identifiers. If not available, they can be anything (eg. CHR_BP)}
+\item{REF}{Reference, or non-effect allele}
+\item{ALT}{Alternative, or effect allele, the one \eqn{\beta} refers to}
+\item{ALT_FREQ}{Minor/ALT allele frequency in the tested population, or in a close population from a reference panel}
+\item{BETA}{\eqn{\beta} (or log(OR)), or effect sizes}
+\item{SE}{standard error of \eqn{\beta}}
+\item{P}{P-value for the association test}
+}
 
-If a reference is provided. It should have 4 columns: CHR, BP,
-SNPID, REF, and ALT. In both files, column order does not matter.
+If a reference is provided. It should have 5 columns: CHR, BP,
+SNPID, REF, and ALT. Also, it should be in the same build as
+the summary statistics. In both files, column order does not matter.
+}
+\examples{
+sumstats <- data.table(SNPID=c("rs139096444","rs3843766","rs61977545", "rs544733737",
+		"rs2177641", "rs183491817", "rs72995775","rs78598863", "rs1411315"), 
+		CHR=c("4","20","14","2","4","6","6","21","13"), 
+		BP=c(1479959, 13000913, 29107209, 203573414, 57331393, 11003529, 149256398, 
+				25630085, 79166661), 
+		REF=c("C","C","C","T","G","C","C","G","T"), 
+		ALT=c("A","T","T","A","A","A","T","A","C"), 
+		ALT_FREQ=c(0.2611,0.4482,0.0321,0.0538,0.574,0.0174,0.0084,0.0304,0.7528),
+		BETA=c(0.012,0.0079,0.0224,0.0033,0.0153,0.058,0.0742,0.001,-0.0131),
+		SE=c(0.0099,0.0066,0.0203,0.0171,0.0063,0.0255,0.043,0.0188,0.0074),
+		P=c(0.2237,0.2316,0.2682,0.8477,0.01473,0.02298,0.08472,0.9573,0.07535))
+
+PGS  <- computePGS(sumstats,  N0= 119078 ,N1=137045, build = "hg38")
+
 }
 \author{
 Guillermo Reales, Chris Wallace

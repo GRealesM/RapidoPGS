@@ -5,3 +5,9 @@ template:
     bootswatch: simplex
 news:
 destination: docs
+repo:
+  url:
+    home: https://github.com/GRealesM/RapidoPGS
+    source: https://github.com/GRealesM/RapidoPGS
+    issue: https://github.com/GRealesM/RapidoPGS/issues
+    user: https://github.com/GRealesM
