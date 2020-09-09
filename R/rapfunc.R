@@ -81,7 +81,7 @@ wakefield_pp_quant <- function(beta, se.beta, sdY, sd.prior=0.15, pi_i=1e-4) {
 ##'
 ##' This function is verbatim of its namesake in cupcake package (github.com/ollyburren/cupcake/)
 ##'
-##' @param p a vector of univariate pvalues from a GWAS
+##' @param z a vector of univariate Z scores from a GWAS
 ##' @param f a vector of minor allele frequencies taken from some reference population.
 ##' @param N a scalar or vector for total sample size of GWAS
 ##' @param s a scalar representing the proportion of cases (n.cases/N)
@@ -93,14 +93,12 @@ wakefield_pp_quant <- function(beta, se.beta, sdY, sd.prior=0.15, pi_i=1e-4) {
 ##' @param log.p if FALSE (DEFAULT), p is a p value. If TRUE, p is a log(p) value.  Use this if your dataset holds p values too small to be accurately stored without using logs
 ##' @return a vector of posterior probabilities.
 ##' @author Olly Burren, Chris Wallace
-
-wakefield_pp <- function(p,f, N, s,pi_i=1e-4,sd.prior=0.2,log.p=FALSE) {
-    if(length(p) != length(f))
-      stop("p and f must be vectors of the same size")
+wakefield_pp <- function(beta, se,f, N, s,pi_i=1e-4,sd.prior=0.2,log.p=FALSE) {
+  if(length(beta) != length(f) || length(beta) != length(se))
+    stop("beta, se and f must be vectors of the same size")
+  z=beta/se
     # compute V
     V <- 1 / (2 * N * f * (1 - f) * s * (1 - s))
-    # convert p vals to z
-    z <- stats::qnorm(0.5 * p, lower.tail = FALSE,log.p=log.p)
     ## Shrinkage factor: ratio of the prior variance to the total variance
     r <- sd.prior^2 / (sd.prior^2 + V)
     ## Approximate BF
@@ -136,7 +134,6 @@ wakefield_pp <- function(p,f, N, s,pi_i=1e-4,sd.prior=0.2,log.p=FALSE) {
 ##'   \item{ALT_FREQ}{Minor/ALT allele frequency in the tested population, or in a close population from a reference panel}
 ##'   \item{BETA}{\eqn{\beta} (or log(OR)), or effect sizes}
 ##'   \item{SE}{standard error of \eqn{\beta}}
-##'   \item{P}{P-value for the association test}
 ##' }
 ##'
 ##' If a reference is provided. It should have 5 columns: CHR, BP,
@@ -160,9 +157,6 @@ wakefield_pp <- function(p,f, N, s,pi_i=1e-4,sd.prior=0.2,log.p=FALSE) {
 ##'   sd.prior. Sensible and widely used DEFAULTs are 0.2 for case
 ##'   control traits, and 0.15 * var(trait) for quantitative (selected
 ##'   if N1 is NULL).
-##' @param log.p if FALSE (DEFAULT), p is a p value. If TRUE, p is a
-##'   log(p) value. Use this if your dataset holds p values too small
-##'   to be accurately stored without using logs.
 ##' @param filt_threshold a scalar indicating the ppi threshold (if
 ##'   \code{filt_threshold} < 1) or the number of top SNPs by absolute
 ##'   weights (if \code{filt_threshold} >= 1) to filter the dataset
@@ -196,19 +190,16 @@ wakefield_pp <- function(p,f, N, s,pi_i=1e-4,sd.prior=0.2,log.p=FALSE) {
 ##'			ALT=c("A","T","T","A","A","A","T","A","C"), 
 ##'			ALT_FREQ=c(0.2611,0.4482,0.0321,0.0538,0.574,0.0174,0.0084,0.0304,0.7528),
 ##'			BETA=c(0.012,0.0079,0.0224,0.0033,0.0153,0.058,0.0742,0.001,-0.0131),
-##'			SE=c(0.0099,0.0066,0.0203,0.0171,0.0063,0.0255,0.043,0.0188,0.0074),
-##'			P=c(0.2237,0.2316,0.2682,0.8477,0.01473,0.02298,0.08472,0.9573,0.07535))
+##'			SE=c(0.0099,0.0066,0.0203,0.0171,0.0063,0.0255,0.043,0.0188,0.0074))
 ##'
 ##' PGS  <- computePGS(sumstats,  N0= 119078 ,N1=137045, build = "hg38")
 ##'
-	
 computePGS <- function(data,
                        N0,
                        N1=NULL,
                        build = "hg19",
                        pi_i= 1e-04,
                        sd.prior=if(is.null(N1)) {0.15} else {0.2},
-                       log.p=FALSE,
                        filt_threshold = NULL,
                        recalc=TRUE,
                        reference=NULL,
@@ -216,13 +207,13 @@ computePGS <- function(data,
                        altformat=FALSE){
 	
   ## Here's a list of columns that the dataset must have, otherwise it will fail
-  mincol <- c("CHR","BP", "REF","ALT","BETA", "SE", "P", "ALT_FREQ", "SNPID")
+  mincol <- c("CHR","BP", "REF","ALT","BETA", "SE", "ALT_FREQ", "SNPID")
   if(!all(mincol %in% names(data)))
     stop("All minimum columns should be present in the summary statistics dataset. Please check, missing columns: ",
          paste(setdiff(mincol,names(data)), collapse=", "))
 
   ds <- copy(data) # avoid modifying input data.table
-  ds  <- na.omit(ds, cols=c("CHR","BP", "BETA", "SE", "P","ALT_FREQ")) # Remove NA in relevant columns
+  ds  <- na.omit(ds, cols=c("CHR","BP", "BETA", "SE", "ALT_FREQ")) # Remove NA in relevant columns
   ## First step, align to reference, if reference is provided
 	if(!is.null(reference)){
           ## Next step is to filter and align our alleles and their effects to the hapmap3 reference, which I have already formatted for our purposes.
@@ -287,10 +278,7 @@ computePGS <- function(data,
       Nco  <- N0
       Nca <- N1
       ds <- na.omit(ds, cols=c(N0,N1))
-      if(log.p){
-        ds[,P:=pnorm(-abs(BETA/SE),log.p=TRUE)*2]	
-      }
-      ds[,ppi:=wakefield_pp(p = P, f = ALT_FREQ, N=get(Nco)+get(Nca), s = get(Nca)/(get(Nco)+get(Nca)), pi_i, sd.prior, log.p), by = "ld.block"][, weight:=ppi*BETA]	
+      ds[,ppi:=wakefield_pp(beta=BETA, se=SE, f = ALT_FREQ, N=get(Nco)+get(Nca), s = get(Nca)/(get(Nco)+get(Nca)), pi_i, sd.prior, log.p), by = "ld.block"][, weight:=ppi*BETA]
       if(!is.null(filt_threshold)){
         if(filt_threshold < 1){
           ds  <- ds[ds$ppi > filt_threshold,]
@@ -299,23 +287,20 @@ computePGS <- function(data,
         }
         
         if(recalc){
-          ds[,ppi:=wakefield_pp(p = P, f = ALT_FREQ, N= get(Nco)+get(Nca) , s = get(Nca)/(get(Nca)+get(Nca)), pi_i, sd.prior, log.p), by = "ld.block"][, weight:=ppi*BETA]
+          ds[,ppi:=wakefield_pp(beta=BETA, se=SE, f = ALT_FREQ, N= get(Nco)+get(Nca) , s = get(Nca)/(get(Nca)+get(Nca)), pi_i, sd.prior, log.p), by = "ld.block"][, weight:=ppi*BETA]
         }
       }
     }else{
       message("Computing PGS for a case-control dataset, with ", N0," controls, and ", N1, " cases.")
-      if(log.p){
-        ds[,P:=pnorm(-abs(BETA/SE),log.p=TRUE)*2]	
-      }
-      ds[,ppi:=wakefield_pp(p = P, f = ALT_FREQ, N= N0+N1, s = N1/(N0+N1), pi_i, sd.prior, log.p), by = "ld.block"][, weight:=ppi*BETA]	
+      ds[,ppi:=wakefield_pp(beta=BETA, se=SE, f = ALT_FREQ, N= N0+N1, s = N1/(N0+N1), pi_i, sd.prior, log.p), by = "ld.block"][, weight:=ppi*BETA]
       if(!is.null(filt_threshold)){
         if(filt_threshold < 1){
           ds  <- ds[ds$ppi > filt_threshold,]
         } else {
-          ds <- ds[order(-rank(abs(weight))),][1:filt_threshold,] 
+          ds <- ds[order(-rank(abs(weight))),][1:filt_threshold,]
         }	
         if(recalc){
-          ds[,ppi:=wakefield_pp(p = P, f = ALT_FREQ, N= N0+N1 , s = N1/(N0+N1), pi_i, sd.prior, log.p), by = "ld.block"][, weight:=ppi*BETA]
+          ds[,ppi:=wakefield_pp(beta=BETA, se=SE, f = ALT_FREQ, N= N0+N1 , s = N1/(N0+N1), pi_i, sd.prior, log.p), by = "ld.block"][, weight:=ppi*BETA]
         }
       }
     }	
