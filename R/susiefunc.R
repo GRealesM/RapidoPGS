@@ -32,7 +32,7 @@ NULL
 ##' dimnames(LD)=list(d$SNPID,d$SNPID)
 ##' susie_pip(d, LD)
 ##' @author Chris Wallace
-susie_pip=function(d,LD,nref=503,pi_i,max_it) {
+susie_pip=function(d,LD,nref=503,pi_i=1e-4,max_it=100) {
   ## checks
   nd <- names(d)
   if(!all(c("SNPID","BETA","SE") %in% nd))
@@ -55,5 +55,7 @@ susie_pip=function(d,LD,nref=503,pi_i,max_it) {
                ,estimate_prior_method="EM"
                 ## ,verbose=TRUE
                ,max_iter=max_it )
-  res$pip
+  pip=res$pip[ -length(res$pip) ]
+  names(pip)=d$SNPID
+  pip
 }
