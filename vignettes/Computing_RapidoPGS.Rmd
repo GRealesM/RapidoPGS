@@ -113,7 +113,7 @@ ds <- ds[CHR != "X",]
 ```
 
 
-# Computing PGS using RápidoPGS
+# Computing PGS using RápidoPGS-single
 
 Now we have applied QC to our dataset, we can now compute our PGS!
 We can easily do that applying the next command, but bear in mind that, since we used harmonised columns, the build is **hg38**, so we must tell RápidoPGS about that.

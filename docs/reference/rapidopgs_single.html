@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Compute PGS from GWAS summary statistics using posteriors from Wakefield's approximate Bayes Factors — computePGS • RápidoPGS</title>
+<title>Compute PGS from GWAS summary statistics using posteriors from Wakefield's approximate Bayes Factors — rapidopgs_single • RápidoPGS</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,8 +46,8 @@
 
 
 
-<meta property="og:title" content="Compute PGS from GWAS summary statistics using posteriors from Wakefield's approximate Bayes Factors — computePGS" />
-<meta property="og:description" content="'computePGS computes PGS from a from GWAS summary statistics using posteriors from Wakefield's approximate Bayes Factors" />
+<meta property="og:title" content="Compute PGS from GWAS summary statistics using posteriors from Wakefield's approximate Bayes Factors — rapidopgs_single" />
+<meta property="og:description" content="'rapidopgs_single computes PGS from a from GWAS summary statistics using posteriors from Wakefield's approximate Bayes Factors" />
 <meta property="og:image" content="http://GRealesM.github.io/RapidoPGS/logo.png" />
 
 
@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RápidoPGS</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.2.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.0.9000</span>
       </span>
     </div>
 
@@ -88,7 +88,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -103,7 +103,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/Computing_RapidoPGS.html">Computing a PGS using RápidoPGS and GWAS catalog</a>
+      <a href="../articles/Computing_RapidoPGS.html">Computing a PGS using RápidoPGS-single and GWAS catalog</a>
     </li>
   </ul>
 </li>
@@ -114,7 +114,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/GRealesM/RapidoPGS">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -133,27 +133,24 @@
     <div class="page-header">
     <h1>Compute PGS from GWAS summary statistics using posteriors from Wakefield's approximate Bayes Factors</h1>
     <small class="dont-index">Source: <a href='https://github.com/GRealesM/RapidoPGSR/rapfunc.R'><code>R/rapfunc.R</code></a></small>
-    <div class="hidden name"><code>computePGS.Rd</code></div>
+    <div class="hidden name"><code>rapidopgs_single.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>'<code>computePGS</code> computes PGS from a from GWAS summary statistics using posteriors from Wakefield's approximate Bayes Factors</p>
+    <p>'<code>rapidopgs_single</code> computes PGS from a from GWAS summary statistics using posteriors from Wakefield's approximate Bayes Factors</p>
     </div>
 
-    <pre class="usage"><span class='fu'>computePGS</span>(
-  <span class='no'>data</span>,
-  <span class='no'>N0</span>,
-  <span class='kw'>N1</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>build</span> <span class='kw'>=</span> <span class='st'>"hg19"</span>,
-  <span class='kw'>pi_i</span> <span class='kw'>=</span> <span class='fl'>1e-04</span>,
-  <span class='kw'>sd.prior</span> <span class='kw'>=</span> <span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/NULL.html'>is.null</a></span>(<span class='no'>N1</span>)) {     <span class='fl'>0.15</span> } <span class='kw'>else</span> {     <span class='fl'>0.2</span> },
-  <span class='kw'>log.p</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>filt_threshold</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>recalc</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>reference</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>forsAUC</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>altformat</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
-)</pre>
+    <pre class="usage"><span class='fu'>rapidopgs_single</span><span class='op'>(</span>
+  <span class='va'>data</span>,
+  N <span class='op'>=</span> <span class='cn'>NULL</span>,
+  trait <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"cc"</span>, <span class='st'>"quant"</span><span class='op'>)</span>,
+  build <span class='op'>=</span> <span class='st'>"hg19"</span>,
+  pi_i <span class='op'>=</span> <span class='fl'>1e-04</span>,
+  sd.prior <span class='op'>=</span> <span class='kw'>if</span> <span class='op'>(</span><span class='va'>trait</span> <span class='op'>==</span> <span class='st'>"quant"</span><span class='op'>)</span> <span class='op'>{</span>     <span class='fl'>0.15</span> <span class='op'>}</span> <span class='kw'>else</span> <span class='op'>{</span>     <span class='fl'>0.2</span> <span class='op'>}</span>,
+  filt_threshold <span class='op'>=</span> <span class='cn'>NULL</span>,
+  recalc <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  reference <span class='op'>=</span> <span class='cn'>NULL</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -164,16 +161,15 @@
 with all required information.</p></td>
     </tr>
     <tr>
-      <th>N0</th>
-      <td><p>a scalar representing the number of controls in the
-study (or the number of subjects in quantitative trait GWAS),
-or a string indicating the column name containing it.</p></td>
+      <th>N</th>
+      <td><p>a scalar representing the sample in the study, or a string indicating
+the column name containing it. Required for quantitative traits only.</p></td>
     </tr>
     <tr>
-      <th>N1</th>
-      <td><p>a scalar representing the number of cases in the
-case-control study, or a string indicating the column name containing it.
-If NULL (DEFAULT), quantitative trait will be assumed.</p></td>
+      <th>trait</th>
+      <td><p>a string specifying if the dataset corresponds to a case-control
+("cc") or a quantitative trait ("quant") GWAS. If trait = "quant", an
+ALT_FREQ column is required.</p></td>
     </tr>
     <tr>
       <th>build</th>
@@ -192,13 +188,7 @@ either "hg19" (for hg19/GRCh37) or "hg38" (hg38/GRCh38). DEFAULT
 follows a centred normal distribution with standard deviation
 sd.prior. Sensible and widely used DEFAULTs are 0.2 for case
 control traits, and 0.15 * var(trait) for quantitative (selected
-if N1 is NULL).</p></td>
-    </tr>
-    <tr>
-      <th>log.p</th>
-      <td><p>if FALSE (DEFAULT), p is a p value. If TRUE, p is a
-log(p) value. Use this if your dataset holds p values too small
-to be accurately stored without using logs.</p></td>
+if trait == "quant").</p></td>
     </tr>
     <tr>
       <th>filt_threshold</th>
@@ -219,17 +209,6 @@ is defined.</p></td>
       <td><p>a string indicating the path of the reference file
 SNPs should be filtered and aligned to, see Details.</p></td>
     </tr>
-    <tr>
-      <th>forsAUC</th>
-      <td><p>a logical indicating if output should be in sAUC
-evaluation format as we used it for the paper.</p></td>
-    </tr>
-    <tr>
-      <th>altformat</th>
-      <td><p>a logical indicating if output should be in a
-format containing pid (chr:pos), ALT, and weights only. DEFAULT
-FALSE</p></td>
-    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -238,45 +217,44 @@ FALSE</p></td>
 computed PGS weights.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Main RápidoPGS function. This function will take a GWAS summary statistic dataset as an input,
+    <p>This function will take a GWAS summary statistic dataset as an input,
 will assign align it to a reference panel file (if provided), then it will assign
 SNPs to LD blocks and compute Wakefield's ppi by LD block, then will use it
 to generate PGS weights by multiplying those posteriors by effect sizes (\(\beta\)).
 Optionally, it will filter SNPs by a custom filter on ppi and then recalculate weights, to improve accuracy.</p>
 <p>Alternatively, if filt_threshold is larger than one, RápidoPGS will select the top
 <code>filt_threshold</code> SNPs by absolute weights (note, not ppi but weights).</p>
-<p>The GWAS summary statistics file to compute PGS using our method must contain the following minimum columns, with these exact column names:</p><dl'>
+<p>The GWAS summary statistics file to compute PGS using our method must contain the following minimum columns, with these exact column names:</p><dl>
 <dt>CHR</dt><dd><p>Chromosome</p></dd>
 <dt>BP</dt><dd><p>Base position (in GRCh37/hg19 or GRCh38/hg38). If using hg38, use build = "hg38" in parameters</p></dd>
-<dt>SNPID</dt><dd><p>rsids, or SNP identifiers. If not available, they can be anything (eg. CHR_BP)</p></dd>
 <dt>REF</dt><dd><p>Reference, or non-effect allele</p></dd>
 <dt>ALT</dt><dd><p>Alternative, or effect allele, the one \(\beta\) refers to</p></dd>
-<dt>ALT_FREQ</dt><dd><p>Minor/ALT allele frequency in the tested population, or in a close population from a reference panel</p></dd>
+<dt>ALT_FREQ</dt><dd><p>Minor/ALT allele frequency in the tested population, or in a close population from a reference panel. Required for Quantitative traits only</p></dd>
 <dt>BETA</dt><dd><p>\(\beta\) (or log(OR)), or effect sizes</p></dd>
 <dt>SE</dt><dd><p>standard error of \(\beta\)</p></dd>
-<dt>P</dt><dd><p>P-value for the association test</p></dd>
 
 </dl>
 
-<p>If a reference is provided. It should have 5 columns: CHR, BP,
+<p>If a reference is provided,  it should have 5 columns: CHR, BP,
 SNPID, REF, and ALT. Also, it should be in the same build as
 the summary statistics. In both files, column order does not matter.</p>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Guillermo Reales, Chris Wallace</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>sumstats</span> <span class='kw'>&lt;-</span> <span class='fu'>data.table</span>(<span class='kw'>SNPID</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"rs139096444"</span>,<span class='st'>"rs3843766"</span>,<span class='st'>"rs61977545"</span>, <span class='st'>"rs544733737"</span>,
-                <span class='st'>"rs2177641"</span>, <span class='st'>"rs183491817"</span>, <span class='st'>"rs72995775"</span>,<span class='st'>"rs78598863"</span>, <span class='st'>"rs1411315"</span>),
-                <span class='kw'>CHR</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"4"</span>,<span class='st'>"20"</span>,<span class='st'>"14"</span>,<span class='st'>"2"</span>,<span class='st'>"4"</span>,<span class='st'>"6"</span>,<span class='st'>"6"</span>,<span class='st'>"21"</span>,<span class='st'>"13"</span>),
-                <span class='kw'>BP</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1479959</span>, <span class='fl'>13000913</span>, <span class='fl'>29107209</span>, <span class='fl'>203573414</span>, <span class='fl'>57331393</span>, <span class='fl'>11003529</span>, <span class='fl'>149256398</span>,
-                                <span class='fl'>25630085</span>, <span class='fl'>79166661</span>),
-                <span class='kw'>REF</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"C"</span>,<span class='st'>"C"</span>,<span class='st'>"C"</span>,<span class='st'>"T"</span>,<span class='st'>"G"</span>,<span class='st'>"C"</span>,<span class='st'>"C"</span>,<span class='st'>"G"</span>,<span class='st'>"T"</span>),
-                <span class='kw'>ALT</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"A"</span>,<span class='st'>"T"</span>,<span class='st'>"T"</span>,<span class='st'>"A"</span>,<span class='st'>"A"</span>,<span class='st'>"A"</span>,<span class='st'>"T"</span>,<span class='st'>"A"</span>,<span class='st'>"C"</span>),
-                <span class='kw'>ALT_FREQ</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.2611</span>,<span class='fl'>0.4482</span>,<span class='fl'>0.0321</span>,<span class='fl'>0.0538</span>,<span class='fl'>0.574</span>,<span class='fl'>0.0174</span>,<span class='fl'>0.0084</span>,<span class='fl'>0.0304</span>,<span class='fl'>0.7528</span>),
-                <span class='kw'>BETA</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.012</span>,<span class='fl'>0.0079</span>,<span class='fl'>0.0224</span>,<span class='fl'>0.0033</span>,<span class='fl'>0.0153</span>,<span class='fl'>0.058</span>,<span class='fl'>0.0742</span>,<span class='fl'>0.001</span>,-<span class='fl'>0.0131</span>),
-                <span class='kw'>SE</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.0099</span>,<span class='fl'>0.0066</span>,<span class='fl'>0.0203</span>,<span class='fl'>0.0171</span>,<span class='fl'>0.0063</span>,<span class='fl'>0.0255</span>,<span class='fl'>0.043</span>,<span class='fl'>0.0188</span>,<span class='fl'>0.0074</span>),
-                <span class='kw'>P</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.2237</span>,<span class='fl'>0.2316</span>,<span class='fl'>0.2682</span>,<span class='fl'>0.8477</span>,<span class='fl'>0.01473</span>,<span class='fl'>0.02298</span>,<span class='fl'>0.08472</span>,<span class='fl'>0.9573</span>,<span class='fl'>0.07535</span>))
+    <pre class="examples"><div class='input'><span class='va'>sumstats</span> <span class='op'>&lt;-</span> <span class='fu'>data.table</span><span class='op'>(</span>SNPID<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"rs139096444"</span>,<span class='st'>"rs3843766"</span>,<span class='st'>"rs61977545"</span>, <span class='st'>"rs544733737"</span>,
+    <span class='st'>"rs2177641"</span>, <span class='st'>"rs183491817"</span>, <span class='st'>"rs72995775"</span>,<span class='st'>"rs78598863"</span>, <span class='st'>"rs1411315"</span><span class='op'>)</span>, 
+    CHR<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"4"</span>,<span class='st'>"20"</span>,<span class='st'>"14"</span>,<span class='st'>"2"</span>,<span class='st'>"4"</span>,<span class='st'>"6"</span>,<span class='st'>"6"</span>,<span class='st'>"21"</span>,<span class='st'>"13"</span><span class='op'>)</span>, 
+    BP<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1479959</span>, <span class='fl'>13000913</span>, <span class='fl'>29107209</span>, <span class='fl'>203573414</span>, <span class='fl'>57331393</span>, <span class='fl'>11003529</span>, <span class='fl'>149256398</span>, 
+        <span class='fl'>25630085</span>, <span class='fl'>79166661</span><span class='op'>)</span>, 
+    REF<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"C"</span>,<span class='st'>"C"</span>,<span class='st'>"C"</span>,<span class='st'>"T"</span>,<span class='st'>"G"</span>,<span class='st'>"C"</span>,<span class='st'>"C"</span>,<span class='st'>"G"</span>,<span class='st'>"T"</span><span class='op'>)</span>, 
+    ALT<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"A"</span>,<span class='st'>"T"</span>,<span class='st'>"T"</span>,<span class='st'>"A"</span>,<span class='st'>"A"</span>,<span class='st'>"A"</span>,<span class='st'>"T"</span>,<span class='st'>"A"</span>,<span class='st'>"C"</span><span class='op'>)</span>, 
+    BETA<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.012</span>,<span class='fl'>0.0079</span>,<span class='fl'>0.0224</span>,<span class='fl'>0.0033</span>,<span class='fl'>0.0153</span>,<span class='fl'>0.058</span>,<span class='fl'>0.0742</span>,<span class='fl'>0.001</span>,<span class='op'>-</span><span class='fl'>0.0131</span><span class='op'>)</span>,
+    SE<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.0099</span>,<span class='fl'>0.0066</span>,<span class='fl'>0.0203</span>,<span class='fl'>0.0171</span>,<span class='fl'>0.0063</span>,<span class='fl'>0.0255</span>,<span class='fl'>0.043</span>,<span class='fl'>0.0188</span>,<span class='fl'>0.0074</span><span class='op'>)</span><span class='op'>)</span>
 
-<span class='no'>PGS</span>  <span class='kw'>&lt;-</span> <span class='fu'>computePGS</span>(<span class='no'>sumstats</span>,  <span class='kw'>N0</span><span class='kw'>=</span> <span class='fl'>119078</span> ,<span class='kw'>N1</span><span class='kw'>=</span><span class='fl'>137045</span>, <span class='kw'>build</span> <span class='kw'>=</span> <span class='st'>"hg38"</span>)</div><div class='output co'>#&gt; <span class='message'>Assigning LD blocks...</span></div><div class='output co'>#&gt; <span class='message'>Done!</span></div><div class='output co'>#&gt; <span class='message'>Computing PGS for a case-control dataset, with 119078 controls, and 137045 cases.</span></div><div class='input'>
-</div></pre>
+<span class='va'>PGS</span>  <span class='op'>&lt;-</span> <span class='fu'>rapidopgs_single</span><span class='op'>(</span><span class='va'>sumstats</span>,  trait <span class='op'>=</span> <span class='st'>"cc"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='message'>Assigning LD blocks...</span></div><div class='output co'>#&gt; <span class='message'>Done!</span></div><div class='output co'>#&gt; <span class='message'>Computing a RápidoPGS-single model for a case-control dataset...</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -292,7 +270,7 @@ the summary statistics. In both files, column order does not matter.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

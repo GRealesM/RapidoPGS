@@ -6,8 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Retrieve GWAS summary datasets from GWAS catalog
-'gwascat.download takes a PMID from the user and downloads the associated summary statistics datasets published in GWAS catalog — gwascat.download • RápidoPGS</title>
+<title>Posterior inclusion probabilities under a multiple causal variant model — susie_pip • RápidoPGS</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -47,11 +46,11 @@
 
 
 
-<meta property="og:title" content="Retrieve GWAS summary datasets from GWAS catalog
-'gwascat.download takes a PMID from the user and downloads the associated summary statistics datasets published in GWAS catalog — gwascat.download" />
-<meta property="og:description" content="This function, takes PUBMED ids as an input, searches at the GWAS catalog
-for harmonised datasets associated to that, interactively asking the
-user to choose if there are more than one, and fetches the dataset." />
+<meta property="og:title" content="Posterior inclusion probabilities under a multiple causal variant model — susie_pip" />
+<meta property="og:description" content="A wrapper around susie_RSS from the susieR package. See
+https://stephenslab.github.io/susieR for the package and Wang et al.
+JRSSB 2020 for the paper describing the model
+https://rss.onlinelibrary.wiley.com/doi/full/10.1111/rssb.12388" />
 <meta property="og:image" content="http://GRealesM.github.io/RapidoPGS/logo.png" />
 
 
@@ -135,57 +134,75 @@ user to choose if there are more than one, and fetches the dataset." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Retrieve GWAS summary datasets from GWAS catalog
-'<code>gwascat.download</code> takes a PMID from the user and downloads the associated summary statistics datasets published in GWAS catalog</h1>
+    <h1>Posterior inclusion probabilities under a multiple causal variant model</h1>
     <small class="dont-index">Source: <a href='https://github.com/GRealesM/RapidoPGSR/rapfunc.R'><code>R/rapfunc.R</code></a></small>
-    <div class="hidden name"><code>gwascat.download.Rd</code></div>
+    <div class="hidden name"><code>susie_pip.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>This function, takes PUBMED ids as an input, searches at the GWAS catalog
-for harmonised datasets associated to that, interactively asking the
-user to choose if there are more than one, and fetches the dataset.</p>
+    <p>A wrapper around susie_RSS from the susieR package. See
+<a href='https://stephenslab.github.io/susieR'>https://stephenslab.github.io/susieR</a> for the package and Wang et al.
+JRSSB 2020 for the paper describing the model
+<a href='https://rss.onlinelibrary.wiley.com/doi/full/10.1111/rssb.12388'>https://rss.onlinelibrary.wiley.com/doi/full/10.1111/rssb.12388</a></p>
     </div>
 
-    <pre class="usage"><span class='fu'>gwascat.download</span><span class='op'>(</span><span class='va'>ID</span>, filenum <span class='op'>=</span> <span class='cn'>NULL</span>, hm_only <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>susie_pip</span><span class='op'>(</span><span class='va'>d</span>, <span class='va'>LD</span>, nref <span class='op'>=</span> <span class='fl'>503</span>, pi_i <span class='op'>=</span> <span class='fl'>1e-04</span>, sd.prior <span class='op'>=</span> <span class='cn'>NULL</span>, max_it <span class='op'>=</span> <span class='fl'>100</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>ID</th>
-      <td><p>a numeric. A PubMed ID (PMID) reference number from a GWAS paper.</p></td>
+      <th>d</th>
+      <td><p>data.table with columns SNPID, BETA, SE (other columns allowed, d
+will be ignored)</p></td>
     </tr>
     <tr>
-      <th>filenum</th>
-      <td><p>a numeric. If multiple files are available, which one to choose? If NULL (DEFAULT), R will prompt an interactive prompt, asking for the number.</p></td>
+      <th>LD</th>
+      <td><p>LD matrix with dimnames matching "SNPID" column</p></td>
     </tr>
     <tr>
-      <th>hm_only</th>
-      <td><p>a logical. Should GWAS catalog harmonised columns be retained?</p></td>
+      <th>nref</th>
+      <td><p>number of individuals used to create the LD matrix</p></td>
+    </tr>
+    <tr>
+      <th>pi_i</th>
+      <td><p>prior probability that a given variant is causal. Default 1e-4</p></td>
+    </tr>
+    <tr>
+      <th>sd.prior</th>
+      <td><p>Standard deviation prior of the trait, if NULL (default), it  will be estimated</p></td>
+    </tr>
+    <tr>
+      <th>max_it</th>
+      <td><p>maximum number of iterations for susie. The default of 100
+should be plenty, but increase if there is not convergence</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a data.table containing the dataset.</p>
+    <p>returns pip for each SNP, which we will use as a snp weight in
+generating the PGS (=pip * BETA)</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>If multiple files are available for the same study, R will prompt an interactive
-dialogue to select a specific file, by number. If you know the number and
-prefer to select it automatically, you can provide it using file argument.</p>
+    <p>NB: intended as an internal function, called from other functions in the
+RapidoPGS package.</p>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
-    <p>Guillermo Reales</p>
+    <p>Chris Wallace, Guillermo Reales</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
-<span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
-<span class='va'>ds</span> <span class='op'>&lt;-</span> <span class='fu'>gwascat.download</span><span class='op'>(</span><span class='fl'>29059683</span>, hm_only <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span> <span class='co'># This should work: Michailidou dataset</span>
-<span class='va'>wrongds</span> <span class='op'>&lt;-</span> <span class='fu'>gwascat.download</span><span class='op'>(</span><span class='fl'>01223247236</span><span class='op'>)</span> <span class='co'># This shouldn't work: The Empress pub phone number</span>
-<span class='op'>}</span>
-
-</div></pre>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>michailidou</span><span class='op'>)</span> <span class='co'># load example data</span>
+<span class='va'>d</span><span class='op'>=</span><span class='va'>michailidou</span><span class='op'>[</span><span class='va'>hm_chrom</span><span class='op'>==</span><span class='fl'>3</span> <span class='op'>&amp;</span> <span class='fu'><a href='https://rdrr.io/r/base/MathFun.html'>abs</a></span><span class='op'>(</span><span class='va'>hm_pos</span><span class='op'>-</span><span class='fl'>27303612</span><span class='op'>)</span> <span class='op'>&lt;</span> <span class='fl'>1e+5</span><span class='op'>]</span> <span class='co'># focus on a window of association</span>
+<span class='fu'>setnames</span><span class='op'>(</span><span class='va'>d</span>, old <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"hm_rsid"</span>, <span class='st'>"hm_chrom"</span>, <span class='st'>"hm_pos"</span>, <span class='st'>"hm_other_allele"</span>,
+  <span class='st'>"hm_effect_allele"</span>, <span class='st'>"hm_beta"</span>, <span class='st'>"hm_effect_allele_frequency"</span>,
+  <span class='st'>"standard_error"</span>, <span class='st'>"p_value"</span><span class='op'>)</span>, new<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"SNPID"</span>,<span class='st'>"CHR"</span>, <span class='st'>"BP"</span>,<span class='st'>"REF"</span>, <span class='st'>"ALT"</span>,
+  <span class='st'>"BETA"</span>, <span class='st'>"ALT_FREQ"</span>, <span class='st'>"SE"</span>, <span class='st'>"P"</span><span class='op'>)</span><span class='op'>)</span> <span class='co'># rename</span>
+<span class='va'>LD</span><span class='op'>=</span><span class='op'>(</span><span class='fl'>1</span> <span class='op'>-</span> <span class='fu'><a href='https://rdrr.io/r/base/MathFun.html'>abs</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/outer.html'>outer</a></span><span class='op'>(</span><span class='va'>d</span><span class='op'>$</span><span class='va'>ALT_FREQ</span>,<span class='va'>d</span><span class='op'>$</span><span class='va'>ALT_FREQ</span>, <span class='st'>"-"</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>*</span>
+   <span class='fu'><a href='https://rdrr.io/r/base/outer.html'>outer</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/sign.html'>sign</a></span><span class='op'>(</span><span class='va'>d</span><span class='op'>$</span><span class='va'>BETA</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/sign.html'>sign</a></span><span class='op'>(</span><span class='va'>d</span><span class='op'>$</span><span class='va'>BETA</span><span class='op'>)</span>, <span class='st'>"*"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/dimnames.html'>dimnames</a></span><span class='op'>(</span><span class='va'>LD</span><span class='op'>)</span><span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='va'>d</span><span class='op'>$</span><span class='va'>SNPID</span>,<span class='va'>d</span><span class='op'>$</span><span class='va'>SNPID</span><span class='op'>)</span>
+<span class='fu'>susie_pip</span><span class='op'>(</span><span class='va'>d</span>, <span class='va'>LD</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='error'>Error in susie_pip(d, LD): could not find function "susie_pip"</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

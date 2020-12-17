@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Helper function to sum logs without loss of precision — logsum • RápidoPGS</title>
+<title>Download 1000 Genomes Phase III panel — create_1000G • RápidoPGS</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,9 +46,13 @@
 
 
 
-<meta property="og:title" content="Helper function to sum logs without loss of precision — logsum" />
-<meta property="og:description" content="Sums logs without loss of precision
-This function is verbatim of its namesake in cupcake package (github.com/ollyburren/cupcake/)" />
+<meta property="og:title" content="Download 1000 Genomes Phase III panel — create_1000G" />
+<meta property="og:description" content="create_1000G downloads and gets 1000 Genomes Phase III panel in
+PLINK format, and apply quality control for being used to compute PGS using
+rapidopgs_multi.
+Given the size of the files, running this function can take long, depending
+on broadband speed and server status. We also recommend to ensure that there
+is at least 60GB free space available in disk." />
 <meta property="og:image" content="http://GRealesM.github.io/RapidoPGS/logo.png" />
 
 
@@ -132,34 +136,72 @@ This function is verbatim of its namesake in cupcake package (github.com/ollybur
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Helper function to sum logs without loss of precision</h1>
+    <h1>Download 1000 Genomes Phase III panel</h1>
     <small class="dont-index">Source: <a href='https://github.com/GRealesM/RapidoPGSR/rapfunc.R'><code>R/rapfunc.R</code></a></small>
-    <div class="hidden name"><code>logsum.Rd</code></div>
+    <div class="hidden name"><code>create_1000G.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Sums logs without loss of precision
-This function is verbatim of its namesake in cupcake package (github.com/ollyburren/cupcake/)</p>
+    <p><code>create_1000G</code> downloads and gets 1000 Genomes Phase III panel in
+PLINK format, and apply quality control for being used to compute PGS using
+<code>rapidopgs_multi</code>.
+Given the size of the files, running this function can take long, depending
+on broadband speed and server status. We also recommend to ensure that there
+is at least 60GB free space available in disk.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>logsum</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>create_1000G</span><span class='op'>(</span>
+  directory <span class='op'>=</span> <span class='st'>"ref-data"</span>,
+  remove.related <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  qc.maf <span class='op'>=</span> <span class='fl'>0.05</span>,
+  qc.hwe <span class='op'>=</span> <span class='fl'>1e-10</span>,
+  qc.geno <span class='op'>=</span> <span class='fl'>0</span>,
+  autosomes.only <span class='op'>=</span> <span class='cn'>TRUE</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>x</th>
-      <td><p>a vector of logs to sum</p></td>
+      <th>directory</th>
+      <td><p>a string indicating the directory to download the panel</p></td>
+    </tr>
+    <tr>
+      <th>remove.related</th>
+      <td><p>a logical stating if related individuals should be removed.
+Default TRUE.</p></td>
+    </tr>
+    <tr>
+      <th>qc.maf</th>
+      <td><p>a numeric to set the MAF threshold for variants to be removed. DEFAULT 0.05</p></td>
+    </tr>
+    <tr>
+      <th>qc.hwe</th>
+      <td><p>a numeric indicating the threshold for Hardy-Weinberg exact test
+p-value, below which variants will be removed. DEFAULT 1e-10.</p></td>
+    </tr>
+    <tr>
+      <th>qc.geno</th>
+      <td><p>a numeric to set maximum missing call rates for variants. DEFAULT = 0.</p></td>
+    </tr>
+    <tr>
+      <th>autosomes.only</th>
+      <td><p>If FALSE, it will include X and Y chromosomes, too.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a scalar</p>
+    <p>bed, fam and bim files for each chromosome in the chosen directory.</p>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
-    <p>Chris Wallace</p>
+    <p>Guillermo Reales</p>
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='fu'>create_1000G</span><span class='op'>(</span><span class='op'>)</span>
+<span class='op'>}</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

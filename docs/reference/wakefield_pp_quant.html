@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RápidoPGS</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.2.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.0.9000</span>
       </span>
     </div>
 
@@ -88,7 +88,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -103,7 +103,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/Computing_RapidoPGS.html">Computing a PGS using RápidoPGS and GWAS catalog</a>
+      <a href="../articles/Computing_RapidoPGS.html">Computing a PGS using RápidoPGS-single and GWAS catalog</a>
     </li>
   </ul>
 </li>
@@ -114,7 +114,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/GRealesM/RapidoPGS">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -140,7 +140,7 @@
     <p><code>wakefield_pp_quant</code> computes posterior probabilities for a given SNP to be causal for a given SNP under the assumption of a single causal variant.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>wakefield_pp_quant</span>(<span class='no'>beta</span>, <span class='no'>se.beta</span>, <span class='no'>sdY</span>, <span class='kw'>sd.prior</span> <span class='kw'>=</span> <span class='fl'>0.15</span>, <span class='kw'>pi_i</span> <span class='kw'>=</span> <span class='fl'>1e-04</span>)</pre>
+    <pre class="usage"><span class='fu'>wakefield_pp_quant</span><span class='op'>(</span><span class='va'>beta</span>, <span class='va'>se</span>, <span class='va'>sdY</span>, sd.prior <span class='op'>=</span> <span class='fl'>0.15</span>, pi_i <span class='op'>=</span> <span class='fl'>1e-04</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -150,7 +150,7 @@
       <td><p>a vector of effect sizes (\(\beta\)) from a quantitative trait GWAS</p></td>
     </tr>
     <tr>
-      <th>se.beta</th>
+      <th>se</th>
       <td><p>vector of standard errors of effect sizes (\(\beta\))</p></td>
     </tr>
     <tr>
@@ -176,6 +176,9 @@ is in the range of 0.66-1.5 at any causal variant.</p></td>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>This function was adapted from <code>wakefield_pp</code> in cupcake package (github.com/ollyburren/cupcake/)</p>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Guillermo Reales, Chris Wallace</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -192,7 +195,7 @@ is in the range of 0.66-1.5 at any causal variant.</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
