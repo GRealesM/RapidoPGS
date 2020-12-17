@@ -1,5 +1,5 @@
 ---
-title: "Computing a PGS using RápidoPGS and GWAS catalog"
+title: "Computing a PGS using RápidoPGS-single and GWAS catalog"
 author: "Guillermo Reales"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -25,7 +25,9 @@ with these names, but in any order:
 * **BETA**: $\beta$ (or log(OR)), or effect sizes.
 * **SE**: Standard error of $\beta$
 * **P**: P-values for the association test
-* **ALT_FREQ**: Minor/ALT allele frequency in the tested population, or in a close population from a reference panel. <!-- No problem if flipped. -->
+
+Also, if doing a PGS on a quantitative trait GWAS dataset, your file must include this:
+* **ALT_FREQ**: Minor/ALT allele frequency in the tested population, or in a close population from a reference panel. 
 
 
 # Installation of RápidoPGS
@@ -38,13 +40,17 @@ if (!requireNamespace("BiocManager", quietly = TRUE))
 BiocManager::install("GenomicRanges")
 ```
 
-RápidoPGS is currently available on GitHub, so we can install it using the following code (Note: If you don't have `remotes` installed, please install it first:
+Current RápidoPGS development version (v2.0.0) is currently available on GitHub, so we can install it using the following code (Note: If you don't have `remotes` installed, please install it first:
 
 ```{r eval=FALSE}
 if (!requireNamespace("remotes", quietly = TRUE))
     install.packages("remotes")
 remotes::install_github("GRealesM/RapidoPGS")
 ```
+
+Note that previous version of RápidoPGS (v1.0.2) is available on CRAN, but we changed important things in the package, including functions for RápidoPGS-multi approach, so until we publish the current version we highly recommend downloading the current development version, to which this vignette refers to.
+
+
 
 # Setup
 
@@ -110,16 +116,16 @@ ds <- ds[CHR != "X",]
 Now we have applied QC to our dataset, we can now compute our PGS!
 We can easily do that applying the next command, but bear in mind that, since we used harmonised columns, the build is **hg38**, so we must tell RápidoPGS about that.
 
-We should also provide the number of controls (N0) and cases (N1) for a case-control study.
-Note that if this was a quantitative trait dataset, we should inform total number of individuals only (as N0). Also, if our dataset had columns reporting the number of individuals for each SNP, we can replace N0 (and N1, in case-control datasets) by strings specifying the respective columns (eg. N0 = "Ncontrols", N1 = "Ncases"). By doing so, RápidoPGS will extract this information directly from the columns.
+In this new version, we don't need sample size for case-control datasets.
+Note that if this was a quantitative trait dataset, we should inform total number of individuals (N parameter). Also, if our dataset had columns reporting the number of individuals for each SNP, we can replace N by a string specifying the column (eg. N = "sample_size"). By doing so, RápidoPGS-single will extract this information directly from the columns.
 
-Let's get our hands dirty! Let's compute first a *full* RápidoPGS model. 
+Let's get our hands dirty! Let's compute first a *full* RápidoPGS-single model. 
 Since we used harmonised coordinates from GWAS catalog, our file is in build hg38, and we need to specify it to RápidoPGS (default is hg19). 
 
 **Advanced use note**: You may want to filter by and align your dataset to an external reference. You can do that with RápidoPGS, too, by specifying the path of your reference file at `reference` argument. This reference file should have five columns (CHR, BP, REF, ALT, and SNPID) and be in the **same build** as our summary statistics dataset. RápidoPGS currently supports **hg19** and **hg38** builds.
 
 ```{r}
-full_PGS <- computePGS(ds, N0= 119078 ,N1=137045, build = "hg38")
+full_PGS <- rapidopgs_single(ds, trait = "cc", build = "hg38")
 ```
 
 Well, that was *rápido*! With increasingly big datasets, it will take a bit longer, of course.
@@ -142,32 +148,26 @@ We can do that using RápidoPGS, let's see how by using a $1e^{-4}$ threshold.
 For accuracy reasons, we recommend recomputing the PGS on just these SNPs after the threshold was applied, so `recalc = TRUE` by default. 
 
 ```{r}
-PGS_1e4 <- computePGS(ds, N0= 119078 ,N1=137045, build = "hg38", filt_threshold = 1e-4)
+PGS_1e4 <- rapidopgs_single(ds, trait ="cc", build = "hg38", filt_threshold = 1e-4)
 head(PGS_1e4)
 ```
 
 You can omit recalculation by setting that argument to `FALSE`
 
 ```{r}
-PGS_1e4_norecalc <- computePGS(ds, N0= 119078 ,N1=137045, build = "hg38", filt_threshold = 1e-4, recalc = FALSE)
+PGS_1e4_norecalc <- rapidopgs_single(ds, trait ="cc", build = "hg38", filt_threshold = 1e-4, recalc = FALSE)
 head(PGS_1e4_norecalc)
 ```
 
 And what if we want the *top 10* SNPs? Just change the `filt_threshold` argument. If it's larger than 1, RápidoPGS will understand that you want a top list, rather than a thresholded result.
 
 ```{r}
-PGS_top10 <- computePGS(ds, N0= 119078 ,N1=137045, build = "hg38", filt_threshold = 10)
+PGS_top10 <- rapidopgs_single(ds, trait ="cc", build = "hg38", filt_threshold = 10)
 head(PGS_top10)
 ```
 
-So those are examples of basic *RápidoPGS* usage!
+So those are examples of basic *RápidoPGS-single* usage! In future tutorials we'll demonstrate how to use the more complex *RápidoPGS-multi* approach.
 
-There are more advanced options:
-
-* RápidoPGS uses a Bayesian fine mapping method to generate the PPI that requires specifying a prior on the distribution of BETA at causal variants. We use a normal prior with 0 mean and sd either 0.2 (Default) for case-control traits, or 0.15 * var(trait) for quantitative).
-* when P-values are too small to be stored accurately in floating point, you can supply log(p) instead
-* different output formats are available
-but these are topics for a future vignette, and documented in the help for each function.
 
 Drop us a line if you encounter problems, and we'll be happy to help.
 
