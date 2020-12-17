@@ -21,7 +21,7 @@ Estimate trait standard deviation given vectors of variance of coefficients,  MA
 }
 \details{
 Estimate is based on var(beta-hat) = var(Y) / (n * var(X))
-var(X) = 2\emph{maf}(1-maf)
+var(X) = 2* maf*(1-maf)
 so we can estimate var(Y) by regressing n*var(X) against 1/var(beta)
 This function is verbatim from its namesake in coloc package (github.com/chr1swallace/coloc/), by Chris Wallace
 }

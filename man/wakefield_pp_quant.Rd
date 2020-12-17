@@ -4,12 +4,12 @@
 \alias{wakefield_pp_quant}
 \title{Compute posterior probabilities using Wakefield's approximate Bayes Factors for quantitative traits}
 \usage{
-wakefield_pp_quant(beta, se.beta, sdY, sd.prior = 0.15, pi_i = 1e-04)
+wakefield_pp_quant(beta, se, sdY, sd.prior = 0.15, pi_i = 1e-04)
 }
 \arguments{
 \item{beta}{a vector of effect sizes (\eqn{\beta}) from a quantitative trait GWAS}
 
-\item{se.beta}{vector of standard errors of effect sizes (\eqn{\beta})}
+\item{se}{vector of standard errors of effect sizes (\eqn{\beta})}
 
 \item{sdY}{a scalar of the standard deviation given vectors of variance of coefficients,  MAF and sample size. Can be calculated using \code{sdY.est}}
 

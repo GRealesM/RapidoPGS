@@ -379,11 +379,10 @@ rapidopgs_single <- function(data,
 ##'   will be ignored)
 ##' @param LD LD matrix with dimnames matching "SNPID" column
 ##' @param nref number of individuals used to create the LD matrix
-##' @param pi_i prior probability that a given variant is causal. Default 1e
-##' @param sd.prior Standard deviation prior of the trait, if NULL (default)  will be estimated
+##' @param pi_i prior probability that a given variant is causal. Default 1e-4
+##' @param sd.prior Standard deviation prior of the trait, if NULL (default), it  will be estimated
 ##' @param max_it maximum number of iterations for susie. The default of 100
 ##'   should be plenty, but increase if there is not convergence
-##' @inheritParams rapidopgs_multi
 ##' @importFrom susieR susie_rss
 ##' @return returns pip for each SNP, which we will use as a snp weight in
 ##'   generating the PGS (=pip * BETA)

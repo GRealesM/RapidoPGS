@@ -5,16 +5,12 @@
 \title{compute posterior probabilities using Wakefield's approximate Bayes Factors
 \code{wakefield_pp} computes posterior probabilities for a given SNP to be causal for a given SNP under the assumption of a single causal variant.}
 \usage{
-wakefield_pp(p, f, N, s, pi_i = 1e-04, sd.prior = 0.2, log.p = FALSE)
+wakefield_pp(beta, se, pi_i = 1e-04, sd.prior = 0.2)
 }
 \arguments{
-\item{p}{a vector of univariate pvalues from a GWAS}
+\item{beta}{a vector of effect sizes (\eqn{\beta}) from a quantitative trait GWAS}
 
-\item{f}{a vector of minor allele frequencies taken from some reference population.}
-
-\item{N}{a scalar or vector for total sample size of GWAS}
-
-\item{s}{a scalar representing the proportion of cases (n.cases/N)}
+\item{se}{vector of standard errors of effect sizes (\eqn{\beta})}
 
 \item{pi_i}{a scalar representing the prior probability (DEFAULT \eqn{1 \times 10^{-4}})}
 
@@ -22,15 +18,13 @@ wakefield_pp(p, f, N, s, pi_i = 1e-04, sd.prior = 0.2, log.p = FALSE)
 The method assumes a normal prior on the population log relative risk centred at 0 and the DEFAULT
 value sets the variance of this distribution to 0.04, equivalent to a 95\\%  belief that the true relative risk
 is in the range of 0.66-1.5 at any causal variant.}
-
-\item{log.p}{if FALSE (DEFAULT), p is a p value. If TRUE, p is a log(p) value.  Use this if your dataset holds p values too small to be accurately stored without using logs}
 }
 \value{
 a vector of posterior probabilities.
 }
 \description{
-This function is verbatim of its namesake in cupcake package (github.com/ollyburren/cupcake/)
+This function was adapted from its namesake in cupcake package (github.com/ollyburren/cupcake/) to no longer require allele frequencies.
 }
 \author{
-Olly Burren, Chris Wallace
+Olly Burren, Chris Wallace, Guillermo Reales
 }
