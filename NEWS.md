@@ -1,4 +1,10 @@
 # RapidoPGS 2.0.0 
+
+RapidoPGS 2.0.0.9001 
+2021-01-27
+- Fixed bug in `rapidopgs_single()` that prevented it for running for quantitative traits.
+- Fixed missing space in message for users in `rapidopgs_single()`.
+
 2020-12-17
 - Changed function name `computePGS()` to `rapidopgs_single()`.
 - `rapidopgs_single()` dropped the requirement for MAF for case-control traits.

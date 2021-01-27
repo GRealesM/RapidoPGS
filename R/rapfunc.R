@@ -59,7 +59,7 @@ sdY.est <- function(vbeta, maf, n) {
 ##' @author Guillermo Reales, Chris Wallace
 wakefield_pp_quant <- function(beta, se, sdY, sd.prior=0.15, pi_i=1e-4) { 
   # compute V
-  V <- se.beta^2
+  V <- se^2
   # Compute z too
   z <- beta/se
   # Multiply prior by sdY
@@ -311,7 +311,7 @@ rapidopgs_single <- function(data,
   # Assign ld.blocks, in case they werent computed yet
   if(!"ld.block" %in% names(ds)){
     if(build == "hg19"){ 
-      blranges <- EUR_ld.blocks
+      blranges <- RapidoPGS::EUR_ld.blocks
     }else if(build == "hg38"){ 
       blranges <- EUR_ld.blocks38
     }else{ 
@@ -326,7 +326,7 @@ rapidopgs_single <- function(data,
   
   if(trait == "quant"){
     if(is.numeric(N) && length(N) == 1) { # In case N is supplied as a number
-      message("Computing a RápidoPGS-single model for a quantitative trait with", N, " individuals...")
+      message("Computing a RápidoPGS-single model for a quantitative trait with ", N, " individuals...")
       ds[,sdY:=sdY.est(vbeta=SE^2, maf=ALT_FREQ, n=N)][,ppi:=wakefield_pp_quant(BETA,SE,sdY,sd.prior), by="ld.block"][,weight:=ppi*BETA]
       if(!is.null(filt_threshold)){
         ds  <- ds[ds$ppi > filt_threshold,]
