@@ -536,7 +536,7 @@ rapidopgs_multi <- function(data, reference, ancestry="EUR", pi_i = 1e-04, itera
   }
   
   # We don't need all columns, so we can filter them by name
-  ds <- ds[,c("CHR","BP","SNPID","REF","ALT","BETA","SE","P","n_eff", "ld.block")]
+  ds <- ds[,c("CHR","BP","SNPID","REF","ALT","BETA","SE","P", "ld.block")]
   # Dear snp_match require specific names, so let's abide
   names(ds)[c(1:2,4:7)]  <- c("chr","pos","a0","a1","beta", "beta_se")
   results <- data.table()
