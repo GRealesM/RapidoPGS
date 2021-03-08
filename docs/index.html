@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">RápidoPGS</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.0.9001</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.0.9000</span>
       </span>
     </div>
 
@@ -96,8 +96,8 @@
 <!-- badges: start -->
 
 <p><strong>A <em>rápido</em> and lightweight method to compute Polygenic Risk Scores.</strong></p>
-<p><strong>Last update:</strong> 2021-01-27</p>
-<p><strong>Current version:</strong> 2.0.0.9001</p>
+<p><strong>Last update:</strong> 2021-03-08</p>
+<p><strong>Current version:</strong> 2.1.0.9000</p>
 <p>This package allows to quickly (<em>rápido</em> is Spanish for “fast”) compute polygenic scores (PGS) from case-control or quantitative trait GWAS summary statistic datasets, without the need of an external validation dataset.</p>
 </div>
 <div id="background" class="section level1">
@@ -105,26 +105,52 @@
 <a href="#background" class="anchor"></a>Background</h1>
 <p>You can find a description of the ideas behind RápidoPGS, as well as technical details in our preprint:</p>
 <blockquote>
-<p><a href="https://www.biorxiv.org/content/10.1101/2020.07.24.220392v1">Reales G, Kelemen M, &amp; Wallace C (2020) RápidoPGS: A rapid polygenic score calculator for summary GWAS data without validation dataset. <em>BioRxiv</em>.</a></p>
+<p><a href="https://www.biorxiv.org/content/10.1101/2020.07.24.220392v2">Reales G, Vigorito E, Kelemen M, &amp; Wallace C (2021) RápidoPGS: A rapid polygenic score calculator for summary GWAS data without validation dataset. <em>BioRxiv</em>.</a></p>
 </blockquote>
+</div>
+<div id="news" class="section level1">
+<h1 class="hasAnchor">
+<a href="#news" class="anchor"></a>News</h1>
+<ul>
+<li>In version 2.1.0 we added a functionality to <code><a href="reference/rapidopgs_multi.html">rapidopgs_multi()</a></code>, which now allows users to use their own LD matrices instead of computing them on the go from a reference panel. For European datasets, we recommend downloading UK Biobank LD matrices kindly provided by Privé et al., which can be accessed <a href="https://figshare.com/articles/dataset/European_LD_reference/13034123">here</a>.</li>
+</ul>
 </div>
 <div id="installation" class="section level1">
 <h1 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h1>
-<pre><code><a href="https://rdrr.io/r/utils/install.packages.html"># RápidoPGS (1.0.2) is now available on CRAN. You can install it by typing the code below
-install.packages("RapidoPGS")</a></code></pre>
+<p>RápidoPGS (1.0.2) is now available on CRAN. You can install it by typing the code below.</p>
+<pre><code><a href="https://rdrr.io/r/utils/install.packages.html">install.packages("RapidoPGS")</a></code></pre>
+<p>Since we are constantly improving the package, and CRAN version is currently outdated, we recommend to install the development version instead.</p>
 <div id="development-version" class="section level2">
 <h2 class="hasAnchor">
 <a href="#development-version" class="anchor"></a>Development version</h2>
-<pre><code><a href="https://remotes.r-lib.org"># There's also a development version, that can be installed from GitHub.
-library(remotes)
+<p>There’s also a development version, that can be installed from GitHub.</p>
+<pre><code><a href="https://remotes.r-lib.org">library(remotes)
 install_github('GRealesM/RapidoPGS')</a></code></pre>
+<div id="a-note-on-dependencies" class="section level3">
+<h3 class="hasAnchor">
+<a href="#a-note-on-dependencies" class="anchor"></a>A note on dependencies</h3>
+<p>RápidoPGS has some dependencies that aren’t available directly from CRAN, so must be installed a bit differently.</p>
+<p><strong>bigsnpr</strong></p>
+<p>Current <code>bigsnpr</code> development version (v1.6.7 as of 2021-03-08) is available from GitHub:</p>
+<pre><code><a href="https://remotes.r-lib.org/reference/install_github.html">remotes::install_github('privefl/bigsnpr')</a></code></pre>
+<p><strong>coloc</strong></p>
+<p>We used a development branch of <code>coloc</code> package, which can be installed by typing:</p>
+<pre><code><a href="https://remotes.r-lib.org/reference/install_github.html">remotes::install_github('chr1swallace/coloc', ref="susie")</a></code></pre>
+<p><strong>GenomicRanges</strong></p>
+<p><code>GenomicRanges</code> package is a Bioconductor package. Please type:</p>
+<pre><code>if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("GenomicRanges")</code></pre>
+</div>
 </div>
 </div>
 <div id="documentation" class="section level1">
 <h1 class="hasAnchor">
 <a href="#documentation" class="anchor"></a>Documentation</h1>
 <p>Full documentation and vignettes are available on the website (click on the cat if you’re at the GitHub repo).</p>
+<p>At the moment, vignettes cover <code><a href="reference/rapidopgs_single.html">rapidopgs_single()</a></code> only, but we’ll try to add a tutorial for <code><a href="reference/rapidopgs_multi.html">rapidopgs_multi()</a></code> soon.</p>
 </div>
 
   </div>

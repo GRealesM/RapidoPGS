@@ -7,10 +7,13 @@
 \usage{
 rapidopgs_multi(
   data,
-  reference,
+  trait = c("cc", "quant"),
+  reference = NULL,
+  LDmatrices = NULL,
+  N_LD = NULL,
+  N = NULL,
   ancestry = "EUR",
   pi_i = 1e-04,
-  iterations = 100,
   ncores = 1,
   alpha.block = 1e-04,
   alpha.snp = 0.01,
@@ -21,22 +24,34 @@ rapidopgs_multi(
 \item{data}{a data.table containing GWAS summary statistic dataset
 with all required information.}
 
+\item{trait}{a string indicating if trait is a case-control ("cc") or quantitative ("quant").}
+
 \item{reference}{a string representing the path to the directory containing
 the reference panel (eg. "../ref-data/").}
+
+\item{LDmatrices}{a string representing the path to the directory containing
+the pre-computed LD matrices.}
+
+\item{N_LD}{a numeric indicating the number of individuals used for LD matrix computation.
+Required for pre-computed LD matrix approach only.}
+
+\item{N}{a numeric indicating the number of individuals used to generate input
+GWAS dataset, or a string indicating the column name containing per-SNP sample size.
+Required for quantitative traits only.}
 
 \item{ancestry}{a string indicating the ancestral population (DEFAULT: "EUR")}
 
 \item{pi_i}{a scalar representing the prior probability (DEFAULT:
 \eqn{1 \times 10^{-4}}).}
 
-\item{iterations}{number of maximum iterations at SuSie step. DEFAULT:100,
-which should be plenty to ensure convergence.}
-
-\item{ncores}{a numeric specifying the number of cores to be used.
-If not set, it won't use parallelisation.}
+\item{ncores}{a numeric specifying the number of cores (CPUs) to be used.
+If using pre-computed LD matrices, one core is enough for best performance.}
 
 \item{alpha.block}{a numeric threshold for minimum P-value in LD blocks.
 Blocks with minimum P above \code{alpha.block} will be skipped. Default: 1e-4.}
+
+\item{alpha.snp}{a numeric threshold for P-value pruning within LD block.
+SNPs with P above \code{alpha.snp} will be removed. Default: 0.01.}
 }
 \value{
 a data.table containing the sumstats dataset with
@@ -47,12 +62,48 @@ computed PGS weights.
 using Bayesian sum of single-effect (SuSiE) linear regression using z scores
 }
 \details{
+This function will take a GWAS summary statistic dataset as an input,
+will assign LD blocks to it, then use user-provided LD matrices or a preset
+reference panel in Plink format to compute LD matrices for each block.
+Then SuSiE method will be used to compute posterior probabilities of variants to be causal
+and generate PGS weights by multiplying those posteriors by effect sizes (\eqn{\beta}).
+Unlike \code{rapidopgs_single}, this approach will assume one or more causal variants.
 
+The GWAS summary statistics file to compute PGS using our method must contain
+the following minimum columns, with these exact column names:
+\describe{
+\item{CHR}{Chromosome}
+\item{BP}{Base position (in GRCh37/hg19).}
+\item{REF}{Reference, or non-effect allele}
+\item{ALT}{Alternative, or effect allele, the one \eqn{\beta} refers to}
+\item{BETA}{\eqn{\beta} (or log(OR)), or effect sizes}
+\item{SE}{standard error of \eqn{\beta}}
+\item{P}{P-value for the association test}
+}
+In addition, quantitative traits must have the following extra column:
+\describe{
+\item{ALT_FREQ}{Minor allele frequency.}
+}
+Also, for quantitative traits, sample size must be supplied, either as a number,
+or indicating the column name, for per-SNP sample size datasets (see below).
+Other columns are allowed, and will be ignored.
+
+Reference panel should be divided by chromosome, in Plink format.
+Both reference panel and summary statistic dataset should be in GRCh37/hg19.
+For 1000 Genomes panel, you can use \code{create_1000G} function to set it up
+automatically.
+
+If prefer to use LD matrices, you must indicate the path to the directory
+where they are stored. They must be in RDS format, named LD_chrZ.rds (where
+Z is the 1-22 chromosome number). If you don't have LD matrices already,
+we recommend downloading those gently provided by Prive et al., at
+\url{https://figshare.com/articles/dataset/European_LD_reference/13034123}.
+These matrices were computed using for 1,054,330 HapMap3 variants based on
+362,320 European individuals of the UK biobank.
 }
 \examples{
 \dontrun{
-sumstats <- data.table(SNPID=c("rs139096444","rs3843766","rs61977545", "rs544733737",
-		"rs2177641", "rs183491817", "rs72995775","rs78598863", "rs1411315"), 
+sumstats <- data.table(
 		CHR=c("4","20","14","2","4","6","6","21","13"), 
 		BP=c(1479959, 13000913, 29107209, 203573414, 57331393, 11003529, 149256398, 
 				25630085, 79166661), 
@@ -62,7 +113,7 @@ sumstats <- data.table(SNPID=c("rs139096444","rs3843766","rs61977545", "rs544733
 		BETA=c(0.012,0.0079,0.0224,0.0033,0.0153,0.058,0.0742,0.001,-0.0131),
 		SE=c(0.0099,0.0066,0.0203,0.0171,0.0063,0.0255,0.043,0.0188,0.0074),
 		P=c(0.2237,0.2316,0.2682,0.8477,0.01473,0.02298,0.08472,0.9573,0.07535))
-PGS  <- rapidopgs_multi(sumstats, reference = "ref-data/", ncores=2)
+PGS  <- rapidopgs_multi(sumstats, trait="cc", reference = "ref-data/", ncores=2)
 }
 }
 \author{

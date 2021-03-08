@@ -7,7 +7,7 @@
 create_1000G(
   directory = "ref-data",
   remove.related = TRUE,
-  qc.maf = 0.05,
+  qc.maf = 0.01,
   qc.hwe = 1e-10,
   qc.geno = 0,
   autosomes.only = TRUE
@@ -19,7 +19,7 @@ create_1000G(
 \item{remove.related}{a logical stating if related individuals should be removed.
 Default TRUE.}
 
-\item{qc.maf}{a numeric to set the MAF threshold for variants to be removed. DEFAULT 0.05}
+\item{qc.maf}{a numeric to set the MAF threshold for variants to be removed. DEFAULT 0.01}
 
 \item{qc.hwe}{a numeric indicating the threshold for Hardy-Weinberg exact test
 p-value, below which variants will be removed. DEFAULT 1e-10.}

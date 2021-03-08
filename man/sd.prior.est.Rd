@@ -13,6 +13,8 @@ Must contain SNPID and SE columns.}
 
 \item{h2}{a numeric. Heritability estimate or h^2 (See details).}
 
+\item{N}{a numeric. Sample size of the GWAS input dataset.}
+
 \item{pi_i}{a numeric. Prior that a given variant is causal. DEFAULT = 1e-4.}
 }
 \description{

@@ -79,7 +79,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RápidoPGS</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.0.9001</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.0.9000</span>
       </span>
     </div>
 
@@ -134,6 +134,21 @@
       <small>Source: <a href='https://github.com/GRealesM/RapidoPGSNEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="rapidopgs-210" class="section level1">
+<h1 class="page-header" data-toc-text="2.1.0">
+<a href="#rapidopgs-210" class="anchor"></a>RapidoPGS 2.1.0<small> Unreleased </small>
+</h1>
+<p>2021-03-08</p>
+<ul>
+<li>New implementation of <code><a href="../reference/rapidopgs_multi.html">rapidopgs_multi()</a></code>, which now allows to use pre-computed LD matrices.</li>
+<li>
+<code><a href="../reference/rapidopgs_multi.html">rapidopgs_multi()</a></code> now uses a different susie implementation, as implemented in <code>coloc</code> package.</li>
+<li>
+<code><a href="../reference/rapidopgs_multi.html">rapidopgs_multi()</a></code> added parameters to select trait type, as well as path to LD matrices, and sample size for the dataset used for LD matrix computation.</li>
+<li>
+<code>coloc</code> added as a dependency.</li>
+</ul>
+</div>
     <div id="rapidopgs-200" class="section level1">
 <h1 class="page-header" data-toc-text="2.0.0">
 <a href="#rapidopgs-200" class="anchor"></a>RapidoPGS 2.0.0<small> Unreleased </small>
@@ -153,7 +168,7 @@
 <li>
 <code><a href="../reference/rapidopgs_multi.html">rapidopgs_multi()</a></code> function added, which applies SuSiE method to PGS computing.</li>
 <li>
-<code>susieR</code> as a dependency.</li>
+<code>susieR</code> added as a dependency.</li>
 <li>
 <code><a href="../reference/create_1000G.html">create_1000G()</a></code> added, which automatically download and sets up a reference panel for <code><a href="../reference/rapidopgs_multi.html">rapidopgs_multi()</a></code> from 1000 Genomes Phase III.</li>
 <li>

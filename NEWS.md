@@ -1,3 +1,12 @@
+# RapidoPGS 2.1.0
+
+2021-03-08
+- New implementation of `rapidopgs_multi()`, which now allows to use pre-computed LD matrices.
+- `rapidopgs_multi()` now uses a different susie implementation, as implemented in `coloc` package.
+- `rapidopgs_multi()` added parameters to select trait type, as well as path to LD matrices, and sample size for the dataset used for LD matrix computation.
+- `coloc` added as a dependency.
+
+
 # RapidoPGS 2.0.0 
 
 RapidoPGS 2.0.0.9001 
@@ -10,7 +19,7 @@ RapidoPGS 2.0.0.9001
 - `rapidopgs_single()` dropped the requirement for MAF for case-control traits.
 - `rapidopgs-single()` added a parameter to select type of trait (case-control or quantitative) of the dataset used in the call.
 - `rapidopgs_multi()` function added, which applies SuSiE method to PGS computing.
-- `susieR` as a dependency.
+- `susieR` added as a dependency.
 - `create_1000G()` added, which automatically download and sets up a reference panel for `rapidopgs_multi()` from 1000 Genomes Phase III.
 - `sd.prior.est()` function added to use heritability estimates to create an informed SD prior.
 

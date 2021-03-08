@@ -83,7 +83,7 @@ using Bayesian sum of single-effect (SuSiE) linear regression using z scores" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RápidoPGS</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.0.9001</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.0.9000</span>
       </span>
     </div>
 
@@ -147,10 +147,13 @@ using Bayesian sum of single-effect (SuSiE) linear regression using z scores</p>
 
     <pre class="usage"><span class='fu'>rapidopgs_multi</span><span class='op'>(</span>
   <span class='va'>data</span>,
-  <span class='va'>reference</span>,
+  trait <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"cc"</span>, <span class='st'>"quant"</span><span class='op'>)</span>,
+  reference <span class='op'>=</span> <span class='cn'>NULL</span>,
+  LDmatrices <span class='op'>=</span> <span class='cn'>NULL</span>,
+  N_LD <span class='op'>=</span> <span class='cn'>NULL</span>,
+  N <span class='op'>=</span> <span class='cn'>NULL</span>,
   ancestry <span class='op'>=</span> <span class='st'>"EUR"</span>,
   pi_i <span class='op'>=</span> <span class='fl'>1e-04</span>,
-  iterations <span class='op'>=</span> <span class='fl'>100</span>,
   ncores <span class='op'>=</span> <span class='fl'>1</span>,
   alpha.block <span class='op'>=</span> <span class='fl'>1e-04</span>,
   alpha.snp <span class='op'>=</span> <span class='fl'>0.01</span>,
@@ -166,9 +169,29 @@ using Bayesian sum of single-effect (SuSiE) linear regression using z scores</p>
 with all required information.</p></td>
     </tr>
     <tr>
+      <th>trait</th>
+      <td><p>a string indicating if trait is a case-control ("cc") or quantitative ("quant").</p></td>
+    </tr>
+    <tr>
       <th>reference</th>
       <td><p>a string representing the path to the directory containing
 the reference panel (eg. "../ref-data/").</p></td>
+    </tr>
+    <tr>
+      <th>LDmatrices</th>
+      <td><p>a string representing the path to the directory containing
+the pre-computed LD matrices.</p></td>
+    </tr>
+    <tr>
+      <th>N_LD</th>
+      <td><p>a numeric indicating the number of individuals used for LD matrix computation.
+Required for pre-computed LD matrix approach only.</p></td>
+    </tr>
+    <tr>
+      <th>N</th>
+      <td><p>a numeric indicating the number of individuals used to generate input
+GWAS dataset, or a string indicating the column name containing per-SNP sample size.
+Required for quantitative traits only.</p></td>
     </tr>
     <tr>
       <th>ancestry</th>
@@ -180,19 +203,19 @@ the reference panel (eg. "../ref-data/").</p></td>
 \(1 \times 10^{-4}\)).</p></td>
     </tr>
     <tr>
-      <th>iterations</th>
-      <td><p>number of maximum iterations at SuSie step. DEFAULT:100,
-which should be plenty to ensure convergence.</p></td>
-    </tr>
-    <tr>
       <th>ncores</th>
-      <td><p>a numeric specifying the number of cores to be used.
-If not set, it won't use parallelisation.</p></td>
+      <td><p>a numeric specifying the number of cores (CPUs) to be used.
+If using pre-computed LD matrices, one core is enough for best performance.</p></td>
     </tr>
     <tr>
       <th>alpha.block</th>
       <td><p>a numeric threshold for minimum P-value in LD blocks.
 Blocks with minimum P above <code>alpha.block</code> will be skipped. Default: 1e-4.</p></td>
+    </tr>
+    <tr>
+      <th>alpha.snp</th>
+      <td><p>a numeric threshold for P-value pruning within LD block.
+SNPs with P above <code>alpha.snp</code> will be removed. Default: 0.01.</p></td>
     </tr>
     </table>
 
@@ -202,17 +225,46 @@ Blocks with minimum P above <code>alpha.block</code> will be skipped. Default: 1
 computed PGS weights.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    
+    <p>This function will take a GWAS summary statistic dataset as an input,
+will assign LD blocks to it, then use user-provided LD matrices or a preset
+reference panel in Plink format to compute LD matrices for each block.
+Then SuSiE method will be used to compute posterior probabilities of variants to be causal
+and generate PGS weights by multiplying those posteriors by effect sizes (\(\beta\)).
+Unlike <code>rapidopgs_single</code>, this approach will assume one or more causal variants.</p>
+<p>The GWAS summary statistics file to compute PGS using our method must contain
+the following minimum columns, with these exact column names:</p><dl>
+<dt>CHR</dt><dd><p>Chromosome</p></dd>
+<dt>BP</dt><dd><p>Base position (in GRCh37/hg19).</p></dd>
+<dt>REF</dt><dd><p>Reference, or non-effect allele</p></dd>
+<dt>ALT</dt><dd><p>Alternative, or effect allele, the one \(\beta\) refers to</p></dd>
+<dt>BETA</dt><dd><p>\(\beta\) (or log(OR)), or effect sizes</p></dd>
+<dt>SE</dt><dd><p>standard error of \(\beta\)</p></dd>
+<dt>P</dt><dd><p>P-value for the association test</p></dd>
 
+</dl><p>In addition, quantitative traits must have the following extra column:</p><dl>
+<dt>ALT_FREQ</dt><dd><p>Minor allele frequency.</p></dd>
 
+</dl><p>Also, for quantitative traits, sample size must be supplied, either as a number,
+or indicating the column name, for per-SNP sample size datasets (see below).
+Other columns are allowed, and will be ignored.</p>
+<p>Reference panel should be divided by chromosome, in Plink format.
+Both reference panel and summary statistic dataset should be in GRCh37/hg19.
+For 1000 Genomes panel, you can use <code>create_1000G</code> function to set it up
+automatically.</p>
+<p>If prefer to use LD matrices, you must indicate the path to the directory
+where they are stored. They must be in RDS format, named LD_chrZ.rds (where
+Z is the 1-22 chromosome number). If you don't have LD matrices already,
+we recommend downloading those gently provided by Prive et al., at
+<a href='https://figshare.com/articles/dataset/European_LD_reference/13034123'>https://figshare.com/articles/dataset/European_LD_reference/13034123</a>.
+These matrices were computed using for 1,054,330 HapMap3 variants based on
+362,320 European individuals of the UK biobank.</p>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Guillermo Reales, Chris Wallace</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
-<span class='va'>sumstats</span> <span class='op'>&lt;-</span> <span class='fu'>data.table</span><span class='op'>(</span>SNPID<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"rs139096444"</span>,<span class='st'>"rs3843766"</span>,<span class='st'>"rs61977545"</span>, <span class='st'>"rs544733737"</span>,
-    <span class='st'>"rs2177641"</span>, <span class='st'>"rs183491817"</span>, <span class='st'>"rs72995775"</span>,<span class='st'>"rs78598863"</span>, <span class='st'>"rs1411315"</span><span class='op'>)</span>, 
+<span class='va'>sumstats</span> <span class='op'>&lt;-</span> <span class='fu'>data.table</span><span class='op'>(</span>
     CHR<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"4"</span>,<span class='st'>"20"</span>,<span class='st'>"14"</span>,<span class='st'>"2"</span>,<span class='st'>"4"</span>,<span class='st'>"6"</span>,<span class='st'>"6"</span>,<span class='st'>"21"</span>,<span class='st'>"13"</span><span class='op'>)</span>, 
     BP<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1479959</span>, <span class='fl'>13000913</span>, <span class='fl'>29107209</span>, <span class='fl'>203573414</span>, <span class='fl'>57331393</span>, <span class='fl'>11003529</span>, <span class='fl'>149256398</span>, 
         <span class='fl'>25630085</span>, <span class='fl'>79166661</span><span class='op'>)</span>, 
@@ -222,7 +274,7 @@ computed PGS weights.</p>
     BETA<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.012</span>,<span class='fl'>0.0079</span>,<span class='fl'>0.0224</span>,<span class='fl'>0.0033</span>,<span class='fl'>0.0153</span>,<span class='fl'>0.058</span>,<span class='fl'>0.0742</span>,<span class='fl'>0.001</span>,<span class='op'>-</span><span class='fl'>0.0131</span><span class='op'>)</span>,
     SE<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.0099</span>,<span class='fl'>0.0066</span>,<span class='fl'>0.0203</span>,<span class='fl'>0.0171</span>,<span class='fl'>0.0063</span>,<span class='fl'>0.0255</span>,<span class='fl'>0.043</span>,<span class='fl'>0.0188</span>,<span class='fl'>0.0074</span><span class='op'>)</span>,
     P<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.2237</span>,<span class='fl'>0.2316</span>,<span class='fl'>0.2682</span>,<span class='fl'>0.8477</span>,<span class='fl'>0.01473</span>,<span class='fl'>0.02298</span>,<span class='fl'>0.08472</span>,<span class='fl'>0.9573</span>,<span class='fl'>0.07535</span><span class='op'>)</span><span class='op'>)</span>
-<span class='va'>PGS</span>  <span class='op'>&lt;-</span> <span class='fu'>rapidopgs_multi</span><span class='op'>(</span><span class='va'>sumstats</span>, reference <span class='op'>=</span> <span class='st'>"ref-data/"</span>, ncores<span class='op'>=</span><span class='fl'>2</span><span class='op'>)</span>
+<span class='va'>PGS</span>  <span class='op'>&lt;-</span> <span class='fu'>rapidopgs_multi</span><span class='op'>(</span><span class='va'>sumstats</span>, trait<span class='op'>=</span><span class='st'>"cc"</span>, reference <span class='op'>=</span> <span class='st'>"ref-data/"</span>, ncores<span class='op'>=</span><span class='fl'>2</span><span class='op'>)</span>
 <span class='op'>}</span>
 </div></pre>
   </div>
