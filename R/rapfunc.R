@@ -499,7 +499,7 @@ rapidopgs_single <- function(data,
 ##'  Required for quantitative traits only.
 ##' @param ancestry a string indicating the ancestral population (DEFAULT: "EUR")
 ##' @param pi_i a scalar representing the prior probability (DEFAULT:
-##'   \eqn{1 \times 10^{-4}}).
+##'   \eqn{1 \times 10^{-4}}).If you wish susie to estimate this internally, set p=NULL.
 ##' @param ncores a numeric specifying the number of cores (CPUs) to be used.
 ##'    If using pre-computed LD matrices, one core is enough for best performance.
 ##' @param alpha.block a numeric threshold for minimum P-value in LD blocks.
@@ -692,7 +692,7 @@ rapidopgs_multi <- function(data, trait=c("cc","quant"), reference=NULL, LDmatri
           prior_var = sd.prior^2
         }
         
-        ppi_susie <- suppressMessages(runsusie(susie.ds,nref=length(euridx) , prior_variance=prior_var, estimate_prior_variance=prior_est, check_R=FALSE))
+        ppi_susie <- suppressMessages(runsusie(susie.ds,nref=length(euridx),p=pi_i, prior_variance=prior_var, estimate_prior_variance=prior_est, check_R=FALSE))
         ppi_susie <- ppi_susie$pip[1:(length(ppi_susie$pip)-1)]
         snp.block$ppi_susie <- ppi_susie
         results <- rbind(results, snp.block)
@@ -778,7 +778,7 @@ rapidopgs_multi <- function(data, trait=c("cc","quant"), reference=NULL, LDmatri
           prior_var  <-  sd.prior^2
         }
         
-        ppi_susie <- suppressMessages(runsusie(susie.ds,nref=N_LD, prior_variance=prior_var, estimate_prior_variance=prior_est, check_R=FALSE))
+        ppi_susie <- suppressMessages(runsusie(susie.ds,nref=N_LD,p=pi_i, prior_variance=prior_var, estimate_prior_variance=prior_est, check_R=FALSE))
         ppi_susie <- ppi_susie$pip[1:(length(ppi_susie$pip)-1)]
         snp.block$ppi_susie <- ppi_susie
         
