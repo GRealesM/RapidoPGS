@@ -713,7 +713,7 @@ rapidopgs_multi <- function(data, trait=c("cc","quant"), reference=NULL, LDmatri
     map.snp <- paste(map$chr, map$pos, map$a0, map$a1, sep=":") 
     
     if(!all(ds.snp %in% map.snp)){
-      ds <- snp_match(ds, map)
+      ds <- as.data.table(snp_match(ds, map))
     }
     
     for(chrs in 1:22){
