@@ -301,7 +301,7 @@ rapidopgs_single <- function(data,
     setnames(ds, old=c("CHR","BP", "BETA", "REF","ALT"), new=c("chr","pos","beta","a0","a1"))
     
     message("Matching and aligning SNPs to the reference")
-    info_snp <- snp_match(ds,refset)
+    info_snp <- snp_match(ds,refset, match.min.prop=0)
     
     message("Original sumstat had ", nrow(sumstats.chr)," for chr",chr,". After matching ", nrow(info_snp.chr)," remained, and will be used for further steps.")
     ds <- data.table(info_snp)
@@ -630,7 +630,7 @@ rapidopgs_multi <- function(data, trait=c("cc","quant"), reference=NULL, LDmatri
       map.chr <- map.chr[map.chr$SNPID %in% ds.chr$SNPID,]	
       message("Matching and aligning SNPs in chr",chrs," to the reference")
       # Align sumstats to panel
-      snp.chr <- snp_match(ds.chr, map.chr)
+      snp.chr <- snp_match(ds.chr, map.chr, match.min.prop=0)
       
       
       pb <- txtProgressBar(min = 0, max = length(unique(snp.chr$ld.block)), style = 3) # Show a nice progress bar
@@ -713,7 +713,7 @@ rapidopgs_multi <- function(data, trait=c("cc","quant"), reference=NULL, LDmatri
     map.snp <- paste(map$chr, map$pos, map$a0, map$a1, sep=":") 
     
     if(!all(ds.snp %in% map.snp)){
-      ds <- as.data.table(snp_match(ds, map))
+      ds <- as.data.table(snp_match(ds, map, match.min.prop = 0))
     }
     
     for(chrs in 1:22){
