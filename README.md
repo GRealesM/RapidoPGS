@@ -8,7 +8,7 @@ status](https://www.r-pkg.org/badges/version/RapidoPGS)](https://cran.r-project.
 
 **A *rápido* and lightweight method to compute Polygenic Risk Scores.**
 
-**Last update:** 2021-03-08
+**Last update:** 2021-03-10
 
 **Current version:** 2.1.0.9000
 
