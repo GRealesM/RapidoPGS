@@ -1,5 +1,11 @@
 # RapidoPGS 2.1.0
 
+RapidoPGS 2.1.0.9001
+2021-04-14
+- New vignette for `rapidopgs_multi()` and minor changes in `rapidopgs_single()` vignette.
+- New dataset `michailidou19`, analogous to `michailidou` but in hg19 build, required for `rapidopgs_multi()` examples.
+
+
 2021-03-08
 - New implementation of `rapidopgs_multi()`, which now allows to use pre-computed LD matrices.
 - `rapidopgs_multi()` now uses a different susie implementation, as implemented in `coloc` package.

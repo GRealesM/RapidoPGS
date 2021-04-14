@@ -1,0 +1,350 @@
+---
+title: "Computing a PGS using RápidoPGS-multi"
+author: "Guillermo Reales"
+date: "12/04/2021"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Computing a PGS using RápidoPGS-multi}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+
+---
+
+
+# Introduction
+
+RápidoPGS is a tool to quickly compute polygenic scores (PGS) from GWAS summary statistics datasets from either case-control (eg. asthma) or quantitative traits (eg. height and BMI).
+
+Input GWAS summary statistics datasets should have a minimum set of columns, 
+with these names, but in any order:
+
+* **CHR**: Chromosome 
+* **BP**: Base position (in GRCh37/hg19 or GRCh38/hg38). If using hg38, use build = "hg38" in parameters.
+* **SNPID**: rsids, or SNP identifiers. If not available, they can be anything (eg. CHR_BP).
+* **REF**: Reference, or non-effect allele
+* **ALT**: Alternative, or effect allele, the one \eqn{\beta} refers to
+* **BETA**: $\beta$ (or log(OR)), or effect sizes.
+* **SE**: Standard error of $\beta$
+* **P**: P-values for the association test
+
+Also, if doing a PGS on a quantitative trait GWAS dataset, your file must include this:
+* **ALT_FREQ**: Minor/ALT allele frequency in the tested population, or in a close population from a reference panel. 
+
+# Installation of RápidoPGS
+
+Current RápidoPGS development version (v2.1.0) is available on GitHub, so we can install it using the following code (Note: If you don't have `remotes` installed, please install it first:
+
+```{r eval=FALSE}
+if (!requireNamespace("remotes", quietly = TRUE))
+    install.packages("remotes")
+remotes::install_github("GRealesM/RapidoPGS")
+```
+
+Note that previous version of RápidoPGS (v1.0.2) is available on CRAN, but we changed important things in the package, including functions for RápidoPGS-multi approach, so until we publish the current version we highly recommend downloading the current development version, to which this vignette refers to.
+
+
+# Setup
+
+Once installed, let's load it. This will automatically load all required dependencies.
+
+```{r message=FALSE, warning = FALSE}
+library(RapidoPGS)
+```
+
+
+# Preparing reference panel
+
+RápidoPGS-multi is slightly less simple to run than RápidoPGS-single, as it requires LD matrices to inform on the relationships between SNPs in the data. To that end we have two options: **(1) Use a reference panel**, and **(2) Use pre-computed LD matrices**. In this section we will deal with the first option.
+
+A reference panel is simply genomic data obtained from a representative sample of a larger population. For example, the UK Biobank cohort comprises ~500,000 individuals between 40 and 69 years old from the United Kingdom and can be used as a reference for the UK (or more roughly, European) population. Unfortunately, UK Biobank data is only available to researches upon application, so in this example we will use the fully public 1000 Genomes Project Phase III as a reference panel. 
+
+The 1000 Genomes Project Phase III comprises genomic data from 2504 individuals from multiple world populations, and although its sample size is relatively small compared to UK Biobank, it has the nice feature of being open for everyone to use it.
+
+Prior to running RápidoPGS-multi, we need to set up our reference panel. To easen things, you can use the `create_1000G`, which will do everything for you. Bear in mind that this will take ~60GB of disk memory and a while, depending of your internet connection, so be warned!
+You can tweak the QC parameters as you see fit. See function documentation for more information.
+
+
+```{r eval=FALSE}
+create_1000G(directory = "ref-data", remove.related=TRUE, qc.maf = 0.01, qc.hwe=1e-10, qc.geno=0, autosomes.only=TRUE)
+```
+
+And that should be it! 
+
+
+# Preparing LD matrices (UK Biobank case)
+
+Alternatively, we can use pre-computed LD matrices (from a larger panel, for example). In our paper, we use pre-computed LD matrices from the UK Biobank panel, made publicly available by LDpred2 authors [here](https://figshare.com/articles/dataset/European_LD_reference/13034123).
+
+These matrices comprise ~1 million HapMap3 variants, and were computed on 362,320 UK Biobank individuals. We can download and set them up using the following code:
+
+```{r eval=FALSE}
+
+dir.create("ukbb")  # Or whatever you like
+download.file("https://ndownloader.figshare.com/articles/13034123/versions/3", destfile="ukbb/LD_ukbb.zip", mode="wb")
+unzip(zipfile="ukbb/LD_ukbb.zip", exdir="ukbb/") 
+
+```
+
+**Note:** If you get some error or warning when unzipping from the R session (eg. "Zip file is corrupt" warning), try to unzip normally, using either a terminal or right-clicking on the file and extracting it.
+
+With this, your LD matrix directory should be ready. We prepared `rapidopgs_multi()` function to work out of the box with these LD matrices, which are (1) Separated by chromosomes, (2) class "dsCMatrix", (3) contained in `.rds` files, and (4) accompanied by a manifest, `map.rds`, containing information on the variants in the LD matrices (HapMap3 variants in this case). 
+
+Note that these matrices are computed using a European population, so they won't be the best fit for generating a PGS for a non-European population. If that is your case, you can use the reference panel option, as it contains many populations from most ancestries.
+
+At the moment, this is the only format RápidoPGS supports for pre-computed LD matrices, and we cannot foresee all possible formats, so if you want to use your own matrices with RápidoPGS-multi, please ensure to provide them in the described format.
+
+
+# Loading data
+
+[GWAS catalog](https://www.ebi.ac.uk/gwas/) is an outstanding GWAS summary statistics data source, as it not only puts together tons of public datasets, but it also uses a semi-automatic pipeline to apply quality control and liftover (a.k.a. harmonise) those datasets, thus helping overcome the problem of having GWAS sumstats in so many different formats and builds.
+
+In this vignette, we'll use GWAS catalog to obtain an example dataset. For this vignette we'll use a Breast cancer (BRCA) dataset from [Michailidou et al., 2017](https://www.nature.com/articles/nature24284), which is one that we used in our manuscript. This GWAS was performed on 119078 controls and 137045 cases of Breast cancer.
+
+**IMPORTANT NOTE**: Input GWAS summary statistics and your reference panel (or LD matrices) **must be in the same build**. Both 1000 Genomes and UK Biobank LD matrices are in GRCh37/hg19 build, while harmonised GWAS catalog files come in GRCh38/hg38. 
+
+
+Hence, instead of using `gwascat.download()`, we downloaded the hg19 version of the file [here](http://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/MichailidouK_29059683_GCST004988/harmonised/29059683-GCST004988-EFO_0000305-build37.f.tsv.gz), sampled 100,000 random SNPs (for educational purposes only, you don't need to sample SNPs when building your PGS), and saved it as `michailidou19`, which we'll now load.
+
+
+```{r eval=FALSE}
+ds <- michailidou19
+```
+
+# Computing a PGS using RápidoPGS-multi and LD matrices
+
+Now we're ready to compute our PGS using UK Biobank LD matrices, this is easily done as follows
+
+```{r eval=FALSE}
+model.LDmat <- rapidopgs_multi(ds ,trait="cc", LDmatrices = "ukbb" , N_LD=362320)
+```
+
+Where `N_LD` corresponds to the sample size of the panel use to compute the LD matrices (362,320 individuals), and `LDmatrices` points at the directory where our LD matrices live. 
+
+Note that default \alpha_{block} is 10^-4 and \alpha_{SNP} is 0.01, which is a fast setting, but sheds off many SNPs. Also, default `ncores = 1`, which shouldn't make much difference when using LD matrices. 
+
+```
+Assigning LD blocks...
+Done!
+Running RápidoPGS-multi model with multiple causal variant assumption for a
+ case-control dataset.
+99,996 variants to be matched.
+0 ambiguous SNPs have been removed.
+9,075 variants have been matched; 0 were flipped and 0 were reversed.
+Working on chromosome 1.
+  |================================================================| 100%
+Working on chromosome 2.
+  |================================================================| 100%
+Working on chromosome 3.
+  |================================================================| 100%
+Working on chromosome 4.
+  |================================================================| 100%
+Working on chromosome 5.
+  |================================================================| 100%
+Working on chromosome 6.
+  |================================================================| 100%
+Working on chromosome 7.
+  |================================================================| 100%
+Working on chromosome 8.
+  |================================================================| 100%
+Working on chromosome 9.
+  |================================================================| 100%
+Working on chromosome 10.
+  |================================================================| 100%
+Working on chromosome 11.
+  |================================================================| 100%
+Working on chromosome 12.
+  |================================================================| 100%
+Working on chromosome 13.
+  |================================================================| 100%
+Working on chromosome 14.
+  |================================================================| 100%
+Working on chromosome 15.
+  |================================================================| 100%
+Working on chromosome 16.
+  |================================================================| 100%
+Working on chromosome 17.
+  |================================================================| 100%
+Working on chromosome 18.
+  |================================================================| 100%
+Working on chromosome 19.
+  |================================================================| 100%
+Working on chromosome 20.
+  |================================================================| 100%
+Working on chromosome 21.
+  |================================================================| 100%
+Working on chromosome 22.
+  |================================================================| 100%
+```
+
+After this `model.LDmat$weight` will contain the weights for each SNP. 
+Bear in mind that depending on your \alpha settings, your model will have much fewer SNPs than your input file.
+
+
+# Computing a PGS using RápidoPGS-multi and 1000 Genomes Phase III panel
+
+We can compute our PGS using 1000 Genomes Phase III panel as follows:
+
+```{r eval=FALSE}
+model.refpanel <- rapidopgs_multi(ds, trait="cc", reference = "ref-data", ncores=8)
+```
+
+Here, instead of `LDmatrices` and `N_LD`, we just need to set `reference` to point to the directory in which our panel lives. 
+
+Note that default $\alpha_{block}$ is $10^{-4}$ and $\alpha_{SNP}$ is 0.01, which is a fast setting, but sheds off many SNPs. Also, default `ncores = 1`, but this approach benefits from parallelisation, so we used 8 CPUs in this example.
+
+
+```
+Assigning LD blocks...
+Done!
+Running RápidoPGS-multi model with multiple causal variant assumption for a
+ case-control dataset.
+Working on chromosome 1.
+Matching and aligning SNPs in chr1 to the reference
+7,747 variants to be matched.
+670 ambiguous SNPs have been removed.
+Some duplicates were removed.
+4,467 variants have been matched; 0 were flipped and 3,634 were reversed.
+  |================================================================| 100%
+Working on chromosome 2.
+Matching and aligning SNPs in chr2 to the reference
+8,371 variants to be matched.
+759 ambiguous SNPs have been removed.
+4,777 variants have been matched; 0 were flipped and 3,969 were reversed.
+  |================================================================| 100%
+Working on chromosome 3.
+Matching and aligning SNPs in chr3 to the reference
+6,948 variants to be matched.
+664 ambiguous SNPs have been removed.
+3,999 variants have been matched; 0 were flipped and 3,257 were reversed.
+  |================================================================| 100%
+Working on chromosome 4.
+Matching and aligning SNPs in chr4 to the reference
+7,318 variants to be matched.
+681 ambiguous SNPs have been removed.
+4,326 variants have been matched; 0 were flipped and 3,530 were reversed.
+  |================================================================| 100%
+Working on chromosome 5.
+Matching and aligning SNPs in chr5 to the reference
+6,370 variants to be matched.
+603 ambiguous SNPs have been removed.
+3,795 variants have been matched; 0 were flipped and 3,114 were reversed.
+  |================================================================| 100%
+Working on chromosome 6.
+Matching and aligning SNPs in chr6 to the reference
+6,673 variants to be matched.
+628 ambiguous SNPs have been removed.
+3,975 variants have been matched; 0 were flipped and 3,226 were reversed.
+  |================================================================| 100%
+Working on chromosome 7.
+Matching and aligning SNPs in chr7 to the reference
+5,924 variants to be matched.
+552 ambiguous SNPs have been removed.
+3,455 variants have been matched; 0 were flipped and 2,845 were reversed.
+  |================================================================| 100%
+Working on chromosome 8.
+Matching and aligning SNPs in chr8 to the reference
+5,348 variants to be matched.
+558 ambiguous SNPs have been removed.
+3,073 variants have been matched; 0 were flipped and 2,491 were reversed.
+  |================================================================| 100%
+Working on chromosome 9.
+Matching and aligning SNPs in chr9 to the reference
+4,352 variants to be matched.
+456 ambiguous SNPs have been removed.
+2,498 variants have been matched; 0 were flipped and 2,072 were reversed.
+  |================================================================| 100%
+Working on chromosome 10.
+Matching and aligning SNPs in chr10 to the reference
+5,131 variants to be matched.
+517 ambiguous SNPs have been removed.
+3,038 variants have been matched; 0 were flipped and 2,498 were reversed.
+  |================================================================| 100%
+Working on chromosome 11.
+Matching and aligning SNPs in chr11 to the reference
+4,879 variants to be matched.
+453 ambiguous SNPs have been removed.
+2,821 variants have been matched; 0 were flipped and 2,282 were reversed.
+  |================================================================| 100%
+Working on chromosome 12.
+Matching and aligning SNPs in chr12 to the reference
+4,795 variants to be matched.
+457 ambiguous SNPs have been removed.
+2,732 variants have been matched; 0 were flipped and 2,208 were reversed.
+  |================================================================| 100%
+Working on chromosome 13.
+Matching and aligning SNPs in chr13 to the reference
+3,697 variants to be matched.
+309 ambiguous SNPs have been removed.
+2,266 variants have been matched; 0 were flipped and 1,873 were reversed.
+  |================================================================| 100%
+Working on chromosome 14.
+Matching and aligning SNPs in chr14 to the reference
+3,338 variants to be matched.
+285 ambiguous SNPs have been removed.
+1,947 variants have been matched; 0 were flipped and 1,610 were reversed.
+  |================================================================| 100%
+Working on chromosome 15.
+Matching and aligning SNPs in chr15 to the reference
+2,891 variants to be matched.
+291 ambiguous SNPs have been removed.
+1,607 variants have been matched; 0 were flipped and 1,322 were reversed.
+  |================================================================| 100%
+Working on chromosome 16.
+Matching and aligning SNPs in chr16 to the reference
+3,176 variants to be matched.
+357 ambiguous SNPs have been removed.
+Some duplicates were removed.
+1,739 variants have been matched; 0 were flipped and 1,439 were reversed.
+  |================================================================| 100%
+Working on chromosome 17.
+Matching and aligning SNPs in chr17 to the reference
+2,695 variants to be matched.
+232 ambiguous SNPs have been removed.
+1,579 variants have been matched; 0 were flipped and 1,311 were reversed.
+  |================================================================| 100%
+Working on chromosome 18.
+Matching and aligning SNPs in chr18 to the reference
+2,804 variants to be matched.
+248 ambiguous SNPs have been removed.
+1,680 variants have been matched; 0 were flipped and 1,358 were reversed.
+  |================================================================| 100%
+Working on chromosome 19.
+Matching and aligning SNPs in chr19 to the reference
+2,437 variants to be matched.
+222 ambiguous SNPs have been removed.
+1,425 variants have been matched; 0 were flipped and 1,172 were reversed.
+  |================================================================| 100%
+Working on chromosome 20.
+Matching and aligning SNPs in chr20 to the reference
+2,224 variants to be matched.
+208 ambiguous SNPs have been removed.
+Some duplicates were removed.
+1,347 variants have been matched; 0 were flipped and 1,136 were reversed.
+  |================================================================| 100%
+Working on chromosome 21.
+Matching and aligning SNPs in chr21 to the reference
+1,432 variants to be matched.
+137 ambiguous SNPs have been removed.
+844 variants have been matched; 0 were flipped and 683 were reversed.
+  |================================================================| 100%
+Working on chromosome 22.
+Matching and aligning SNPs in chr22 to the reference
+1,446 variants to be matched.
+117 ambiguous SNPs have been removed.
+851 variants have been matched; 0 were flipped and 710 were reversed.
+  |================================================================| 100%
+```
+
+After this `model.refpanel$weight` will contain the weights for each SNP. 
+Bear in mind that depending on your \alpha settings, your model will have much fewer SNPs than your input file.
+
+# Conclusion
+
+So those are examples of basic *RápidoPGS-multi* usage! 
+
+Drop us a line if you encounter problems, and we'll be happy to help.
+
+Good luck!
+
+
+Guillermo

@@ -42,7 +42,7 @@ Required for quantitative traits only.}
 \item{ancestry}{a string indicating the ancestral population (DEFAULT: "EUR")}
 
 \item{pi_i}{a scalar representing the prior probability (DEFAULT:
-\eqn{1 \times 10^{-4}}).}
+\eqn{1 \times 10^{-4}}).If you wish susie to estimate this internally, set p=NULL.}
 
 \item{ncores}{a numeric specifying the number of cores (CPUs) to be used.
 If using pre-computed LD matrices, one core is enough for best performance.}

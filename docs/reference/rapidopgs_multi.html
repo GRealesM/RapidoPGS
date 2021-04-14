@@ -83,7 +83,7 @@ using Bayesian sum of single-effect (SuSiE) linear regression using z scores" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RápidoPGS</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.0.9001</span>
       </span>
     </div>
 
@@ -106,7 +106,10 @@ using Bayesian sum of single-effect (SuSiE) linear regression using z scores" />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/Computing_RapidoPGS.html">Computing a PGS using RápidoPGS-single and GWAS catalog</a>
+      <a href="../articles/Computing_RapidoPGSmulti.html">Computing a PGS using RápidoPGS-multi</a>
+    </li>
+    <li>
+      <a href="../articles/Computing_RapidoPGSsingle.html">Computing a PGS using RápidoPGS-single and GWAS catalog</a>
     </li>
   </ul>
 </li>
@@ -200,7 +203,7 @@ Required for quantitative traits only.</p></td>
     <tr>
       <th>pi_i</th>
       <td><p>a scalar representing the prior probability (DEFAULT:
-\(1 \times 10^{-4}\)).</p></td>
+\(1 \times 10^{-4}\)).If you wish susie to estimate this internally, set p=NULL.</p></td>
     </tr>
     <tr>
       <th>ncores</th>

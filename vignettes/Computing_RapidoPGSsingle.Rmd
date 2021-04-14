@@ -157,8 +157,10 @@ PGS_top10 <- rapidopgs_single(ds, trait ="cc", build = "hg38", filt_threshold = 
 head(PGS_top10)
 ```
 
-So those are examples of basic *RápidoPGS-single* usage! In future tutorials we'll demonstrate how to use the more complex *RápidoPGS-multi* approach.
 
+# Conclusion
+
+So those are examples of basic *RápidoPGS-single* usage! 
 
 Drop us a line if you encounter problems, and we'll be happy to help.
 
