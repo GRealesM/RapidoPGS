@@ -1,2 +1,2 @@
 utils::globalVariables(c("..hmcols","ALT_FREQ","BETA","BP","CHR","EUR_ld.blocks","EUR_ld.blocks38","P",
-"PUBMEDID","SE","SNPID","chr","id","info_snp.chr","ld.block","pid","ppi","sdY","sumstats.chr","weight"))
+"PUBMEDID","SE","SNPID","chr","id","info_snp.chr","ld.block","pid","ppi","sdY","sumstats.chr","weight", "beta_se", "pos"))

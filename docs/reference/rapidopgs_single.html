@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RápidoPGS</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.0.9001</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.0</span>
       </span>
     </div>
 
@@ -225,7 +225,7 @@ will assign align it to a reference panel file (if provided), then it will assig
 SNPs to LD blocks and compute Wakefield's ppi by LD block, then will use it
 to generate PGS weights by multiplying those posteriors by effect sizes (\(\beta\)).
 Optionally, it will filter SNPs by a custom filter on ppi and then recalculate weights, to improve accuracy.</p>
-<p>Alternatively, if filt_threshold is larger than one, RápidoPGS will select the top
+<p>Alternatively, if filt_threshold is larger than one, RapidoPGS will select the top
 <code>filt_threshold</code> SNPs by absolute weights (note, not ppi but weights).</p>
 <p>The GWAS summary statistics file to compute PGS using our method must contain the following minimum columns, with these exact column names:</p><dl>
 <dt>CHR</dt><dd><p>Chromosome</p></dd>
@@ -257,7 +257,7 @@ the summary statistics. In both files, column order does not matter.</p>
     SE<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.0099</span>,<span class='fl'>0.0066</span>,<span class='fl'>0.0203</span>,<span class='fl'>0.0171</span>,<span class='fl'>0.0063</span>,<span class='fl'>0.0255</span>,<span class='fl'>0.043</span>,<span class='fl'>0.0188</span>,<span class='fl'>0.0074</span><span class='op'>)</span><span class='op'>)</span>
 
 <span class='va'>PGS</span>  <span class='op'>&lt;-</span> <span class='fu'>rapidopgs_single</span><span class='op'>(</span><span class='va'>sumstats</span>,  trait <span class='op'>=</span> <span class='st'>"cc"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Assigning LD blocks...</span></div><div class='output co'>#&gt; <span class='message'>Done!</span></div><div class='output co'>#&gt; <span class='message'>Computing a RápidoPGS-single model for a case-control dataset...</span></div></pre>
+</div><div class='output co'>#&gt; <span class='message'>Assigning LD blocks...</span></div><div class='output co'>#&gt; <span class='message'>Done!</span></div><div class='output co'>#&gt; <span class='message'>Computing a RapidoPGS-single model for a case-control dataset...</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

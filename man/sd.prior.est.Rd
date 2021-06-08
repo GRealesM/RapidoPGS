@@ -22,7 +22,7 @@ Must contain SNPID and SE columns.}
 value obtained from a public repository such as LDhub,
 (http://ldsc.broadinstitute.org/ldhub/), sample size and number of variants,
 and will provide a sd.prior estimate that can be used to improve prediction
-performance of RápidoPGS functions on quantitative traits.
+performance of RapidoPGS functions on quantitative traits.
 }
 \examples{
 sumstats <- data.table(SNPID=c("4:1479959","20:13000913","14:29107209","2:203573414",

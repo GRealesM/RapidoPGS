@@ -67,7 +67,7 @@ SNPs to LD blocks and compute Wakefield's ppi by LD block, then will use it
 to generate PGS weights by multiplying those posteriors by effect sizes (\eqn{\beta}).
 Optionally, it will filter SNPs by a custom filter on ppi and then recalculate weights, to improve accuracy.
 
-Alternatively, if filt_threshold is larger than one, RápidoPGS will select the top
+Alternatively, if filt_threshold is larger than one, RapidoPGS will select the top
 \code{filt_threshold} SNPs by absolute weights (note, not ppi but weights).
 
 The GWAS summary statistics file to compute PGS using our method must contain the following minimum columns, with these exact column names:

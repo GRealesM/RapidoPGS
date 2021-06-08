@@ -83,7 +83,7 @@ using Bayesian sum of single-effect (SuSiE) linear regression using z scores" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RápidoPGS</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.0.9001</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.0</span>
       </span>
     </div>
 
@@ -203,7 +203,7 @@ Required for quantitative traits only.</p></td>
     <tr>
       <th>pi_i</th>
       <td><p>a scalar representing the prior probability (DEFAULT:
-\(1 \times 10^{-4}\)).If you wish susie to estimate this internally, set p=NULL.</p></td>
+\(1 \times 10^{-4}\)).If you wish SuSiE to estimate this internally, set p=NULL.</p></td>
     </tr>
     <tr>
       <th>ncores</th>
@@ -219,6 +219,13 @@ Blocks with minimum P above <code>alpha.block</code> will be skipped. Default: 1
       <th>alpha.snp</th>
       <td><p>a numeric threshold for P-value pruning within LD block.
 SNPs with P above <code>alpha.snp</code> will be removed. Default: 0.01.</p></td>
+    </tr>
+    <tr>
+      <th>sd.prior</th>
+      <td><p>the prior specifies that BETA at causal SNPs
+follows a centred normal distribution with standard deviation
+sd.prior.
+If NULL (default) it will be automatically estimated (recommended).</p></td>
     </tr>
     </table>
 

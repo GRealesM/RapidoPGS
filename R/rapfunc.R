@@ -188,7 +188,7 @@ gwascat.download <- function(ID, filenum = NULL, hm_only=TRUE){
 ##' to generate PGS weights by multiplying those posteriors by effect sizes (\eqn{\beta}). 
 ##' Optionally, it will filter SNPs by a custom filter on ppi and then recalculate weights, to improve accuracy.
 ##' 
-##' Alternatively, if filt_threshold is larger than one, RápidoPGS will select the top
+##' Alternatively, if filt_threshold is larger than one, RapidoPGS will select the top
 ##' \code{filt_threshold} SNPs by absolute weights (note, not ppi but weights).
 ##' 
 ##' The GWAS summary statistics file to compute PGS using our method must contain the following minimum columns, with these exact column names:
@@ -316,7 +316,7 @@ rapidopgs_single <- function(data,
     }else if(build == "hg38"){ 
       blranges <- EUR_ld.blocks38
     }else{ 
-      stop("RápidoPGS only accepts hg19 or hg38 at the moment, please check.")
+      stop("RapidoPGS only accepts hg19 or hg38 at the moment, please check.")
     }		
     message("Assigning LD blocks...")
     snpranges <- GRanges(seqnames=paste("chr",ds$CHR, sep=""), ranges=IRanges(start=ds$BP, end=ds$BP, names=ds$SNPID), strand="*")
@@ -327,7 +327,7 @@ rapidopgs_single <- function(data,
   
   if(trait == "quant"){
     if(is.numeric(N) && length(N) == 1) { # In case N is supplied as a number
-      message("Computing a RápidoPGS-single model for a quantitative trait with N = ", N, ".")
+      message("Computing a RapidoPGS-single model for a quantitative trait with N = ", N, ".")
       ds[,sdY:=sdY.est(vbeta=SE^2, maf=ALT_FREQ, n=N)][,ppi:=wakefield_pp_quant(BETA,SE,sdY,sd.prior), by="ld.block"][,weight:=ppi*BETA]
       if(!is.null(filt_threshold)){
         ds  <- ds[ds$ppi > filt_threshold,]
@@ -338,7 +338,7 @@ rapidopgs_single <- function(data,
     } else{ # In case column name is supplied
       if(is.character(N) && length(N) == 1){
         Nco <- N
-        message("Computing a RápidoPGS-single model for a quantitative trait with N supplied by column ", Nco,". Mmax N: ", max(ds[,get(Nco)]), ", min N = ", min(ds[,get(Nco)]), ", and mean N: ",mean(ds[,get(Nco)]), "...")
+        message("Computing a RapidoPGS-single model for a quantitative trait with N supplied by column ", Nco,". Mmax N: ", max(ds[,get(Nco)]), ", min N = ", min(ds[,get(Nco)]), ", and mean N: ",mean(ds[,get(Nco)]), "...")
         ds[,sdY:=sdY.est(vbeta=SE^2, maf=ALT_FREQ, n=get(Nco))][,ppi:=wakefield_pp_quant(BETA,SE,sdY,sd.prior), by="ld.block"][,weight:=ppi*BETA]
         if(!is.null(filt_threshold)){
           ds  <- ds[ds$ppi > filt_threshold,]
@@ -350,7 +350,7 @@ rapidopgs_single <- function(data,
     }
   }
   if(trait == "cc"){
-    message("Computing a RápidoPGS-single model for a case-control dataset...")
+    message("Computing a RapidoPGS-single model for a case-control dataset...")
     ds[,ppi:=wakefield_pp(beta=BETA, se=SE,pi_i, sd.prior), by = "ld.block"][, weight:=ppi*BETA]
     if(!is.null(filt_threshold)){
       if(filt_threshold < 1){
@@ -499,19 +499,24 @@ rapidopgs_single <- function(data,
 ##'  Required for quantitative traits only.
 ##' @param ancestry a string indicating the ancestral population (DEFAULT: "EUR")
 ##' @param pi_i a scalar representing the prior probability (DEFAULT:
-##'   \eqn{1 \times 10^{-4}}).If you wish susie to estimate this internally, set p=NULL.
+##'   \eqn{1 \times 10^{-4}}).If you wish SuSiE to estimate this internally, set p=NULL.
 ##' @param ncores a numeric specifying the number of cores (CPUs) to be used.
 ##'    If using pre-computed LD matrices, one core is enough for best performance.
 ##' @param alpha.block a numeric threshold for minimum P-value in LD blocks.
 ##'    Blocks with minimum P above \code{alpha.block} will be skipped. Default: 1e-4.
 ##' @param alpha.snp a numeric threshold for P-value pruning within LD block.
 ##'    SNPs with P above \code{alpha.snp} will be removed. Default: 0.01.
+##' @param sd.prior the prior specifies that BETA at causal SNPs
+##'   follows a centred normal distribution with standard deviation
+##'   sd.prior.
+##'   If NULL (default) it will be automatically estimated (recommended).
 ##' @return a data.table containing the sumstats dataset with
 ##'   computed PGS weights.
 ##' @import data.table coloc
 ##' @importFrom bigsnpr snp_match snp_cor snp_readBed snp_attach
 ##' @importFrom GenomicRanges GRanges findOverlaps
-##' @importFrom IRanges IRanges
+##' @importFrom IRanges IRanges 
+##' @importFrom utils download.file setTxtProgressBar txtProgressBar
 ##' @export
 ##' @author Guillermo Reales, Chris Wallace
 ##' @examples
@@ -602,9 +607,9 @@ rapidopgs_multi <- function(data, trait=c("cc","quant"), reference=NULL, LDmatri
   
   results <- data.table()
   
-  if(trait == "cc") message("Running RápidoPGS-multi model with multiple causal variant assumption for a case-control dataset.")
-  if(trait == "quant" && is.character(N)) message("Running RápidoPGS-multi with multiple causal variant assumption for a quantitative trait dataset, with N supplied by column ", Nco,". Mmax N: ", max(ds[,get(Nco)]), ", min N = ", min(ds[,get(Nco)]), ", and mean N: ",mean(ds[,get(Nco)]), ".")
-  if(trait == "quant" && is.numeric(N)) message("Running RápidoPGS-multi with multiple causal variant assumption for a quantitative trait dataset, with N = ", N, ".")
+  if(trait == "cc") message("Running RapidoPGS-multi model with multiple causal variant assumption for a case-control dataset.")
+  if(trait == "quant" && is.character(N)) message("Running RapidoPGS-multi with multiple causal variant assumption for a quantitative trait dataset, with N supplied by column ", Nco,". Mmax N: ", max(ds[,get(Nco)]), ", min N = ", min(ds[,get(Nco)]), ", and mean N: ",mean(ds[,get(Nco)]), ".")
+  if(trait == "quant" && is.numeric(N)) message("Running RapidoPGS-multi with multiple causal variant assumption for a quantitative trait dataset, with N = ", N, ".")
   
   if(!is.null(reference)){ # If a panel is supplied
     for(chrs in 1:22){
@@ -816,7 +821,8 @@ rapidopgs_multi <- function(data, trait=c("cc","quant"), reference=NULL, LDmatri
 ##' @param qc.geno a numeric to set maximum missing call rates for variants. DEFAULT = 0.
 ##' @param autosomes.only If FALSE, it will include X and Y chromosomes, too.
 ##' @return bed, fam and bim files for each chromosome in the chosen directory.
-##' @import data.table bigsnpr bigreadr
+##' @import data.table bigsnpr bigreadr 
+##' @importFrom utils download.file
 ##' @export
 ##' @author Guillermo Reales
 ##' @examples
@@ -846,10 +852,10 @@ create_1000G <- function(directory = "ref-data", remove.related=TRUE, qc.maf = 0
   }
   if(!autosomes.only){
   # X and Y chromosomes have a bit different link
-  message("Downloading chromosome X. Note that current RápidoPGS-multi version uses autosomes only.")
+  message("Downloading chromosome X. Note that current RapidoPGS-multi version uses autosomes only.")
   download.file("ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chrX.phase3_shapeit2_mvncall_integrated_v1b.20130502.genotypes.vcf.gz", destfile = paste0(directory,"/chr23.vcf.gz"), mode = "wb")
   message("Done!")
-  message("Downloading chromosome Y. Note that current RápidoPGS-multi version uses autosomes only.")
+  message("Downloading chromosome Y. Note that current RapidoPGS-multi version uses autosomes only.")
   download.file("ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chrY.phase3_integrated_v2a.20130502.genotypes.vcf.gz", destfile = paste0(directory,"/chr24.vcf.gz"), mode = "wb")
   message("Done!")
   max.chr=24
@@ -916,7 +922,7 @@ create_1000G <- function(directory = "ref-data", remove.related=TRUE, qc.maf = 0
 ##' value obtained from a public repository such as LDhub, 
 ##' (http://ldsc.broadinstitute.org/ldhub/), sample size and number of variants,
 ##' and will provide a sd.prior estimate that can be used to improve prediction
-##' performance of RápidoPGS functions on quantitative traits.
+##' performance of RapidoPGS functions on quantitative traits.
 ##' 
 ##' @param data a data.table containing the GWAS summary statistic input dataset. 
 ##' Must contain SNPID and SE columns.

@@ -1,5 +1,9 @@
 # RapidoPGS 2.1.0
 
+RapidoPGS 2.1.0.9002
+2021-06-08
+- Updated dependency versions.
+
 RapidoPGS 2.1.0.9001
 2021-04-14
 - New vignette for `rapidopgs_multi()` and minor changes in `rapidopgs_single()` vignette.

@@ -42,7 +42,7 @@ Required for quantitative traits only.}
 \item{ancestry}{a string indicating the ancestral population (DEFAULT: "EUR")}
 
 \item{pi_i}{a scalar representing the prior probability (DEFAULT:
-\eqn{1 \times 10^{-4}}).If you wish susie to estimate this internally, set p=NULL.}
+\eqn{1 \times 10^{-4}}).If you wish SuSiE to estimate this internally, set p=NULL.}
 
 \item{ncores}{a numeric specifying the number of cores (CPUs) to be used.
 If using pre-computed LD matrices, one core is enough for best performance.}
@@ -52,6 +52,11 @@ Blocks with minimum P above \code{alpha.block} will be skipped. Default: 1e-4.}
 
 \item{alpha.snp}{a numeric threshold for P-value pruning within LD block.
 SNPs with P above \code{alpha.snp} will be removed. Default: 0.01.}
+
+\item{sd.prior}{the prior specifies that BETA at causal SNPs
+follows a centred normal distribution with standard deviation
+sd.prior.
+If NULL (default) it will be automatically estimated (recommended).}
 }
 \value{
 a data.table containing the sumstats dataset with

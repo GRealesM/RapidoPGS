@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>LD block architecture for European populations (hg38). — EUR_ld.blocks38 • RápidoPGS</title>
+<title>Subset of Michailidou BRCA GWAS sumstat dataset. — michailidou19 • RápidoPGS</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,11 +46,9 @@
 
 
 
-<meta property="og:title" content="LD block architecture for European populations (hg38). — EUR_ld.blocks38" />
-<meta property="og:description" content="A GRanges object containing the LD block for European ancestry, in hg38 build.
-This dataset was obtained from Berisa and Pickrell (2016), in bed format,
-then liftovered to hg38 using UCSC liftOver tool, then converted to GRanges.
-See manuscript for more details." />
+<meta property="og:title" content="Subset of Michailidou BRCA GWAS sumstat dataset. — michailidou19" />
+<meta property="og:description" content="A data.table containing a subset of Michailidou et al., 2017 breast cancer summary statistic dataset, in hg19 build.
+This dataset is freely available in GWAS catalog (see link below). I used &quot;chromosome&quot;, &quot;base_pair_location columns&quot;, removed unnecessary and all-missing columns, and took a random sample of 100,000 SNPs without replacement." />
 <meta property="og:image" content="http://GRealesM.github.io/RapidoPGS/logo.png" />
 
 
@@ -137,33 +135,38 @@ See manuscript for more details." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>LD block architecture for European populations (hg38).</h1>
+    <h1>Subset of Michailidou BRCA GWAS sumstat dataset.</h1>
     <small class="dont-index">Source: <a href='https://github.com/GRealesM/RapidoPGSR/data.R'><code>R/data.R</code></a></small>
-    <div class="hidden name"><code>EUR_ld.blocks38.Rd</code></div>
+    <div class="hidden name"><code>michailidou19.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>A GRanges object containing the LD block for European ancestry, in hg38 build.
-This dataset was obtained from <a href='https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4731402/'>Berisa and Pickrell (2016)</a>, in bed format,
-then liftovered to hg38 using UCSC liftOver tool, then converted to GRanges.
-See manuscript for more details.</p>
+    <p>A data.table containing a subset of <a href='https://www.nature.com/articles/nature24284/'>Michailidou et al., 2017</a> breast cancer summary statistic dataset, in hg19 build.
+This dataset is freely available in GWAS catalog (see link below). I used "chromosome", "base_pair_location columns", removed unnecessary and all-missing columns, and took a random sample of 100,000 SNPs without replacement.</p>
     </div>
 
-    <pre class="usage"><span class='va'>EUR_ld.blocks38</span></pre>
+    <pre class="usage"><span class='va'>michailidou19</span></pre>
 
 
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
-    <p>A GRanges object containing 1625 ranges</p><dl>
-<dt>seqnames</dt><dd><p>chromosome</p></dd>
-<dt>ranges</dt><dd><p>start and stop positions for the block</p></dd>
-<dt>strand</dt><dd><p>genomic strand, irrelevant here</p></dd>
+    <p>A data.table object containing 100,000 SNPs</p><dl>
+SNPID, CHR, BP, REF, ALT, ALT_FREQ, BETA, SE, P
+<dt>SNPID</dt><dd><p>rsids, or SNP ids</p></dd>
+<dt>CHR</dt><dd><p>chromosome</p></dd>
+<dt>BP</dt><dd><p>base position, in hg38</p></dd>
+<dt>REF</dt><dd><p>reference, or non-effect allele</p></dd>
+<dt>ALT</dt><dd><p>alternative, or effect allele</p></dd>
+<dt>ALT_FREQ</dt><dd><p>effect allele frequency</p></dd>
+<dt>BETA</dt><dd><p>beta, log(OR), or effect size</p></dd>
+<dt>SE</dt><dd><p>standard error of beta</p></dd>
+<dt>P</dt><dd><p>p-value</p></dd>
 
 </dl>
 
     <h2 class="hasAnchor" id="source"><a class="anchor" href="#source"></a>Source</h2>
 
-    <p><a href='https://bitbucket.org/nygcresearch/ldetect-data/src'>https://bitbucket.org/nygcresearch/ldetect-data/src</a></p>
+    <p><a href='ftp://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/MichailidouK_29059683_GCST004988/harmonised/29059683-GCST004988-EFO_0000305.h.tsv.gz'>ftp://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/MichailidouK_29059683_GCST004988/harmonised/29059683-GCST004988-EFO_0000305.h.tsv.gz</a></p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
