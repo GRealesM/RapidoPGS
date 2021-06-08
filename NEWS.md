@@ -3,6 +3,7 @@
 RapidoPGS 2.1.0.9002
 2021-06-08
 - Updated dependency versions.
+- Change some stuff for CRAN submission.
 
 RapidoPGS 2.1.0.9001
 2021-04-14

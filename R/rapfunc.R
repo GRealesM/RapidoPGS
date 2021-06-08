@@ -238,7 +238,6 @@ gwascat.download <- function(ID, filenum = NULL, hm_only=TRUE){
 ##' @importFrom bigsnpr snp_match
 ##' @importFrom GenomicRanges GRanges findOverlaps
 ##' @importFrom IRanges IRanges
-##' @importFrom coloc runsusie
 ##' @export
 ##' @author Guillermo Reales, Chris Wallace
 ##' @examples
@@ -512,11 +511,12 @@ rapidopgs_single <- function(data,
 ##'   If NULL (default) it will be automatically estimated (recommended).
 ##' @return a data.table containing the sumstats dataset with
 ##'   computed PGS weights.
-##' @import data.table coloc
+##' @import data.table
 ##' @importFrom bigsnpr snp_match snp_cor snp_readBed snp_attach
 ##' @importFrom GenomicRanges GRanges findOverlaps
 ##' @importFrom IRanges IRanges 
 ##' @importFrom utils download.file setTxtProgressBar txtProgressBar
+##' @importFrom coloc runsusie
 ##' @export
 ##' @author Guillermo Reales, Chris Wallace
 ##' @examples
