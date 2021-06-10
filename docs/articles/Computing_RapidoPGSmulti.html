@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RápidoPGS</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.0.9003</span>
       </span>
     </div>
 
@@ -187,8 +187,8 @@
 <a href="#computing-a-pgs-using-r%C3%A1pidopgs-multi-and-ld-matrices" class="anchor"></a>Computing a PGS using RápidoPGS-multi and LD matrices</h1>
 <p>Now we’re ready to compute our PGS using UK Biobank LD matrices, this is easily done as follows</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">model.LDmat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/rapidopgs_multi.html">rapidopgs_multi</a></span><span class="op">(</span><span class="va">ds</span> ,trait<span class="op">=</span><span class="st">"cc"</span>, LDmatrices <span class="op">=</span> <span class="st">"ukbb"</span> , N_LD<span class="op">=</span><span class="fl">362320</span><span class="op">)</span></code></pre></div>
-<p>Where <code>N_LD</code> corresponds to the sample size of the panel use to compute the LD matrices (362,320 individuals), and <code>LDmatrices</code> points at the directory where our LD matrices live.</p>
+<code class="sourceCode R"><span class="va">model.LDmat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/rapidopgs_multi.html">rapidopgs_multi</a></span><span class="op">(</span><span class="va">ds</span> ,trait<span class="op">=</span><span class="st">"cc"</span>, LDmatrices <span class="op">=</span> <span class="st">"ukbb"</span><span class="op">)</span></code></pre></div>
+<p><strong>NOTE</strong>: The world has changed, and so has RápidoPGS. Thus, <code>N_LD</code> (corresponding to the sample size of the panel use to compute the LD matrices) is no longer required.</p>
 <p>Note that default <em>{block} is 10^-4 and </em>{SNP} is 0.01, which is a fast setting, but sheds off many SNPs. Also, default <code>ncores = 1</code>, which shouldn’t make much difference when using LD matrices.</p>
 <pre><code>Assigning LD blocks...
 Done!
@@ -249,7 +249,7 @@ Working on chromosome 22.
 <p>We can compute our PGS using 1000 Genomes Phase III panel as follows:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">model.refpanel</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/rapidopgs_multi.html">rapidopgs_multi</a></span><span class="op">(</span><span class="va">ds</span>, trait<span class="op">=</span><span class="st">"cc"</span>, reference <span class="op">=</span> <span class="st">"ref-data"</span>, ncores<span class="op">=</span><span class="fl">8</span><span class="op">)</span></code></pre></div>
-<p>Here, instead of <code>LDmatrices</code> and <code>N_LD</code>, we just need to set <code>reference</code> to point to the directory in which our panel lives.</p>
+<p>Here, instead of <code>LDmatrices</code>, we just need to set <code>reference</code> to point to the directory in which our panel lives.</p>
 <p>Note that default <span class="math inline">\(\alpha_{block}\)</span> is <span class="math inline">\(10^{-4}\)</span> and <span class="math inline">\(\alpha_{SNP}\)</span> is 0.01, which is a fast setting, but sheds off many SNPs. Also, default <code>ncores = 1</code>, but this approach benefits from parallelisation, so we used 8 CPUs in this example.</p>
 <pre><code>Assigning LD blocks...
 Done!

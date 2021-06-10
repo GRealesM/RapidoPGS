@@ -491,8 +491,6 @@ rapidopgs_single <- function(data,
 ##'   the reference panel (eg. "../ref-data/").
 ##' @param LDmatrices a string representing the path to the directory containing 
 ##'   the pre-computed LD matrices.
-##' @param N_LD a numeric indicating the number of individuals used for LD matrix computation. 
-##' Required for pre-computed LD matrix approach only.
 ##' @param N a numeric indicating the number of individuals used to generate input
 ##'  GWAS dataset, or a string indicating the column name containing per-SNP sample size.
 ##'  Required for quantitative traits only.
@@ -534,7 +532,7 @@ rapidopgs_single <- function(data,
 ##' PGS  <- rapidopgs_multi(sumstats, trait="cc", reference = "ref-data/", ncores=2)
 ##'}
 
-rapidopgs_multi <- function(data, trait=c("cc","quant"), reference=NULL, LDmatrices=NULL, N_LD = NULL, N=NULL, ancestry="EUR", pi_i = 1e-04, ncores=1, alpha.block=1e-4, alpha.snp=0.01, sd.prior=NULL){
+rapidopgs_multi <- function(data, trait=c("cc","quant"), reference=NULL, LDmatrices=NULL, N=NULL, ancestry="EUR", pi_i = 1e-04, ncores=1, alpha.block=1e-4, alpha.snp=0.01, sd.prior=NULL){
   
   ds <- copy(data) # avoid modifying input data.table
   # Sanity checks
@@ -570,9 +568,6 @@ rapidopgs_multi <- function(data, trait=c("cc","quant"), reference=NULL, LDmatri
     }
     if(!all(paste0("LD_chr", 1:22, ".rds") %in% dir(path=LDmatrices))){
       stop("Not all matrices LD_chr...rds are present in the directory. Please check.")
-    }
-    if(is.null(N_LD)){
-      stop("LD matrix approach was chosen, but sample size to compute them is missing. Please supply N_LD.")	
     }
   }
  
@@ -783,7 +778,7 @@ rapidopgs_multi <- function(data, trait=c("cc","quant"), reference=NULL, LDmatri
           prior_var  <-  sd.prior^2
         }
         
-        ppi_susie <- suppressMessages(runsusie(susie.ds,nref=N_LD,p=pi_i, prior_variance=prior_var, estimate_prior_variance=prior_est, check_R=FALSE))
+        ppi_susie <- suppressMessages(runsusie(susie.ds,p=pi_i, prior_variance=prior_var, estimate_prior_variance=prior_est, check_R=FALSE))
         ppi_susie <- ppi_susie$pip[1:(length(ppi_susie$pip)-1)]
         snp.block$ppi_susie <- ppi_susie
         

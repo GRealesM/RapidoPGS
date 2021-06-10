@@ -1,6 +1,6 @@
 Package: RapidoPGS
 Title: A Fast and Light Package to Compute Polygenic Risk Scores
-Version: 2.1.0
+Version: 2.1.0.9003
 Authors@R: c(
     person("Guillermo","Reales", role = c("aut", "cre"), email = "gr440@cam.ac.uk",  comment = c(ORCID = "0000-0001-9993-3916")),
     person("Chris", "Wallace", role = "aut", email = "cew54@cam.ac.uk", comment = c(ORCID = "0000-0001-9755-1703")),
@@ -8,7 +8,7 @@ Authors@R: c(
 Description: Quickly computes polygenic scores from GWAS summary statistics of either case-control or quantitative traits, without LD matrix computation or parameter tuning. Reales,G., Vigorito, E., Kelemen,M., Wallace,C. (2021) <doi:10.1101/2020.07.24.220392> "RápidoPGS: A rapid polygenic score calculator for summary GWAS data without a test dataset".
 License: GPL-3
 Depends: R (>= 4.0), data.table,  RCurl, curl
-Imports: dplyr (>= 1.0.6), GenomicRanges (>= 1.42.0), IRanges (>= 2.24.1), bigsnpr (>= 1.8.1), coloc (>= 5.0.0), bigreadr (>= 0.2.4)
+Imports: dplyr (>= 1.0.6), GenomicRanges (>= 1.42.0), IRanges (>= 2.24.1), bigsnpr (>= 1.8.1), coloc (>= 5.1.0), bigreadr (>= 0.2.4)
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)

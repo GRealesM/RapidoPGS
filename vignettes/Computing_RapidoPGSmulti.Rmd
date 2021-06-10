@@ -115,10 +115,10 @@ ds <- michailidou19
 Now we're ready to compute our PGS using UK Biobank LD matrices, this is easily done as follows
 
 ```{r eval=FALSE}
-model.LDmat <- rapidopgs_multi(ds ,trait="cc", LDmatrices = "ukbb" , N_LD=362320)
+model.LDmat <- rapidopgs_multi(ds ,trait="cc", LDmatrices = "ukbb")
 ```
 
-Where `N_LD` corresponds to the sample size of the panel use to compute the LD matrices (362,320 individuals), and `LDmatrices` points at the directory where our LD matrices live. 
+**NOTE**: The world has changed, and so has RápidoPGS. Thus, `N_LD` (corresponding to the sample size of the panel use to compute the LD matrices) is no longer required. 
 
 Note that default \alpha_{block} is 10^-4 and \alpha_{SNP} is 0.01, which is a fast setting, but sheds off many SNPs. Also, default `ncores = 1`, which shouldn't make much difference when using LD matrices. 
 
@@ -188,7 +188,7 @@ We can compute our PGS using 1000 Genomes Phase III panel as follows:
 model.refpanel <- rapidopgs_multi(ds, trait="cc", reference = "ref-data", ncores=8)
 ```
 
-Here, instead of `LDmatrices` and `N_LD`, we just need to set `reference` to point to the directory in which our panel lives. 
+Here, instead of `LDmatrices`, we just need to set `reference` to point to the directory in which our panel lives. 
 
 Note that default $\alpha_{block}$ is $10^{-4}$ and $\alpha_{SNP}$ is 0.01, which is a fast setting, but sheds off many SNPs. Also, default `ncores = 1`, but this approach benefits from parallelisation, so we used 8 CPUs in this example.
 
