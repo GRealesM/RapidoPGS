@@ -83,7 +83,7 @@ using Bayesian sum of single-effect (SuSiE) linear regression using z scores" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RápidoPGS</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.0.9003</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.0</span>
       </span>
     </div>
 
@@ -153,7 +153,6 @@ using Bayesian sum of single-effect (SuSiE) linear regression using z scores</p>
   trait <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"cc"</span>, <span class='st'>"quant"</span><span class='op'>)</span>,
   reference <span class='op'>=</span> <span class='cn'>NULL</span>,
   LDmatrices <span class='op'>=</span> <span class='cn'>NULL</span>,
-  N_LD <span class='op'>=</span> <span class='cn'>NULL</span>,
   N <span class='op'>=</span> <span class='cn'>NULL</span>,
   ancestry <span class='op'>=</span> <span class='st'>"EUR"</span>,
   pi_i <span class='op'>=</span> <span class='fl'>1e-04</span>,
@@ -184,11 +183,6 @@ the reference panel (eg. "../ref-data/").</p></td>
       <th>LDmatrices</th>
       <td><p>a string representing the path to the directory containing
 the pre-computed LD matrices.</p></td>
-    </tr>
-    <tr>
-      <th>N_LD</th>
-      <td><p>a numeric indicating the number of individuals used for LD matrix computation.
-Required for pre-computed LD matrix approach only.</p></td>
     </tr>
     <tr>
       <th>N</th>
