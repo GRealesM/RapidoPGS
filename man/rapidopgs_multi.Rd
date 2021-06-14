@@ -10,7 +10,6 @@ rapidopgs_multi(
   trait = c("cc", "quant"),
   reference = NULL,
   LDmatrices = NULL,
-  N_LD = NULL,
   N = NULL,
   ancestry = "EUR",
   pi_i = 1e-04,
@@ -31,9 +30,6 @@ the reference panel (eg. "../ref-data/").}
 
 \item{LDmatrices}{a string representing the path to the directory containing
 the pre-computed LD matrices.}
-
-\item{N_LD}{a numeric indicating the number of individuals used for LD matrix computation.
-Required for pre-computed LD matrix approach only.}
 
 \item{N}{a numeric indicating the number of individuals used to generate input
 GWAS dataset, or a string indicating the column name containing per-SNP sample size.
