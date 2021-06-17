@@ -1,4 +1,4 @@
-# RápidoPGS <a href='http://GRealesM.github.io/RapidoPGS'><img src='man/figures/logo.png' align="right" height="190.5" /></a>
+# RápidoPGS <a href='https://grealesm.github.io/RapidoPGS/'><img src='man/figures/logo.png' align="right" height="190.5" /></a>
 
 <!-- badges: start -->
 
