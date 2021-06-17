@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RápidoPGS</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.0.9004</span>
       </span>
     </div>
 
@@ -128,23 +128,29 @@
 <li>
 <strong>P</strong>: P-values for the association test</li>
 </ul>
-<p>Also, if doing a PGS on a quantitative trait GWAS dataset, your file must include this: * <strong>ALT_FREQ</strong>: Minor/ALT allele frequency in the tested population, or in a close population from a reference panel.</p>
+<p>Also, if doing a PGS on a quantitative trait GWAS dataset, your file must include this:</p>
+<ul>
+<li>
+<strong>ALT_FREQ</strong>: Minor/ALT allele frequency in the tested population, or in a close population from a reference panel.</li>
+</ul>
 </div>
 <div id="installation-of-rápidopgs" class="section level1">
 <h1 class="hasAnchor">
 <a href="#installation-of-r%C3%A1pidopgs" class="anchor"></a>Installation of RápidoPGS</h1>
-<p>Current RápidoPGS development version (v2.1.0) is available on GitHub, so we can install it using the following code (Note: If you don’t have <code>remotes</code> installed, please install it first:</p>
+<p>Current RápidoPGS version (v2.1.0) is available on CRAN, so we can install it using the following code</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"RapidoPGS"</span><span class="op">)</span></code></pre></div>
+<p>Alternatively, you can download the development version from Github (Note: If you don’t have <code>remotes</code> installed, please install it first:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html">requireNamespace</a></span><span class="op">(</span><span class="st">"remotes"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>
     <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span>
 <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"GRealesM/RapidoPGS"</span><span class="op">)</span></code></pre></div>
-<p>Note that previous version of RápidoPGS (v1.0.2) is available on CRAN, but we changed important things in the package, including functions for RápidoPGS-multi approach, so until we publish the current version we highly recommend downloading the current development version, to which this vignette refers to.</p>
 </div>
 <div id="setup" class="section level1">
 <h1 class="hasAnchor">
 <a href="#setup" class="anchor"></a>Setup</h1>
 <p>Once installed, let’s load it. This will automatically load all required dependencies.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">RapidoPGS</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="downloading-data-from-gwas-catalog" class="section level1">
@@ -155,10 +161,10 @@
 <p>It’s a big file, and may take a while to download, so here we will show the command to download, but actually cheat and load a subset of data already loaded.</p>
 <p>Note that in this particular case we chose a study that contained a single dataset. In other cases there may be more than one. In that case <code>gwascat.download</code> will prompt you with the list of available options, prompting their accession numbers, and asking you to choose a file by its number in the list, if running interactively. If you want to run <code>gwascat.download</code> automatically, and you know the number already, you can supply it using <code>filenum</code> argument, so R won’t bug you.</p>
 <p>We use it’s PubMed ID (29059683). We could download only harmonised GWAS catalog columns (thus having a lighter file) but I don’t advise this because sometimes we may need columns from the original file. We then set <code>hm_only = FALSE</code> to get all columns.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gwascat.download.html">gwascat.download</a></span><span class="op">(</span><span class="fl">29059683</span>, hm_only <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
 <p>Now for the cheat: for illustrative purposes, I took a random subset from this file including 100,000 SNPs from this file, which we’ll use in this tutorial. Bear in mind that the final PGS won’t be a <em>valid</em> model since we randomly removed most SNPs. It will serve for our teaching purposes, though! ;)</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">ds</span> <span class="op">&lt;-</span> <span class="va">michailidou</span></code></pre></div>
 </div>
 <div id="applying-quality-control-to-the-dataset" class="section level1">
@@ -168,7 +174,7 @@
 <p>A note of caution when dealing with GWAS catalog files, though: since they use a semi-automated pipeline, it is possible that even some columns are present, they are <em>empty</em>, so be careful with that!</p>
 <p>Also, RápidoPGS requires allele frequencies, so it’s possible that you need to compute it from an external reference panel (eg. 1000 Genomes Phase III). We don’t cover that step in this vignette, but we might write instructions explaining how to do it in the future.</p>
 <p>Let’s take a look at the file!</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">ds</span><span class="op">)</span></code></pre></div>
 <pre><code>##    hm_rsid            hm_chrom             hm_pos          hm_other_allele   
 ##  Length:100000      Length:100000      Min.   :    10519   Length:100000     
@@ -192,10 +198,10 @@
 ##  3rd Qu.:0.0259   3rd Qu.:0.7215  
 ##  Max.   :1.0917   Max.   :0.9993</code></pre>
 <p>In this case, we don’t have any missing data, which is fantastic. We’ll now prepare the dataset for RápidoPGS. We need to rename columns to something RápidoPGS can understand, and this is easy to do with data.table.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">setnames</span><span class="op">(</span><span class="va">ds</span>, old <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"hm_rsid"</span>, <span class="st">"hm_chrom"</span>, <span class="st">"hm_pos"</span>, <span class="st">"hm_other_allele"</span>, <span class="st">"hm_effect_allele"</span>, <span class="st">"hm_beta"</span>, <span class="st">"hm_effect_allele_frequency"</span>, <span class="st">"standard_error"</span>, <span class="st">"p_value"</span><span class="op">)</span>, new<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"SNPID"</span>,<span class="st">"CHR"</span>, <span class="st">"BP"</span>,<span class="st">"REF"</span>, <span class="st">"ALT"</span>, <span class="st">"BETA"</span>, <span class="st">"ALT_FREQ"</span>, <span class="st">"SE"</span>, <span class="st">"P"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p>Now another thing to consider: RápidoPGS use only autosomes, so remove X or Y chromosomes at this step.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">ds</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">[</span><span class="va">CHR</span> <span class="op">!=</span> <span class="st">"X"</span>,<span class="op">]</span></code></pre></div>
 </div>
 <div id="computing-pgs-using-rápidopgs-single" class="section level1">
@@ -205,14 +211,14 @@
 <p>In this new version, we don’t need sample size for case-control datasets. Note that if this was a quantitative trait dataset, we should inform total number of individuals (N parameter). Also, if our dataset had columns reporting the number of individuals for each SNP, we can replace N by a string specifying the column (eg. N = “sample_size”). By doing so, RápidoPGS-single will extract this information directly from the columns.</p>
 <p>Let’s get our hands dirty! Let’s compute first a <em>full</em> RápidoPGS-single model. Since we used harmonised coordinates from GWAS catalog, our file is in build hg38, and we need to specify it to RápidoPGS (default is hg19).</p>
 <p><strong>Advanced use note</strong>: You may want to filter by and align your dataset to an external reference. You can do that with RápidoPGS, too, by specifying the path of your reference file at <code>reference</code> argument. This reference file should have five columns (CHR, BP, REF, ALT, and SNPID) and be in the <strong>same build</strong> as our summary statistics dataset. RápidoPGS currently supports <strong>hg19</strong> and <strong>hg38</strong> builds.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">full_PGS</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/rapidopgs_single.html">rapidopgs_single</a></span><span class="op">(</span><span class="va">ds</span>, trait <span class="op">=</span> <span class="st">"cc"</span>, build <span class="op">=</span> <span class="st">"hg38"</span><span class="op">)</span></code></pre></div>
 <pre><code>## Assigning LD blocks...</code></pre>
 <pre><code>## Done!</code></pre>
 <pre><code>## Computing a RapidoPGS-single model for a case-control dataset...</code></pre>
 <p>Well, that was <em>rápido</em>! With increasingly big datasets, it will take a bit longer, of course.</p>
 <p>Let’s take a look.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">full_PGS</span><span class="op">)</span></code></pre></div>
 <pre><code>##          SNPID CHR        BP REF ALT    BETA ALT_FREQ     SE       P ld.block
 ## 1: rs117214991   9 109388299   C   T  0.0929   0.0052 0.0559 0.09647      950
@@ -235,12 +241,12 @@
 <p>Imagine that we want a small portable PGS. We could use a threshold (eg. keep only SNPs with ppi larger than <span class="math inline">\(1e^{-4}\)</span>, a reasonable threshold) or keep the top SNPs with largest weights (in either way).</p>
 <p>We can do that using RápidoPGS, let’s see how by using a <span class="math inline">\(1e^{-4}\)</span> threshold.</p>
 <p>For accuracy reasons, we recommend recomputing the PGS on just these SNPs after the threshold was applied, so <code>recalc = TRUE</code> by default.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">PGS_1e4</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/rapidopgs_single.html">rapidopgs_single</a></span><span class="op">(</span><span class="va">ds</span>, trait <span class="op">=</span><span class="st">"cc"</span>, build <span class="op">=</span> <span class="st">"hg38"</span>, filt_threshold <span class="op">=</span> <span class="fl">1e-4</span><span class="op">)</span></code></pre></div>
 <pre><code>## Assigning LD blocks...</code></pre>
 <pre><code>## Done!</code></pre>
 <pre><code>## Computing a RapidoPGS-single model for a case-control dataset...</code></pre>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">PGS_1e4</span><span class="op">)</span></code></pre></div>
 <pre><code>##          SNPID CHR       BP REF ALT    BETA ALT_FREQ     SE        P ld.block
 ## 1:  rs61113083  11 82946128   G   A -0.0336   0.0623 0.0132 0.010860     1088
@@ -257,12 +263,12 @@
 ## 5: 0.0001139903 -7.523357e-06
 ## 6: 0.0006078236 -2.984414e-05</code></pre>
 <p>You can omit recalculation by setting that argument to <code>FALSE</code></p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">PGS_1e4_norecalc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/rapidopgs_single.html">rapidopgs_single</a></span><span class="op">(</span><span class="va">ds</span>, trait <span class="op">=</span><span class="st">"cc"</span>, build <span class="op">=</span> <span class="st">"hg38"</span>, filt_threshold <span class="op">=</span> <span class="fl">1e-4</span>, recalc <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
 <pre><code>## Assigning LD blocks...</code></pre>
 <pre><code>## Done!</code></pre>
 <pre><code>## Computing a RapidoPGS-single model for a case-control dataset...</code></pre>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">PGS_1e4_norecalc</span><span class="op">)</span></code></pre></div>
 <pre><code>##          SNPID CHR       BP REF ALT    BETA ALT_FREQ     SE        P ld.block
 ## 1:  rs61113083  11 82946128   G   A -0.0336   0.0623 0.0132 0.010860     1088
@@ -279,12 +285,12 @@
 ## 5: 0.0001139009 -7.517458e-06
 ## 6: 0.0006072414 -2.981555e-05</code></pre>
 <p>And what if we want the <em>top 10</em> SNPs? Just change the <code>filt_threshold</code> argument. If it’s larger than 1, RápidoPGS will understand that you want a top list, rather than a thresholded result.</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">PGS_top10</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/rapidopgs_single.html">rapidopgs_single</a></span><span class="op">(</span><span class="va">ds</span>, trait <span class="op">=</span><span class="st">"cc"</span>, build <span class="op">=</span> <span class="st">"hg38"</span>, filt_threshold <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></code></pre></div>
 <pre><code>## Assigning LD blocks...</code></pre>
 <pre><code>## Done!</code></pre>
 <pre><code>## Computing a RapidoPGS-single model for a case-control dataset...</code></pre>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">PGS_top10</span><span class="op">)</span></code></pre></div>
 <pre><code>##         SNPID CHR        BP REF ALT    BETA ALT_FREQ     SE         P ld.block
 ## 1: rs79054216  11  69371625   C   T  0.2309   0.0145 0.0265 3.041e-18     1080

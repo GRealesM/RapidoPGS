@@ -2,3 +2,5 @@ doc
 Meta
 .Rhistory
 .cran-comments.md
+/doc/
+/Meta/

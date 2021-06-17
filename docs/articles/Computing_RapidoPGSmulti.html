@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RápidoPGS</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.0.9004</span>
       </span>
     </div>
 
@@ -95,7 +95,7 @@
       <h1 data-toc-skip>Computing a PGS using RápidoPGS-multi</h1>
                         <h4 class="author">Guillermo Reales</h4>
             
-            <h4 class="date">12/04/2021</h4>
+            <h4 class="date">2021-06-17</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/GRealesM/RapidoPGSvignettes/Computing_RapidoPGSmulti.Rmd"><code>vignettes/Computing_RapidoPGSmulti.Rmd</code></a></small>
       <div class="hidden name"><code>Computing_RapidoPGSmulti.Rmd</code></div>
@@ -128,23 +128,29 @@
 <li>
 <strong>P</strong>: P-values for the association test</li>
 </ul>
-<p>Also, if doing a PGS on a quantitative trait GWAS dataset, your file must include this: * <strong>ALT_FREQ</strong>: Minor/ALT allele frequency in the tested population, or in a close population from a reference panel.</p>
+<p>Also, if doing a PGS on a quantitative trait GWAS dataset, your file must include this:</p>
+<ul>
+<li>
+<strong>ALT_FREQ</strong>: Minor/ALT allele frequency in the tested population, or in a close population from a reference panel.</li>
+</ul>
 </div>
 <div id="installation-of-rápidopgs" class="section level1">
 <h1 class="hasAnchor">
 <a href="#installation-of-r%C3%A1pidopgs" class="anchor"></a>Installation of RápidoPGS</h1>
-<p>Current RápidoPGS development version (v2.1.0) is available on GitHub, so we can install it using the following code (Note: If you don’t have <code>remotes</code> installed, please install it first:</p>
+<p>Current RápidoPGS version (v2.1.0) is available on CRAN, so we can install it using the following code</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"RapidoPGS"</span><span class="op">)</span></code></pre></div>
+<p>Alternatively, you can download the development version from Github (Note: If you don’t have <code>remotes</code> installed, please install it first:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html">requireNamespace</a></span><span class="op">(</span><span class="st">"remotes"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>
     <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span>
 <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"GRealesM/RapidoPGS"</span><span class="op">)</span></code></pre></div>
-<p>Note that previous version of RápidoPGS (v1.0.2) is available on CRAN, but we changed important things in the package, including functions for RápidoPGS-multi approach, so until we publish the current version we highly recommend downloading the current development version, to which this vignette refers to.</p>
 </div>
 <div id="setup" class="section level1">
 <h1 class="hasAnchor">
 <a href="#setup" class="anchor"></a>Setup</h1>
 <p>Once installed, let’s load it. This will automatically load all required dependencies.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">RapidoPGS</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="preparing-reference-panel" class="section level1">
@@ -154,7 +160,7 @@
 <p>A reference panel is simply genomic data obtained from a representative sample of a larger population. For example, the UK Biobank cohort comprises ~500,000 individuals between 40 and 69 years old from the United Kingdom and can be used as a reference for the UK (or more roughly, European) population. Unfortunately, UK Biobank data is only available to researches upon application, so in this example we will use the fully public 1000 Genomes Project Phase III as a reference panel.</p>
 <p>The 1000 Genomes Project Phase III comprises genomic data from 2504 individuals from multiple world populations, and although its sample size is relatively small compared to UK Biobank, it has the nice feature of being open for everyone to use it.</p>
 <p>Prior to running RápidoPGS-multi, we need to set up our reference panel. To easen things, you can use the <code>create_1000G</code>, which will do everything for you. Bear in mind that this will take ~60GB of disk memory and a while, depending of your internet connection, so be warned! You can tweak the QC parameters as you see fit. See function documentation for more information.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/create_1000G.html">create_1000G</a></span><span class="op">(</span>directory <span class="op">=</span> <span class="st">"ref-data"</span>, remove.related<span class="op">=</span><span class="cn">TRUE</span>, qc.maf <span class="op">=</span> <span class="fl">0.01</span>, qc.hwe<span class="op">=</span><span class="fl">1e-10</span>, qc.geno<span class="op">=</span><span class="fl">0</span>, autosomes.only<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p>And that should be it!</p>
 </div>
@@ -163,7 +169,7 @@
 <a href="#preparing-ld-matrices-uk-biobank-case" class="anchor"></a>Preparing LD matrices (UK Biobank case)</h1>
 <p>Alternatively, we can use pre-computed LD matrices (from a larger panel, for example). In our paper, we use pre-computed LD matrices from the UK Biobank panel, made publicly available by LDpred2 authors <a href="https://figshare.com/articles/dataset/European_LD_reference/13034123">here</a>.</p>
 <p>These matrices comprise ~1 million HapMap3 variants, and were computed on 362,320 UK Biobank individuals. We can download and set them up using the following code:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/files2.html">dir.create</a></span><span class="op">(</span><span class="st">"ukbb"</span><span class="op">)</span>  <span class="co"># Or whatever you like</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/download.file.html">download.file</a></span><span class="op">(</span><span class="st">"https://ndownloader.figshare.com/articles/13034123/versions/3"</span>, destfile<span class="op">=</span><span class="st">"ukbb/LD_ukbb.zip"</span>, mode<span class="op">=</span><span class="st">"wb"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/unzip.html">unzip</a></span><span class="op">(</span>zipfile<span class="op">=</span><span class="st">"ukbb/LD_ukbb.zip"</span>, exdir<span class="op">=</span><span class="st">"ukbb/"</span><span class="op">)</span> </code></pre></div>
@@ -179,14 +185,14 @@
 <p>In this vignette, we’ll use GWAS catalog to obtain an example dataset. For this vignette we’ll use a Breast cancer (BRCA) dataset from <a href="https://www.nature.com/articles/nature24284">Michailidou et al., 2017</a>, which is one that we used in our manuscript. This GWAS was performed on 119078 controls and 137045 cases of Breast cancer.</p>
 <p><strong>IMPORTANT NOTE</strong>: Input GWAS summary statistics and your reference panel (or LD matrices) <strong>must be in the same build</strong>. Both 1000 Genomes and UK Biobank LD matrices are in GRCh37/hg19 build, while harmonised GWAS catalog files come in GRCh38/hg38.</p>
 <p>Hence, instead of using <code><a href="../reference/gwascat.download.html">gwascat.download()</a></code>, we downloaded the hg19 version of the file <a href="http://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/MichailidouK_29059683_GCST004988/harmonised/29059683-GCST004988-EFO_0000305-build37.f.tsv.gz">here</a>, sampled 100,000 random SNPs (for educational purposes only, you don’t need to sample SNPs when building your PGS), and saved it as <code>michailidou19</code>, which we’ll now load.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">ds</span> <span class="op">&lt;-</span> <span class="va">michailidou19</span></code></pre></div>
 </div>
 <div id="computing-a-pgs-using-rápidopgs-multi-and-ld-matrices" class="section level1">
 <h1 class="hasAnchor">
 <a href="#computing-a-pgs-using-r%C3%A1pidopgs-multi-and-ld-matrices" class="anchor"></a>Computing a PGS using RápidoPGS-multi and LD matrices</h1>
 <p>Now we’re ready to compute our PGS using UK Biobank LD matrices, this is easily done as follows</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">model.LDmat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/rapidopgs_multi.html">rapidopgs_multi</a></span><span class="op">(</span><span class="va">ds</span> ,trait<span class="op">=</span><span class="st">"cc"</span>, LDmatrices <span class="op">=</span> <span class="st">"ukbb"</span><span class="op">)</span></code></pre></div>
 <p><strong>NOTE</strong>: The world has changed, and so has RápidoPGS. Thus, <code>N_LD</code> (corresponding to the sample size of the panel use to compute the LD matrices) is no longer required.</p>
 <p>Note that default <em>{block} is 10^-4 and </em>{SNP} is 0.01, which is a fast setting, but sheds off many SNPs. Also, default <code>ncores = 1</code>, which shouldn’t make much difference when using LD matrices.</p>
@@ -247,7 +253,7 @@ Working on chromosome 22.
 <h1 class="hasAnchor">
 <a href="#computing-a-pgs-using-r%C3%A1pidopgs-multi-and-1000-genomes-phase-iii-panel" class="anchor"></a>Computing a PGS using RápidoPGS-multi and 1000 Genomes Phase III panel</h1>
 <p>We can compute our PGS using 1000 Genomes Phase III panel as follows:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">model.refpanel</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/rapidopgs_multi.html">rapidopgs_multi</a></span><span class="op">(</span><span class="va">ds</span>, trait<span class="op">=</span><span class="st">"cc"</span>, reference <span class="op">=</span> <span class="st">"ref-data"</span>, ncores<span class="op">=</span><span class="fl">8</span><span class="op">)</span></code></pre></div>
 <p>Here, instead of <code>LDmatrices</code>, we just need to set <code>reference</code> to point to the directory in which our panel lives.</p>
 <p>Note that default <span class="math inline">\(\alpha_{block}\)</span> is <span class="math inline">\(10^{-4}\)</span> and <span class="math inline">\(\alpha_{SNP}\)</span> is 0.01, which is a fast setting, but sheds off many SNPs. Also, default <code>ncores = 1</code>, but this approach benefits from parallelisation, so we used 8 CPUs in this example.</p>

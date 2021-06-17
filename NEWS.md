@@ -1,5 +1,9 @@
 # RapidoPGS 2.1.0
 
+RapidoPGS 2.1.0.9004
+2021-06-17
+- Tiny updates in README and vignettes concerning dependencies and versions.
+
 RapidoPGS 2.1.0.9003
 2021-06-09
 - Removed need for N_LD in `rapidopgs_multi()`.

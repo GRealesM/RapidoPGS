@@ -8,9 +8,9 @@ status](https://www.r-pkg.org/badges/version/RapidoPGS)](https://cran.r-project.
 
 **A *rápido* and lightweight method to compute Polygenic Risk Scores.**
 
-**Last update:** 2021-06-09
+**Last update:** 2021-06-17
 
-**Current version:** 2.1.0.9003
+**Current version:** 2.1.0.9004
 
 This package allows to quickly (*rápido* is Spanish for "fast") compute polygenic scores (PGS) from case-control or quantitative trait GWAS summary statistic datasets, without the need of an external validation dataset.
 
@@ -27,11 +27,10 @@ You can find a description of the ideas behind RápidoPGS, as well as technical 
 
 # Installation
 
-RápidoPGS (1.0.2) is now available on CRAN. You can install it by typing the code below.
+RápidoPGS (2.1.0) is now available on CRAN. You can install it by typing the code below.
 ```
 install.packages("RapidoPGS")
 ```
-Since we are constantly improving the package, and CRAN version is currently outdated, we recommend to install the development version instead.
 
 ## Development version
 
@@ -44,22 +43,6 @@ install_github('GRealesM/RapidoPGS')
 ### A note on dependencies
 
 RápidoPGS has some dependencies that aren't available directly from CRAN, so must be installed a bit differently.
-
-**bigsnpr**
-
-Current `bigsnpr` development version (v1.6.7 as of 2021-03-08) is available from GitHub:
-```
-remotes::install_github('privefl/bigsnpr')
-```
-
-
-**coloc**
-
-We used a development branch of `coloc` package, which can be installed by typing:
-```
-remotes::install_github('chr1swallace/coloc', ref="susie")
-```
-
 
 **GenomicRanges**
 
