@@ -59,5 +59,4 @@ BiocManager::install("GenomicRanges")
 
 Full documentation and vignettes are available on the website (click on the cat if you're at the GitHub repo).
 
-At the moment, vignettes cover `rapidopgs_single()` only, but we'll try to add a tutorial for `rapidopgs_multi()` soon.
 
