@@ -848,10 +848,10 @@ create_1000G <- function(directory = "ref-data", remove.related=TRUE, qc.maf = 0
   if(!autosomes.only){
   # X and Y chromosomes have a bit different link
   message("Downloading chromosome X. Note that current RapidoPGS-multi version uses autosomes only.")
-  download.file("ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chrX.phase3_shapeit2_mvncall_integrated_v1b.20130502.genotypes.vcf.gz", destfile = paste0(directory,"/chr23.vcf.gz"), mode = "wb")
+  download.file("ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chrX.phase3_shapeit2_mvncall_integrated_v1c.20130502.genotypes.vcf.gz", destfile = paste0(directory,"/chr23.vcf.gz"), mode = "wb")
   message("Done!")
   message("Downloading chromosome Y. Note that current RapidoPGS-multi version uses autosomes only.")
-  download.file("ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chrY.phase3_integrated_v2a.20130502.genotypes.vcf.gz", destfile = paste0(directory,"/chr24.vcf.gz"), mode = "wb")
+  download.file("ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chrY.phase3_integrated_v2b.20130502.genotypes.vcf.gz", destfile = paste0(directory,"/chr24.vcf.gz"), mode = "wb")
   message("Done!")
   max.chr=24
   }
