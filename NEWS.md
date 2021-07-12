@@ -1,5 +1,14 @@
 # RapidoPGS 2.1.0
 
+RapidoPGS 2.1.0.9006 
+2021-07-12
+- Fixed an error popping up when `rapidopgs_multi()` is not supplied input of data.table class.
+- Removed a deprecated argument in `runsusie()` internal function that was preventing `rapidopgs_multi()` to run properly.
+
+RapidoPGS 2.1.0.9005 
+2021-07-09
+- Fixed a change in the hard-coded url to download 1000G panel from the official server to meet a change in versioning (v5a -> v5b) at the source.
+
 RapidoPGS 2.1.0.9004
 2021-06-17
 - Tiny updates in README and vignettes concerning dependencies and versions.

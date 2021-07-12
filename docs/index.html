@@ -99,8 +99,8 @@
 <!-- badges: start -->
 
 <p><strong>A <em>rápido</em> and lightweight method to compute Polygenic Risk Scores.</strong></p>
-<p><strong>Last update:</strong> 2021-07-09</p>
-<p><strong>Current version:</strong> 2.1.0.9005</p>
+<p><strong>Last update:</strong> 2021-07-12</p>
+<p><strong>Current version:</strong> 2.1.0.9006</p>
 <p>This package allows to quickly (<em>rápido</em> is Spanish for “fast”) compute polygenic scores (PGS) from case-control or quantitative trait GWAS summary statistic datasets, without the need of an external validation dataset.</p>
 </div>
 <div id="background" class="section level1">
@@ -117,6 +117,7 @@
 <ul>
 <li>In version 2.1.0 we added a functionality to <code><a href="reference/rapidopgs_multi.html">rapidopgs_multi()</a></code>, which now allows users to use their own LD matrices instead of computing them on the go from a reference panel. For European datasets, we recommend downloading UK Biobank LD matrices kindly provided by Privé et al., which can be accessed <a href="https://figshare.com/articles/dataset/European_LD_reference/13034123">here</a>.</li>
 <li>In development version 2.1.0.9005 we fixed a change in the hard-coded url to download 1000G panel from the official server to meet a change in versioning (v5a -&gt; v5b) at the source.</li>
+<li>In development version 2.1.0.9006 we fixed an error popping up when <code><a href="reference/rapidopgs_multi.html">rapidopgs_multi()</a></code> is not supplied input of data.table class, and removed a deprecated argument in <code>runsusie()</code> internal function that was preventing <code><a href="reference/rapidopgs_multi.html">rapidopgs_multi()</a></code> to run properly.</li>
 </ul>
 </div>
 <div id="installation" class="section level1">

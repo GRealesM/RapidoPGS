@@ -533,9 +533,11 @@ rapidopgs_single <- function(data,
 ##'}
 
 rapidopgs_multi <- function(data, trait=c("cc","quant"), reference=NULL, LDmatrices=NULL, N=NULL, ancestry="EUR", pi_i = 1e-04, ncores=1, alpha.block=1e-4, alpha.snp=0.01, sd.prior=NULL){
-  
-  ds <- copy(data) # avoid modifying input data.table
+ 
   # Sanity checks
+  if(!"data.table" %in% class(data))
+  	  data <- as.data.table(data)
+  
   if(!trait %in% c("cc", "quant")) stop("Please, specify your study type, choose case-control ('cc') or quantitative ('quant').")
   if(length(trait) != 1) stop("Please select only one study type")
   if(trait == "quant" && is.null(N)) stop("N (sample size) is required for quantitative traits, please provide them, either as an integer or as column name containing it.")
@@ -571,6 +573,7 @@ rapidopgs_multi <- function(data, trait=c("cc","quant"), reference=NULL, LDmatri
     }
   }
  
+  ds <- copy(data) # avoid modifying input data.table
   ds[,SNPID:=paste(CHR,BP, sep = ":")]
   ds  <- na.omit(ds, cols=c("CHR","BP", "BETA", "SE", "P"))
   
@@ -692,7 +695,7 @@ rapidopgs_multi <- function(data, trait=c("cc","quant"), reference=NULL, LDmatri
           prior_var = sd.prior^2
         }
         
-        ppi_susie <- suppressMessages(runsusie(susie.ds,nref=length(euridx),p=pi_i, prior_variance=prior_var, estimate_prior_variance=prior_est, check_R=FALSE))
+        ppi_susie <- suppressMessages(runsusie(susie.ds,nref=length(euridx),p=pi_i, prior_variance=prior_var, estimate_prior_variance=prior_est))
         ppi_susie <- ppi_susie$pip[1:(length(ppi_susie$pip)-1)]
         snp.block$ppi_susie <- ppi_susie
         results <- rbind(results, snp.block)
@@ -778,7 +781,7 @@ rapidopgs_multi <- function(data, trait=c("cc","quant"), reference=NULL, LDmatri
           prior_var  <-  sd.prior^2
         }
         
-        ppi_susie <- suppressMessages(runsusie(susie.ds,p=pi_i, prior_variance=prior_var, estimate_prior_variance=prior_est, check_R=FALSE))
+        ppi_susie <- suppressMessages(runsusie(susie.ds,p=pi_i, prior_variance=prior_var, estimate_prior_variance=prior_est))
         ppi_susie <- ppi_susie$pip[1:(length(ppi_susie$pip)-1)]
         snp.block$ppi_susie <- ppi_susie
         
