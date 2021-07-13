@@ -1,5 +1,9 @@
 # RapidoPGS 2.1.0
 
+RapidoPGS 2.1.0.9007
+2021-07-13
+- Fixed a bug caused by changes in behavior of `runsusie()` in `rapidopgs_multi()` that used to supply an extra zero element which is not supplied anymore.
+
 RapidoPGS 2.1.0.9006 
 2021-07-12
 - Fixed an error popping up when `rapidopgs_multi()` is not supplied input of data.table class.

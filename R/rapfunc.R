@@ -696,8 +696,9 @@ rapidopgs_multi <- function(data, trait=c("cc","quant"), reference=NULL, LDmatri
         }
         
         ppi_susie <- suppressMessages(runsusie(susie.ds,nref=length(euridx),p=pi_i, prior_variance=prior_var, estimate_prior_variance=prior_est))
-        ppi_susie <- ppi_susie$pip[1:(length(ppi_susie$pip)-1)]
-        snp.block$ppi_susie <- ppi_susie
+        snp.block$ppi_susie <- ppi_susie$pip
+        
+        # Append to results
         results <- rbind(results, snp.block)
         
         # Progress bar
@@ -782,8 +783,7 @@ rapidopgs_multi <- function(data, trait=c("cc","quant"), reference=NULL, LDmatri
         }
         
         ppi_susie <- suppressMessages(runsusie(susie.ds,p=pi_i, prior_variance=prior_var, estimate_prior_variance=prior_est))
-        ppi_susie <- ppi_susie$pip[1:(length(ppi_susie$pip)-1)]
-        snp.block$ppi_susie <- ppi_susie
+        snp.block$ppi_susie <- ppi_susie$pip
         
         # Append to results
         results <- rbind(results, snp.block)
