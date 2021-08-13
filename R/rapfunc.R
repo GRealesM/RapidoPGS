@@ -844,7 +844,7 @@ create_1000G <- function(directory = "ref-data", remove.related=TRUE, qc.maf = 0
   message("These are (very) big files, so they'll take a while to download. Time for a cuppa.")
   for(chr in c(1:max.chr)){
     message("Downloading chromosome ",chr,"...")
-    download.file(paste0("ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chr",chr,".phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz"),
+    download.file(paste0("ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/ALL.chr",chr,".phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz"),
                   destfile = paste0(directory,"/chr",chr,".vcf.gz"), mode = "wb")
     message("Done!")
   }

@@ -1,5 +1,9 @@
 # RapidoPGS 2.1.0
 
+RapidoPGS 2.1.0.9008
+2021-08-13
+- Fixed a change in the hard-coded url to download 1000G panel from the official server to meet a change in versioning (v5a -> v5b) at the source.
+
 RapidoPGS 2.1.0.9007
 2021-07-13
 - Fixed a bug caused by changes in behavior of `runsusie()` in `rapidopgs_multi()` that used to supply an extra zero element which is not supplied anymore.
@@ -11,7 +15,7 @@ RapidoPGS 2.1.0.9006
 
 RapidoPGS 2.1.0.9005 
 2021-07-09
-- Fixed a change in the hard-coded url to download 1000G panel from the official server to meet a change in versioning (v5a -> v5b) at the source.
+- Fixed a change in the hard-coded url to download 1000G panel from the official server to meet a change in versioning for sex chromosomes at the source.
 
 RapidoPGS 2.1.0.9004
 2021-06-17
