@@ -695,7 +695,7 @@ rapidopgs_multi <- function(data, trait=c("cc","quant"), reference=NULL, LDmatri
           prior_var = sd.prior^2
         }
         
-        ppi_susie <- suppressMessages(runsusie(susie.ds,nref=length(euridx),p=pi_i, prior_variance=prior_var, estimate_prior_variance=prior_est))
+        ppi_susie <- suppressMessages(runsusie(susie.ds,p=pi_i, prior_variance=prior_var, estimate_prior_variance=prior_est))
         snp.block$ppi_susie <- ppi_susie$pip
         
         # Append to results

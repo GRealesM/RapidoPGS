@@ -1,6 +1,10 @@
 # RapidoPGS 2.1.0
 
 RapidoPGS 2.1.0.9008
+2021-09-28
+- Fixed a bug derived from automatically supplying "nref" to SuSIE in `rapidopgs_multi()`, which is no longer required.
+
+RapidoPGS 2.1.0.9008
 2021-08-13
 - Fixed a change in the hard-coded url to download 1000G panel from the official server to meet a change in versioning (v5a -> v5b) at the source.
 
