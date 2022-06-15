@@ -32,7 +32,7 @@ You can find a description of the ideas behind RápidoPGS, as well as technical 
 
 # Installation
 
-RápidoPGS (2.1.0) is now available on CRAN. You can install it by typing the code below.
+RápidoPGS (2.2.0) is now available on CRAN. You can install it by typing the code below.
 ```
 install.packages("RapidoPGS")
 ```
