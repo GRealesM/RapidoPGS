@@ -5,7 +5,7 @@
 \alias{EUR_ld.blocks38}
 \title{LD block architecture for European populations (hg38).}
 \format{
-A GRanges object containing 1625 ranges
+A GRanges object containing 1361 ranges
 \describe{
 \item{seqnames}{chromosome}
 \item{ranges}{start and stop positions for the block}
@@ -13,15 +13,15 @@ A GRanges object containing 1625 ranges
 }
 }
 \source{
-\url{https://bitbucket.org/nygcresearch/ldetect-data/src}
+\url{https://raw.githubusercontent.com/jmacdon/LDblocks_GRCh38/master/data/EUR_LD_blocks.bed}
 }
 \usage{
 EUR_ld.blocks38
 }
 \description{
 A GRanges object containing the LD block for European ancestry, in hg38 build.
-This dataset was obtained from \href{https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4731402/}{Berisa and Pickrell (2016)}, in bed format,
-then liftovered to hg38 using UCSC liftOver tool, then converted to GRanges.
+This dataset was obtained from \href{https://www.biorxiv.org/content/10.1101/2022.03.04.483057v1}{MacDonald et al. (2022)}, in bed format,
+then transformed to GRanges.
 See manuscript for more details.
 }
 \keyword{datasets}

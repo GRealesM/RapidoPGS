@@ -17,17 +17,17 @@
 #' LD block architecture for European populations (hg38).
 #'
 #' A GRanges object containing the LD block for European ancestry, in hg38 build.
-#' This dataset was obtained from \href{https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4731402/}{Berisa and Pickrell (2016)}, in bed format,
-#' then liftovered to hg38 using UCSC liftOver tool, then converted to GRanges. 
+#' This dataset was obtained from \href{https://www.biorxiv.org/content/10.1101/2022.03.04.483057v1}{MacDonald et al. (2022)}, in bed format,
+#'  then transformed to GRanges.
 #' See manuscript for more details.
 #'
-#' @format A GRanges object containing 1625 ranges
+#' @format A GRanges object containing 1361 ranges
 #' \describe{
 #'   \item{seqnames}{chromosome}
 #'   \item{ranges}{start and stop positions for the block}
 #'   \item{strand}{genomic strand, irrelevant here}
 #' }
-#' @source \url{https://bitbucket.org/nygcresearch/ldetect-data/src} 
+#' @source \url{https://raw.githubusercontent.com/jmacdon/LDblocks_GRCh38/master/data/EUR_LD_blocks.bed} 
 #' 
 "EUR_ld.blocks38"
 

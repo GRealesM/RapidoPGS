@@ -8,17 +8,17 @@ status](https://www.r-pkg.org/badges/version/RapidoPGS)](https://cran.r-project.
 
 **A *rápido* and lightweight method to compute Polygenic Risk Scores.**
 
-**Last update:** 2021-09-28
+**Last update:** 2022-06-15
 
-**Current version:** 2.1.0.9009
+**Current version:** 2.2.0.9000
 
 This package allows to quickly (*rápido* is Spanish for "fast") compute polygenic scores (PGS) from case-control or quantitative trait GWAS summary statistic datasets, without the need of an external validation dataset.
 
 # Background
 
-You can find a description of the ideas behind RápidoPGS, as well as technical details in our preprint:
+You can find a description of the ideas behind RápidoPGS, as well as technical details in our *Bioinformatics* paper:
 
-> [Reales G, Vigorito E, Kelemen M, & Wallace C (2021) RápidoPGS: A rapid polygenic score calculator for summary GWAS data without validation dataset. *BioRxiv*.](https://www.biorxiv.org/content/10.1101/2020.07.24.220392v2)
+> [Reales G, Vigorito E, Kelemen M, & Wallace C (2021) RápidoPGS: A rapid polygenic score calculator for summary GWAS data without validation dataset. *Bioinformatics*, 37(23), 4444-50.](https://academic.oup.com/bioinformatics/article/37/23/4444/6305825)
 
 # News
 
@@ -27,6 +27,8 @@ You can find a description of the ideas behind RápidoPGS, as well as technical 
 * In development version 2.1.0.9006 we fixed an error popping up when `rapidopgs_multi()` is not supplied input of data.table class, and removed a deprecated argument in `runsusie()` internal function that was preventing `rapidopgs_multi()` to run properly.
 * In development version 2.1.0.9007 we fixed a bug caused by changes in behavior of `runsusie()` in `rapidopgs_multi()` that used to supply an extra zero element which is not supplied anymore.
 * In development version 2.1.0.9008 we fixed a change in the hard-coded url to download 1000G panel from the official server to meet a change in versioning (v5a -> v5b) at the source.
+* In development version 2.1.0.9009 we fixed a bug derived from automatically supplying "nref" to SuSIE in `rapidopgs_multi()`, which is no longer required.
+* In version 2.2.0.9000 we updated hg38 LD blocks from liftovered Berisa & Pickrell to recomputed MacDonald et al. 2022 (https://github.com/jmacdon/LDblocks_GRCh38, https://www.biorxiv.org/content/10.1101/2022.03.04.483057v1).
 
 # Installation
 

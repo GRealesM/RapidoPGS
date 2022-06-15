@@ -1,6 +1,10 @@
-# RapidoPGS 2.1.0
+# RapidoPGS 2.2.0
 
-RapidoPGS 2.1.0.9008
+RapidoPGS 2.2.0.9000
+2022-06-15
+- We updated hg38 LD blocks from liftovered Berisa & Pickrell to recomputed MacDonald et al. 2022 (https://github.com/jmacdon/LDblocks_GRCh38, https://www.biorxiv.org/content/10.1101/2022.03.04.483057v1), which offer a more accurate representation of LD structure in hg38.
+
+RapidoPGS 2.1.0.9009
 2021-09-28
 - Fixed a bug derived from automatically supplying "nref" to SuSIE in `rapidopgs_multi()`, which is no longer required.
 

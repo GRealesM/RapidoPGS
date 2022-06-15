@@ -1,0 +1,20 @@
+citHeader("To cite RapidoPGS in publications use:")
+
+citEntry(
+  entry    = "Article",
+  title    = "RápidoPGS: A rapid polygenic score calculator for summary GWAS data without validation dataset",
+  author   = c(person("Guillermo", "Reales"),
+               person("Vigorito", "Elena"),
+               person("Kelemen", "Martin"),
+               person("Wallace", "Chris")),
+  journal  = "Bioinformatics",
+  year     = "2021",
+  volume   = "37",
+  number   = "23",
+  pages    = "4444-4450",
+  url      = "https://academic.oup.com/bioinformatics/article/37/23/4444/6305825",
+  doi      = "10.1093/bioinformatics/btab456",
+  textVersion =  paste0("Guillermo Reales, Elena Vigorito, Martin Kelemen, ",
+                " and Chris Wallace. RápidoPGS: A rapid polygenic score calculator for summary GWAS data without validation dataset. ",
+                sprintf("R package version %s", meta$Version), ".")
+)

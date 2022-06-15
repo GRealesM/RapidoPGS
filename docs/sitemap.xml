@@ -1,7 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://GRealesM.github.io/RapidoPGS/404.html</loc>
+  </url>
+  <url>
+    <loc>http://GRealesM.github.io/RapidoPGS/articles/Computing_RapidoPGS.html</loc>
+  </url>
+  <url>
+    <loc>http://GRealesM.github.io/RapidoPGS/articles/Computing_RapidoPGSmulti.html</loc>
+  </url>
+  <url>
+    <loc>http://GRealesM.github.io/RapidoPGS/articles/Computing_RapidoPGSsingle.html</loc>
+  </url>
+  <url>
+    <loc>http://GRealesM.github.io/RapidoPGS/articles/index.html</loc>
+  </url>
+  <url>
+    <loc>http://GRealesM.github.io/RapidoPGS/authors.html</loc>
+  </url>
+  <url>
     <loc>http://GRealesM.github.io/RapidoPGS/index.html</loc>
+  </url>
+  <url>
+    <loc>http://GRealesM.github.io/RapidoPGS/news/index.html</loc>
   </url>
   <url>
     <loc>http://GRealesM.github.io/RapidoPGS/reference/EUR_ld.blocks.html</loc>
@@ -14,6 +35,9 @@
   </url>
   <url>
     <loc>http://GRealesM.github.io/RapidoPGS/reference/gwascat.download.html</loc>
+  </url>
+  <url>
+    <loc>http://GRealesM.github.io/RapidoPGS/reference/index.html</loc>
   </url>
   <url>
     <loc>http://GRealesM.github.io/RapidoPGS/reference/logsum.html</loc>
@@ -37,15 +61,12 @@
     <loc>http://GRealesM.github.io/RapidoPGS/reference/sdY.est.html</loc>
   </url>
   <url>
+    <loc>http://GRealesM.github.io/RapidoPGS/reference/susie_pip.html</loc>
+  </url>
+  <url>
     <loc>http://GRealesM.github.io/RapidoPGS/reference/wakefield_pp.html</loc>
   </url>
   <url>
     <loc>http://GRealesM.github.io/RapidoPGS/reference/wakefield_pp_quant.html</loc>
-  </url>
-  <url>
-    <loc>http://GRealesM.github.io/RapidoPGS/articles/Computing_RapidoPGSmulti.html</loc>
-  </url>
-  <url>
-    <loc>http://GRealesM.github.io/RapidoPGS/articles/Computing_RapidoPGSsingle.html</loc>
   </url>
 </urlset>
