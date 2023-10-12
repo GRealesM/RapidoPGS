@@ -23,7 +23,7 @@ performance of RapidoPGS functions on quantitative traits."><meta property="og:i
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RápidoPGS</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.3.0</span>
       </span>
     </div>
 
@@ -77,7 +77,7 @@ performance of RapidoPGS functions on quantitative traits.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">sd.prior.est</span><span class="op">(</span><span class="va">data</span>, <span class="va">h2</span>, <span class="va">N</span>, pi_i <span class="op">=</span> <span class="fl">1e-04</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">sd.prior.est</span><span class="op">(</span><span class="va">data</span>, <span class="va">h2</span>, <span class="va">N</span>, pi_i <span class="op">=</span> <span class="fl">1e-04</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -85,12 +85,19 @@ performance of RapidoPGS functions on quantitative traits.</p>
     <dl><dt>data</dt>
 <dd><p>a data.table containing the GWAS summary statistic input dataset.
 Must contain SNPID and SE columns.</p></dd>
+
+
 <dt>h2</dt>
 <dd><p>a numeric. Heritability estimate or h^2 (See details).</p></dd>
+
+
 <dt>N</dt>
 <dd><p>a numeric. Sample size of the GWAS input dataset.</p></dd>
+
+
 <dt>pi_i</dt>
 <dd><p>a numeric. Prior that a given variant is causal. DEFAULT = 1e-4.</p></dd>
+
 </dl></div>
     <div id="author">
     <h2>Author</h2>
@@ -99,17 +106,17 @@ Must contain SNPID and SE columns.</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">sumstats</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="op">(</span>SNPID<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"4:1479959"</span>,<span class="st">"20:13000913"</span>,<span class="st">"14:29107209"</span>,<span class="st">"2:203573414"</span>,</span>
-<span class="r-in"><span class="st">"4:57331393"</span>,<span class="st">"6:11003529"</span>,<span class="st">"6:149256398"</span>,<span class="st">"21:25630085"</span>,<span class="st">"13:79166661"</span><span class="op">)</span>, </span>
-<span class="r-in">    REF<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"C"</span>,<span class="st">"C"</span>,<span class="st">"C"</span>,<span class="st">"T"</span>,<span class="st">"G"</span>,<span class="st">"C"</span>,<span class="st">"C"</span>,<span class="st">"G"</span>,<span class="st">"T"</span><span class="op">)</span>, </span>
-<span class="r-in">    ALT<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A"</span>,<span class="st">"T"</span>,<span class="st">"T"</span>,<span class="st">"A"</span>,<span class="st">"A"</span>,<span class="st">"A"</span>,<span class="st">"T"</span>,<span class="st">"A"</span>,<span class="st">"C"</span><span class="op">)</span>, </span>
-<span class="r-in">    ALT_FREQ<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.2611</span>,<span class="fl">0.4482</span>,<span class="fl">0.0321</span>,<span class="fl">0.0538</span>,<span class="fl">0.574</span>,<span class="fl">0.0174</span>,<span class="fl">0.0084</span>,<span class="fl">0.0304</span>,<span class="fl">0.7528</span><span class="op">)</span>,</span>
-<span class="r-in">    BETA<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.012</span>,<span class="fl">0.0079</span>,<span class="fl">0.0224</span>,<span class="fl">0.0033</span>,<span class="fl">0.0153</span>,<span class="fl">0.058</span>,<span class="fl">0.0742</span>,<span class="fl">0.001</span>,<span class="op">-</span><span class="fl">0.0131</span><span class="op">)</span>,</span>
-<span class="r-in">    SE<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.0099</span>,<span class="fl">0.0066</span>,<span class="fl">0.0203</span>,<span class="fl">0.0171</span>,<span class="fl">0.0063</span>,<span class="fl">0.0255</span>,<span class="fl">0.043</span>,<span class="fl">0.0188</span>,<span class="fl">0.0074</span><span class="op">)</span>,</span>
-<span class="r-in">    P<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.2237</span>,<span class="fl">0.2316</span>,<span class="fl">0.2682</span>,<span class="fl">0.8477</span>,<span class="fl">0.01473</span>,<span class="fl">0.02298</span>,<span class="fl">0.08472</span>,<span class="fl">0.9573</span>,<span class="fl">0.07535</span><span class="op">)</span><span class="op">)</span> </span>
-<span class="r-in"><span class="va">sd.prior</span> <span class="op">&lt;-</span> <span class="fu">sd.prior.est</span><span class="op">(</span><span class="va">sumstats</span>, h2 <span class="op">=</span> <span class="fl">0.2456</span>, N <span class="op">=</span> <span class="fl">45658</span>, pi_i<span class="op">=</span><span class="fl">1e-4</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sumstats</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="op">(</span>SNPID<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"4:1479959"</span>,<span class="st">"20:13000913"</span>,<span class="st">"14:29107209"</span>,<span class="st">"2:203573414"</span>,</span></span>
+<span class="r-in"><span><span class="st">"4:57331393"</span>,<span class="st">"6:11003529"</span>,<span class="st">"6:149256398"</span>,<span class="st">"21:25630085"</span>,<span class="st">"13:79166661"</span><span class="op">)</span>, </span></span>
+<span class="r-in"><span>    REF<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"C"</span>,<span class="st">"C"</span>,<span class="st">"C"</span>,<span class="st">"T"</span>,<span class="st">"G"</span>,<span class="st">"C"</span>,<span class="st">"C"</span>,<span class="st">"G"</span>,<span class="st">"T"</span><span class="op">)</span>, </span></span>
+<span class="r-in"><span>    ALT<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A"</span>,<span class="st">"T"</span>,<span class="st">"T"</span>,<span class="st">"A"</span>,<span class="st">"A"</span>,<span class="st">"A"</span>,<span class="st">"T"</span>,<span class="st">"A"</span>,<span class="st">"C"</span><span class="op">)</span>, </span></span>
+<span class="r-in"><span>    ALT_FREQ<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.2611</span>,<span class="fl">0.4482</span>,<span class="fl">0.0321</span>,<span class="fl">0.0538</span>,<span class="fl">0.574</span>,<span class="fl">0.0174</span>,<span class="fl">0.0084</span>,<span class="fl">0.0304</span>,<span class="fl">0.7528</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    BETA<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.012</span>,<span class="fl">0.0079</span>,<span class="fl">0.0224</span>,<span class="fl">0.0033</span>,<span class="fl">0.0153</span>,<span class="fl">0.058</span>,<span class="fl">0.0742</span>,<span class="fl">0.001</span>,<span class="op">-</span><span class="fl">0.0131</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    SE<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.0099</span>,<span class="fl">0.0066</span>,<span class="fl">0.0203</span>,<span class="fl">0.0171</span>,<span class="fl">0.0063</span>,<span class="fl">0.0255</span>,<span class="fl">0.043</span>,<span class="fl">0.0188</span>,<span class="fl">0.0074</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    P<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.2237</span>,<span class="fl">0.2316</span>,<span class="fl">0.2682</span>,<span class="fl">0.8477</span>,<span class="fl">0.01473</span>,<span class="fl">0.02298</span>,<span class="fl">0.08472</span>,<span class="fl">0.9573</span>,<span class="fl">0.07535</span><span class="op">)</span><span class="op">)</span> </span></span>
+<span class="r-in"><span><span class="va">sd.prior</span> <span class="op">&lt;-</span> <span class="fu">sd.prior.est</span><span class="op">(</span><span class="va">sumstats</span>, h2 <span class="op">=</span> <span class="fl">0.2456</span>, N <span class="op">=</span> <span class="fl">45658</span>, pi_i<span class="op">=</span><span class="fl">1e-4</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -124,7 +131,7 @@ Must contain SNPID and SE columns.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

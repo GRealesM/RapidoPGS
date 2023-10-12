@@ -21,7 +21,7 @@ user to choose if there are more than one, and fetches the dataset."><meta prope
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RápidoPGS</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.3.0</span>
       </span>
     </div>
 
@@ -73,43 +73,36 @@ user to choose if there are more than one, and fetches the dataset.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">gwascat.download</span><span class="op">(</span><span class="va">ID</span>, filenum <span class="op">=</span> <span class="cn">NULL</span>, hm_only <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">gwascat.download</span><span class="op">(</span><span class="va">ID</span>, harmonised <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>ID</dt>
 <dd><p>a numeric. A PubMed ID (PMID) reference number from a GWAS paper.</p></dd>
-<dt>filenum</dt>
-<dd><p>a numeric. If multiple files are available, which one to choose? If NULL (DEFAULT), R will prompt an interactive prompt, asking for the number.</p></dd>
-<dt>hm_only</dt>
-<dd><p>a logical. Should GWAS catalog harmonised columns be retained?</p></dd>
+
+
+<dt>harmonised</dt>
+<dd><p>a logical. Should GWAS catalog harmonised files be pursued?
+If not available, the function will fall back to non-harmonised</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>a data.table containing the dataset.</p>
+    
+
+<p>a character vector containing the url(s) to the dataset(s).</p>
     </div>
     <div id="details">
     <h2>Details</h2>
     <p>If multiple files are available for the same study, R will prompt an interactive
-dialogue to select a specific file, by number. If you know the number and
-prefer to select it automatically, you can provide it using file argument.</p>
+dialogue to select a specific file, by number.</p>
     </div>
     <div id="author">
     <h2>Author</h2>
     <p>Guillermo Reales</p>
     </div>
 
-    <div id="ref-examples">
-    <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">gwascat.download</span><span class="op">(</span><span class="fl">29059683</span>, hm_only <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="co"># This should work: Michailidou dataset</span></span>
-<span class="r-in"><span class="va">wrongds</span> <span class="op">&lt;-</span> <span class="fu">gwascat.download</span><span class="op">(</span><span class="fl">01223247236</span><span class="op">)</span> <span class="co"># This shouldn't work: The Empress pub phone number</span></span>
-<span class="r-in"><span class="op">}</span></span>
-<span class="r-in"></span>
-</code></pre></div>
-    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>
@@ -122,7 +115,7 @@ prefer to select it automatically, you can provide it using file argument.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

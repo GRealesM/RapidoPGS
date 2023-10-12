@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RápidoPGS</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.3.0</span>
       </span>
     </div>
 
@@ -61,8 +61,15 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="2.2.0" id="rapidopgs-220">RapidoPGS 2.2.0<a class="anchor" aria-label="anchor" href="#rapidopgs-220"></a></h2>
+<h2 class="page-header" data-toc-text="2.3.0" id="rapidopgs-230">RapidoPGS 2.3.0<a class="anchor" aria-label="anchor" href="#rapidopgs-230"></a></h2>
+<p>RápidoPGS 2.3.0 2023-10-12 - We updated <code><a href="../reference/rapidopgs_multi.html">rapidopgs_multi()</a></code> to accommodate updates in both <code>coloc</code> and <code>susieR</code>. This involved adding some arguments (N, sample size), and removing others (pi_i, prior probability, now automatically computed by SuSiE). We also now allow the user to supply their own LD block file for non-European GWAS. - Fixed <code><a href="../reference/gwascat.download.html">gwascat.download()</a></code> to accommodate the new GWAS catalog file structure. Now it is more interactive, providing extra flexibility. - Updated vignettes.</p>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.2.0" id="rapidopgs-220">RapidoPGS 2.2.0<small>2022-06-15</small><a class="anchor" aria-label="anchor" href="#rapidopgs-220"></a></h2>
 <p>RapidoPGS 2.2.0.9000 2022-06-15 - We updated hg38 LD blocks from liftovered Berisa &amp; Pickrell to recomputed MacDonald et al. 2022 (<a href="https://github.com/jmacdon/LDblocks_GRCh38" class="external-link uri">https://github.com/jmacdon/LDblocks_GRCh38</a>, <a href="https://www.biorxiv.org/content/10.1101/2022.03.04.483057v1" class="external-link uri">https://www.biorxiv.org/content/10.1101/2022.03.04.483057v1</a>), which offer a more accurate representation of LD structure in hg38.</p>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.1.0" id="rapidopgs-210">RapidoPGS 2.1.0<small>2021-06-17</small><a class="anchor" aria-label="anchor" href="#rapidopgs-210"></a></h2>
 <p>RapidoPGS 2.1.0.9009 2021-09-28 - Fixed a bug derived from automatically supplying “nref” to SuSIE in <code><a href="../reference/rapidopgs_multi.html">rapidopgs_multi()</a></code>, which is no longer required.</p>
 <p>RapidoPGS 2.1.0.9008 2021-08-13 - Fixed a change in the hard-coded url to download 1000G panel from the official server to meet a change in versioning (v5a -&gt; v5b) at the source.</p>
 <p>RapidoPGS 2.1.0.9007 2021-07-13 - Fixed a bug caused by changes in behavior of <code>runsusie()</code> in <code><a href="../reference/rapidopgs_multi.html">rapidopgs_multi()</a></code> that used to supply an extra zero element which is not supplied anymore.</p>
@@ -101,7 +108,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

@@ -1,10 +1,10 @@
-pandoc: '2.18'
-pkgdown: 2.0.3
+pandoc: 2.14.0.3
+pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
   Computing_RapidoPGSmulti: Computing_RapidoPGSmulti.html
   Computing_RapidoPGSsingle: Computing_RapidoPGSsingle.html
-last_built: 2022-06-15T13:49Z
+last_built: 2023-10-12T14:25Z
 urls:
   reference: http://GRealesM.github.io/RapidoPGS/reference
   article: http://GRealesM.github.io/RapidoPGS/articles
