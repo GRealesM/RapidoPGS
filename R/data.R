@@ -49,7 +49,7 @@
 #'   \item{standard_error}{standard error of beta}
 #'   \item{p_value}{p-value}
 #' }
-#' @source \url{ftp://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST004001-GCST005000/GCST004988/harmonised/29059683-GCST004988-EFO_0000305.h.tsv.gz} 
+#' @source \url{http://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST004001-GCST005000/GCST004988/harmonised/29059683-GCST004988-EFO_0000305.h.tsv.gz} 
 #' 
 "michailidou38"
 
@@ -71,6 +71,6 @@
 #'   \item{SE}{standard error of beta}
 #'   \item{P}{p-value}
 #' }
-#' @source \url{ftp://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST004001-GCST005000/GCST004988/harmonised/29059683-GCST004988-EFO_0000305-build37.f.tsv.gz} 
+#' @source \url{http://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST004001-GCST005000/GCST004988/harmonised/29059683-GCST004988-EFO_0000305-build37.f.tsv.gz} 
 #' 
 "michailidou19"

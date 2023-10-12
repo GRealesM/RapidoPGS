@@ -4,7 +4,7 @@ library(data.table)
 set.seed(1)
 options(timeout=10000)
 
-ds <- fread("ftp://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST004001-GCST005000/GCST004988/harmonised/29059683-GCST004988-EFO_0000305-build37.f.tsv.gz")
+ds <- fread("http://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST004001-GCST005000/GCST004988/harmonised/29059683-GCST004988-EFO_0000305-build37.f.tsv.gz")
 
 # If running interactively, you can also run the next line, selecting option 1 -- hg19
 # ds <- gwascat.download(29059683)
