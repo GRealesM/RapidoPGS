@@ -123,7 +123,7 @@ Now we're ready to compute our PGS using UK Biobank LD matrices, this is easily 
 model.LDmat <- rapidopgs_multi(ds, LDmatrices = "ukbb", N = 256123, build = "hg19", trait="cc")
 ```
 
-Note that default \alpha_{block} is 10^-4 and \alpha_{SNP} is 0.01, which is a fast setting, but sheds off many SNPs. Also, sample size (N) is now required by RápidoPGS for both case-control and quantitative datasets. For case-control datasets, `N = Ncases + Ncontrols`.
+Note that default $\alpha_{block}$ is $10^-4$ and $\alpha_{SNP}$ is 0.01, which is a fast setting, but sheds off many SNPs. Also, sample size (N) is now required by RápidoPGS for both case-control and quantitative datasets. For case-control datasets, `N = Ncases + Ncontrols`.
 
 ```
 You selected hg19 build. Please note that your reference or LDmatrices must be in the same build as your dataset.
@@ -181,7 +181,7 @@ Working on chromosome 22.
 ```
 
 After this `model.LDmat$weight` will contain the weights for each SNP. 
-Bear in mind that depending on your \alpha settings, your model will have much fewer SNPs than your input file.
+Bear in mind that depending on your $\alpha$ settings, your model will have much fewer SNPs than your input file.
 
 
 # Computing a PGS using RápidoPGS-multi and 1000 Genomes Phase III panel

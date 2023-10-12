@@ -191,7 +191,7 @@
 <p>Now we’re ready to compute our PGS using UK Biobank LD matrices, this is easily done as follows.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model.LDmat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/rapidopgs_multi.html">rapidopgs_multi</a></span><span class="op">(</span><span class="va">ds</span>, LDmatrices <span class="op">=</span> <span class="st">"ukbb"</span>, N <span class="op">=</span> <span class="fl">256123</span>, build <span class="op">=</span> <span class="st">"hg19"</span>, trait<span class="op">=</span><span class="st">"cc"</span><span class="op">)</span></span></code></pre></div>
-<p>Note that default <em>{block} is 10^-4 and </em>{SNP} is 0.01, which is a fast setting, but sheds off many SNPs. Also, sample size (N) is now required by RápidoPGS for both case-control and quantitative datasets. For case-control datasets, <code>N = Ncases + Ncontrols</code>.</p>
+<p>Note that default <span class="math inline">\(\alpha_{block}\)</span> is <span class="math inline">\(10^-4\)</span> and <span class="math inline">\(\alpha_{SNP}\)</span> is 0.01, which is a fast setting, but sheds off many SNPs. Also, sample size (N) is now required by RápidoPGS for both case-control and quantitative datasets. For case-control datasets, <code>N = Ncases + Ncontrols</code>.</p>
 <pre><code>You selected hg19 build. Please note that your reference or LDmatrices must be in the same build as your dataset.
 Assigning LD blocks using pre-computed hg19 LD blocks.
 Done!
@@ -244,7 +244,7 @@ Working on chromosome 21.
 Working on chromosome 22.
   |======================================================================| 100%
 </code></pre>
-<p>After this <code>model.LDmat$weight</code> will contain the weights for each SNP. Bear in mind that depending on your settings, your model will have much fewer SNPs than your input file.</p>
+<p>After this <code>model.LDmat$weight</code> will contain the weights for each SNP. Bear in mind that depending on your <span class="math inline">\(\alpha\)</span> settings, your model will have much fewer SNPs than your input file.</p>
 </div>
 <div class="section level2">
 <h2 id="computing-a-pgs-using-rápidopgs-multi-and-1000-genomes-phase-iii-panel">Computing a PGS using RápidoPGS-multi and 1000 Genomes Phase III panel<a class="anchor" aria-label="anchor" href="#computing-a-pgs-using-r%C3%A1pidopgs-multi-and-1000-genomes-phase-iii-panel"></a>
