@@ -108,7 +108,7 @@ In this vignette, we'll use GWAS catalog to obtain an example dataset. For this 
 **IMPORTANT NOTE**: Input GWAS summary statistics and your reference panel (or LD matrices) **must be in the same build**. Both 1000 Genomes and UK Biobank LD matrices are in GRCh37/hg19 build, while harmonised GWAS catalog files come in GRCh38/hg38. 
 
 
-Hence, instead of using `gwascat.download()`, we downloaded the hg19 version of the file [here](http://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST004001-GCST005000/GCST004988/harmonised/29059683-GCST004988-EFO_0000305-build37.f.tsv.gz), sampled 100,000 random SNPs (for educational purposes only, you don't need to sample SNPs when building your PGS), and saved it as `michailidou19`, which we'll now load.
+You can use `gwascat.download()` to download files from GWAS catalog see the RápidoPGS single [vignette](https://grealesm.github.io/RapidoPGS/articles/Computing_RapidoPGSsingle.html). In this case, we downloaded the hg19 version of the file [here](http://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST004001-GCST005000/GCST004988/harmonised/29059683-GCST004988-EFO_0000305-build37.f.tsv.gz), sampled 100,000 random SNPs (for educational purposes only, you don't need to sample SNPs when building your PGS), and saved it as `michailidou19`, which we'll now load.
 
 
 ```{r eval=FALSE}
@@ -126,7 +126,78 @@ model.LDmat <- rapidopgs_multi(ds, LDmatrices = "ukbb", N = 256123, build = "hg1
 Note that default \alpha_{block} is 10^-4 and \alpha_{SNP} is 0.01, which is a fast setting, but sheds off many SNPs. Also, sample size (N) is now required by RápidoPGS for both case-control and quantitative datasets. For case-control datasets, `N = Ncases + Ncontrols`.
 
 ```
-You selected 1 core. When using a reference you can increase the number of cores
+You selected hg19 build. Please note that your reference or LDmatrices must be in the same build as your dataset.
+Assigning LD blocks using pre-computed hg19 LD blocks.
+Done!
+Running RapidoPGS-multi model with multiple causal variant assumption for a GWAS summary statistics dataset in hg19, of EUR ancestry, and with N = 256123.
+100,000 variants to be matched.
+0 ambiguous SNPs have been removed.
+9,207 variants have been matched; 0 were flipped and 0 were reversed.
+Working on chromosome 1.
+  |======================================================================| 100%
+Working on chromosome 2.
+  |======================================================================| 100%
+Working on chromosome 3.
+  |======================================================================| 100%
+Working on chromosome 4.
+  |======================================================================| 100%
+Working on chromosome 5.
+  |======================================================================| 100%
+Working on chromosome 6.
+  |======================================================================| 100%
+Working on chromosome 7.
+  |======================================================================| 100%
+Working on chromosome 8.
+  |======================================================================| 100%
+Working on chromosome 9.
+  |======================================================================| 100%
+Working on chromosome 10.
+  |======================================================================| 100%
+Working on chromosome 11.
+  |======================================================================| 100%
+Working on chromosome 12.
+  |======================================================================| 100%
+Working on chromosome 13.
+  |======================================================================| 100%
+Working on chromosome 14.
+  |======================================================================| 100%
+Working on chromosome 15.
+  |======================================================================| 100%
+Working on chromosome 16.
+  |======================================================================| 100%
+Working on chromosome 17.
+  |======================================================================| 100%
+Working on chromosome 18.
+  |======================================================================| 100%
+Working on chromosome 19.
+  |======================================================================| 100%
+Working on chromosome 20.
+  |======================================================================| 100%
+Working on chromosome 21.
+  |======================================================================| 100%
+Working on chromosome 22.
+  |======================================================================| 100%
+
+```
+
+After this `model.LDmat$weight` will contain the weights for each SNP. 
+Bear in mind that depending on your \alpha settings, your model will have much fewer SNPs than your input file.
+
+
+# Computing a PGS using RápidoPGS-multi and 1000 Genomes Phase III panel
+
+We can compute our PGS using 1000 Genomes Phase III panel as follows:
+
+```{r eval=FALSE}
+model.refpanel <- rapidopgs_multi(ds, reference = "ref-data",  N = 256123, build = "hg19", trait="cc", ncores=8)
+```
+
+Here, instead of `LDmatrices`, we just need to set `reference` to point to the directory in which our panel lives. 
+
+Note that default $\alpha_{block}$ is $10^{-4}$ and $\alpha_{SNP}$ is 0.01, which is a fast setting, but sheds off many SNPs. Also, default `ncores = 1`, but this approach benefits from parallelisation, so we used 8 CPUs in this example.
+
+
+```
 You selected hg19 build. Please note that your reference or LDmatrices must be in the same build as your dataset.
 Assigning LD blocks using pre-computed hg19 LD blocks.
 Done!
@@ -266,166 +337,6 @@ Matching and aligning SNPs in chr22 to the reference
 76 ambiguous SNPs have been removed.
 642 variants have been matched; 0 were flipped and 487 were reversed.
   |======================================================================| 100%
-
-```
-
-After this `model.LDmat$weight` will contain the weights for each SNP. 
-Bear in mind that depending on your \alpha settings, your model will have much fewer SNPs than your input file.
-
-
-# Computing a PGS using RápidoPGS-multi and 1000 Genomes Phase III panel
-
-We can compute our PGS using 1000 Genomes Phase III panel as follows:
-
-```{r eval=FALSE}
-model.refpanel <- rapidopgs_multi(ds, reference = "ref-data",  N = 256123, build = "hg19", trait="cc", ncores=8)
-```
-
-Here, instead of `LDmatrices`, we just need to set `reference` to point to the directory in which our panel lives. 
-
-Note that default $\alpha_{block}$ is $10^{-4}$ and $\alpha_{SNP}$ is 0.01, which is a fast setting, but sheds off many SNPs. Also, default `ncores = 1`, but this approach benefits from parallelisation, so we used 8 CPUs in this example.
-
-
-```
-Assigning LD blocks...
-Done!
-Running RápidoPGS-multi model with multiple causal variant assumption for a
- case-control dataset.
-Working on chromosome 1.
-Matching and aligning SNPs in chr1 to the reference
-7,747 variants to be matched.
-670 ambiguous SNPs have been removed.
-Some duplicates were removed.
-4,467 variants have been matched; 0 were flipped and 3,634 were reversed.
-  |================================================================| 100%
-Working on chromosome 2.
-Matching and aligning SNPs in chr2 to the reference
-8,371 variants to be matched.
-759 ambiguous SNPs have been removed.
-4,777 variants have been matched; 0 were flipped and 3,969 were reversed.
-  |================================================================| 100%
-Working on chromosome 3.
-Matching and aligning SNPs in chr3 to the reference
-6,948 variants to be matched.
-664 ambiguous SNPs have been removed.
-3,999 variants have been matched; 0 were flipped and 3,257 were reversed.
-  |================================================================| 100%
-Working on chromosome 4.
-Matching and aligning SNPs in chr4 to the reference
-7,318 variants to be matched.
-681 ambiguous SNPs have been removed.
-4,326 variants have been matched; 0 were flipped and 3,530 were reversed.
-  |================================================================| 100%
-Working on chromosome 5.
-Matching and aligning SNPs in chr5 to the reference
-6,370 variants to be matched.
-603 ambiguous SNPs have been removed.
-3,795 variants have been matched; 0 were flipped and 3,114 were reversed.
-  |================================================================| 100%
-Working on chromosome 6.
-Matching and aligning SNPs in chr6 to the reference
-6,673 variants to be matched.
-628 ambiguous SNPs have been removed.
-3,975 variants have been matched; 0 were flipped and 3,226 were reversed.
-  |================================================================| 100%
-Working on chromosome 7.
-Matching and aligning SNPs in chr7 to the reference
-5,924 variants to be matched.
-552 ambiguous SNPs have been removed.
-3,455 variants have been matched; 0 were flipped and 2,845 were reversed.
-  |================================================================| 100%
-Working on chromosome 8.
-Matching and aligning SNPs in chr8 to the reference
-5,348 variants to be matched.
-558 ambiguous SNPs have been removed.
-3,073 variants have been matched; 0 were flipped and 2,491 were reversed.
-  |================================================================| 100%
-Working on chromosome 9.
-Matching and aligning SNPs in chr9 to the reference
-4,352 variants to be matched.
-456 ambiguous SNPs have been removed.
-2,498 variants have been matched; 0 were flipped and 2,072 were reversed.
-  |================================================================| 100%
-Working on chromosome 10.
-Matching and aligning SNPs in chr10 to the reference
-5,131 variants to be matched.
-517 ambiguous SNPs have been removed.
-3,038 variants have been matched; 0 were flipped and 2,498 were reversed.
-  |================================================================| 100%
-Working on chromosome 11.
-Matching and aligning SNPs in chr11 to the reference
-4,879 variants to be matched.
-453 ambiguous SNPs have been removed.
-2,821 variants have been matched; 0 were flipped and 2,282 were reversed.
-  |================================================================| 100%
-Working on chromosome 12.
-Matching and aligning SNPs in chr12 to the reference
-4,795 variants to be matched.
-457 ambiguous SNPs have been removed.
-2,732 variants have been matched; 0 were flipped and 2,208 were reversed.
-  |================================================================| 100%
-Working on chromosome 13.
-Matching and aligning SNPs in chr13 to the reference
-3,697 variants to be matched.
-309 ambiguous SNPs have been removed.
-2,266 variants have been matched; 0 were flipped and 1,873 were reversed.
-  |================================================================| 100%
-Working on chromosome 14.
-Matching and aligning SNPs in chr14 to the reference
-3,338 variants to be matched.
-285 ambiguous SNPs have been removed.
-1,947 variants have been matched; 0 were flipped and 1,610 were reversed.
-  |================================================================| 100%
-Working on chromosome 15.
-Matching and aligning SNPs in chr15 to the reference
-2,891 variants to be matched.
-291 ambiguous SNPs have been removed.
-1,607 variants have been matched; 0 were flipped and 1,322 were reversed.
-  |================================================================| 100%
-Working on chromosome 16.
-Matching and aligning SNPs in chr16 to the reference
-3,176 variants to be matched.
-357 ambiguous SNPs have been removed.
-Some duplicates were removed.
-1,739 variants have been matched; 0 were flipped and 1,439 were reversed.
-  |================================================================| 100%
-Working on chromosome 17.
-Matching and aligning SNPs in chr17 to the reference
-2,695 variants to be matched.
-232 ambiguous SNPs have been removed.
-1,579 variants have been matched; 0 were flipped and 1,311 were reversed.
-  |================================================================| 100%
-Working on chromosome 18.
-Matching and aligning SNPs in chr18 to the reference
-2,804 variants to be matched.
-248 ambiguous SNPs have been removed.
-1,680 variants have been matched; 0 were flipped and 1,358 were reversed.
-  |================================================================| 100%
-Working on chromosome 19.
-Matching and aligning SNPs in chr19 to the reference
-2,437 variants to be matched.
-222 ambiguous SNPs have been removed.
-1,425 variants have been matched; 0 were flipped and 1,172 were reversed.
-  |================================================================| 100%
-Working on chromosome 20.
-Matching and aligning SNPs in chr20 to the reference
-2,224 variants to be matched.
-208 ambiguous SNPs have been removed.
-Some duplicates were removed.
-1,347 variants have been matched; 0 were flipped and 1,136 were reversed.
-  |================================================================| 100%
-Working on chromosome 21.
-Matching and aligning SNPs in chr21 to the reference
-1,432 variants to be matched.
-137 ambiguous SNPs have been removed.
-844 variants have been matched; 0 were flipped and 683 were reversed.
-  |================================================================| 100%
-Working on chromosome 22.
-Matching and aligning SNPs in chr22 to the reference
-1,446 variants to be matched.
-117 ambiguous SNPs have been removed.
-851 variants have been matched; 0 were flipped and 710 were reversed.
-  |================================================================| 100%
 ```
 
 After this `model.refpanel$weight` will contain the weights for each SNP. 
