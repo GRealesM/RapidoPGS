@@ -19,7 +19,7 @@ A data.table object containing 100,000 SNPs
 }
 }
 \source{
-\url{ftp://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST004001-GCST005000/GCST004988/harmonised/29059683-GCST004988-EFO_0000305.h.tsv.gz}
+\url{http://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST004001-GCST005000/GCST004988/harmonised/29059683-GCST004988-EFO_0000305.h.tsv.gz}
 }
 \usage{
 michailidou38

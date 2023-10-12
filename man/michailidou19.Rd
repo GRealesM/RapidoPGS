@@ -20,7 +20,7 @@ SNPID, CHR, BP, REF, ALT, ALT_FREQ, BETA, SE, P
 }
 }
 \source{
-\url{ftp://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST004001-GCST005000/GCST004988/harmonised/29059683-GCST004988-EFO_0000305-build37.f.tsv.gz}
+\url{http://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST004001-GCST005000/GCST004988/harmonised/29059683-GCST004988-EFO_0000305-build37.f.tsv.gz}
 }
 \usage{
 michailidou19
