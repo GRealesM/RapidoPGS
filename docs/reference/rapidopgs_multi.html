@@ -148,19 +148,10 @@ You'll also need to provide matching LD.blocks via the LDblocks argument.</p></d
 <dt>LDblocks</dt>
 <dd><p>a string indicating the path to an alternative LD block file in .RData format. Only required for non-European PGS.</p></dd>
 
-
-<dt>pi_i</dt>
-<dd><p>a scalar representing the prior probability (DEFAULT:
-\(1 \times 10^{-4}\)).If you wish SuSiE to estimate this internally, set p=NULL.</p></dd>
-
 </dl></div>
     <div id="value">
     <h2>Value</h2>
     
-
-<p>a data.table containing the sumstats dataset with
-computed PGS weights.</p>
-
 
 <p>a data.table containing the sumstats dataset with
 computed PGS weights.</p>
@@ -222,7 +213,19 @@ These matrices were computed using for 1,054,330 HapMap3 variants based on
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="va">ss</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    CHR<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"4"</span>,<span class="st">"20"</span>,<span class="st">"14"</span>,<span class="st">"2"</span>,<span class="st">"4"</span>,<span class="st">"6"</span>,<span class="st">"6"</span>,<span class="st">"21"</span>,<span class="st">"13"</span><span class="op">)</span>, </span></span>
+<span class="r-in"><span>    BP<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1479959</span>, <span class="fl">13000913</span>, <span class="fl">29107209</span>, <span class="fl">203573414</span>, <span class="fl">57331393</span>, <span class="fl">11003529</span>, <span class="fl">149256398</span>, </span></span>
+<span class="r-in"><span>        <span class="fl">25630085</span>, <span class="fl">79166661</span><span class="op">)</span>, </span></span>
+<span class="r-in"><span>    REF<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"C"</span>,<span class="st">"C"</span>,<span class="st">"C"</span>,<span class="st">"T"</span>,<span class="st">"G"</span>,<span class="st">"C"</span>,<span class="st">"C"</span>,<span class="st">"G"</span>,<span class="st">"T"</span><span class="op">)</span>, </span></span>
+<span class="r-in"><span>    ALT<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A"</span>,<span class="st">"T"</span>,<span class="st">"T"</span>,<span class="st">"A"</span>,<span class="st">"A"</span>,<span class="st">"A"</span>,<span class="st">"T"</span>,<span class="st">"A"</span>,<span class="st">"C"</span><span class="op">)</span>, </span></span>
+<span class="r-in"><span>    BETA<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.012</span>,<span class="fl">0.0079</span>,<span class="fl">0.0224</span>,<span class="fl">0.0033</span>,<span class="fl">0.0153</span>,<span class="fl">0.058</span>,<span class="fl">0.0742</span>,<span class="fl">0.001</span>,<span class="op">-</span><span class="fl">0.0131</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    SE<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.0099</span>,<span class="fl">0.0066</span>,<span class="fl">0.0203</span>,<span class="fl">0.0171</span>,<span class="fl">0.0063</span>,<span class="fl">0.0255</span>,<span class="fl">0.043</span>,<span class="fl">0.0188</span>,<span class="fl">0.0074</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    P<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.2237</span>,<span class="fl">0.2316</span>,<span class="fl">0.2682</span>,<span class="fl">0.8477</span>,<span class="fl">0.01473</span>,<span class="fl">0.02298</span>,<span class="fl">0.08472</span>,<span class="fl">0.9573</span>,<span class="fl">0.07535</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">PGS</span> <span class="op">&lt;-</span> <span class="fu">rapidopgs_multi</span><span class="op">(</span><span class="va">ss</span>, reference <span class="op">=</span> <span class="st">"ref-data/"</span>, N <span class="op">=</span> <span class="fl">20000</span>, build <span class="op">=</span> <span class="st">"hg19"</span>, trait<span class="op">=</span><span class="st">"cc"</span>, ncores<span class="op">=</span><span class="fl">5</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+</code></pre></div>
     </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
