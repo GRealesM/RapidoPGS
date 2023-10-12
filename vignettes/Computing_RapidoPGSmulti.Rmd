@@ -340,7 +340,7 @@ Matching and aligning SNPs in chr22 to the reference
 ```
 
 After this `model.refpanel$weight` will contain the weights for each SNP. 
-Bear in mind that depending on your \alpha settings, your model will have much fewer SNPs than your input file.
+Bear in mind that depending on your $\alpha$ settings, your model will have much fewer SNPs than your input file.
 
 # Conclusion
 
