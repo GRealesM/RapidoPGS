@@ -56,14 +56,8 @@ If using an alternative population, bear in mind that your LD matrices or refere
 You'll also need to provide matching LD.blocks via the LDblocks argument.}
 
 \item{LDblocks}{a string indicating the path to an alternative LD block file in .RData format. Only required for non-European PGS.}
-
-\item{pi_i}{a scalar representing the prior probability (DEFAULT:
-\eqn{1 \times 10^{-4}}).If you wish SuSiE to estimate this internally, set p=NULL.}
 }
 \value{
-a data.table containing the sumstats dataset with
-computed PGS weights.
-
 a data.table containing the sumstats dataset with
 computed PGS weights.
 }
@@ -113,67 +107,7 @@ These matrices were computed using for 1,054,330 HapMap3 variants based on
 }
 \examples{
 \dontrun{
-sumstats <- data.table(
-		CHR=c("4","20","14","2","4","6","6","21","13"), 
-		BP=c(1479959, 13000913, 29107209, 203573414, 57331393, 11003529, 149256398, 
-				25630085, 79166661), 
-		REF=c("C","C","C","T","G","C","C","G","T"), 
-		ALT=c("A","T","T","A","A","A","T","A","C"), 
-		ALT_FREQ=c(0.2611,0.4482,0.0321,0.0538,0.574,0.0174,0.0084,0.0304,0.7528),
-		BETA=c(0.012,0.0079,0.0224,0.0033,0.0153,0.058,0.0742,0.001,-0.0131),
-		SE=c(0.0099,0.0066,0.0203,0.0171,0.0063,0.0255,0.043,0.0188,0.0074),
-		P=c(0.2237,0.2316,0.2682,0.8477,0.01473,0.02298,0.08472,0.9573,0.07535))
-PGS  <- rapidopgs_multi(sumstats, trait="cc", reference = "ref-data/", ncores=2)
-}
-Compute PGS from GWAS summary statistics using Bayesian sum of single-effect 
-(SuSiE) linear regression using z scores
-
-'\code{rapidopgs_multi} computes PGS from a from GWAS summary statistics 
-using Bayesian sum of single-effect (SuSiE) linear regression using z scores
-
-This function will take a GWAS summary statistic dataset as an input,
-will assign LD blocks to it, then use user-provided LD matrices or a preset 
-reference panel in Plink format to compute LD matrices for each block. 
-Then SuSiE method will be used to compute posterior probabilities of variants to be causal 
-and generate PGS weights by multiplying those posteriors by effect sizes (\eqn{\beta}). 
-Unlike \code{rapidopgs_single}, this approach will assume one or more causal variants.
-
-
-The GWAS summary statistics file to compute PGS using our method must contain
-the following minimum columns, with these exact column names:
-\describe{
-  \item{CHR}{Chromosome}
-  \item{BP}{Base position (in GRCh37/hg19).}
-  \item{REF}{Reference, or non-effect allele}
-  \item{ALT}{Alternative, or effect allele, the one \eqn{\beta} refers to}
-  \item{BETA}{\eqn{\beta} (or log(OR)), or effect sizes}
-  \item{SE}{standard error of \eqn{\beta}}
-  \item{P}{P-value for the association test}
-}
-In addition, quantitative traits must have the following extra column:
-\describe{
-  \item{ALT_FREQ}{Minor allele frequency.}
-}
-Also, for quantitative traits, sample size must be supplied, either as a number,
-or indicating the column name, for per-SNP sample size datasets (see below).
-Other columns are allowed, and will be ignored.
-
-Reference panel should be divided by chromosome, in Plink format.
-Both reference panel and summary statistic dataset should be in GRCh37/hg19.
-For 1000 Genomes panel, you can use \code{create_1000G} function to set it up
-automatically.
-
-If prefer to use LD matrices, you must indicate the path to the directory 
-where they are stored. They must be in RDS format, named LD_chrZ.rds (where
-Z is the 1-22 chromosome number). If you don't have LD matrices already,
-we recommend downloading those gently provided by Prive et al., at 
-\url{https://figshare.com/articles/dataset/European_LD_reference/13034123}.
-These matrices were computed using for 1,054,330 HapMap3 variants based on 
-362,320 European individuals of the UK biobank.
- 
-
-\dontrun{
-sumstats <- data.table(
+ss <- data.table(
 		CHR=c("4","20","14","2","4","6","6","21","13"), 
 		BP=c(1479959, 13000913, 29107209, 203573414, 57331393, 11003529, 149256398, 
 				25630085, 79166661), 
@@ -182,7 +116,7 @@ sumstats <- data.table(
 		BETA=c(0.012,0.0079,0.0224,0.0033,0.0153,0.058,0.0742,0.001,-0.0131),
 		SE=c(0.0099,0.0066,0.0203,0.0171,0.0063,0.0255,0.043,0.0188,0.0074),
 		P=c(0.2237,0.2316,0.2682,0.8477,0.01473,0.02298,0.08472,0.9573,0.07535))
-PGS  <- rapidopgs_multi(sumstats, trait="cc", build = "hg19", N = 20000, reference = "ref-data/", ncores=5)
+PGS <- rapidopgs_multi(ss, reference = "ref-data/", N = 20000, build = "hg19", trait="cc", ncores=5)
 }
 }
 \author{

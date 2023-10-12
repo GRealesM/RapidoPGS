@@ -118,8 +118,6 @@ wakefield_pp <- function(beta, se, pi_i=1e-4,sd.prior=0.2) {
 ##' @return a data.table containing the dataset.
 ##' @import data.table curl RCurl magrittr
 ##' @author Guillermo Reales
-
-##'
 find_file_in_ftp <- function(ftp_address, acc, hm){
 		
 		flist <- getURL(ftp_address, dirlistonly = TRUE) %>% strsplit(., "\n")  %>% unlist 
@@ -465,100 +463,6 @@ rapidopgs_single <- function(data,
 ##' 
 ##' @param data a data.table containing GWAS summary statistic dataset
 ##'   with all required information.
-##' @param trait a string indicating if trait is a case-control ("cc") or quantitative ("quant").
-##' @param reference a string representing the path to the directory containing 
-##'   the reference panel (eg. "../ref-data/").
-##' @param LDmatrices a string representing the path to the directory containing 
-##'   the pre-computed LD matrices.
-##' @param N a numeric indicating the number of individuals used to generate input
-##'  GWAS dataset, or a string indicating the column name containing per-SNP sample size.
-##'  Required for quantitative traits only.
-##' @param ancestry a string indicating the ancestral population (DEFAULT: "EUR")
-##' @param pi_i a scalar representing the prior probability (DEFAULT:
-##'   \eqn{1 \times 10^{-4}}).If you wish SuSiE to estimate this internally, set p=NULL.
-##' @param ncores a numeric specifying the number of cores (CPUs) to be used.
-##'    If using pre-computed LD matrices, one core is enough for best performance.
-##' @param alpha.block a numeric threshold for minimum P-value in LD blocks.
-##'    Blocks with minimum P above \code{alpha.block} will be skipped. Default: 1e-4.
-##' @param alpha.snp a numeric threshold for P-value pruning within LD block.
-##'    SNPs with P above \code{alpha.snp} will be removed. Default: 0.01.
-##' @param sd.prior the prior specifies that BETA at causal SNPs
-##'   follows a centred normal distribution with standard deviation
-##'   sd.prior.
-##'   If NULL (default) it will be automatically estimated (recommended).
-##' @return a data.table containing the sumstats dataset with
-##'   computed PGS weights.
-##' @import data.table
-##' @importFrom bigsnpr snp_match snp_cor snp_readBed snp_attach
-##' @importFrom GenomicRanges GRanges findOverlaps
-##' @importFrom IRanges IRanges 
-##' @importFrom utils download.file setTxtProgressBar txtProgressBar
-##' @importFrom coloc runsusie
-##' @export
-##' @author Guillermo Reales, Chris Wallace
-##' @examples
-##' \dontrun{
-##' sumstats <- data.table(
-##'			CHR=c("4","20","14","2","4","6","6","21","13"), 
-##'			BP=c(1479959, 13000913, 29107209, 203573414, 57331393, 11003529, 149256398, 
-##'					25630085, 79166661), 
-##'			REF=c("C","C","C","T","G","C","C","G","T"), 
-##'			ALT=c("A","T","T","A","A","A","T","A","C"), 
-##'			ALT_FREQ=c(0.2611,0.4482,0.0321,0.0538,0.574,0.0174,0.0084,0.0304,0.7528),
-##'			BETA=c(0.012,0.0079,0.0224,0.0033,0.0153,0.058,0.0742,0.001,-0.0131),
-##'			SE=c(0.0099,0.0066,0.0203,0.0171,0.0063,0.0255,0.043,0.0188,0.0074),
-##'			P=c(0.2237,0.2316,0.2682,0.8477,0.01473,0.02298,0.08472,0.9573,0.07535))
-##' PGS  <- rapidopgs_multi(sumstats, trait="cc", reference = "ref-data/", ncores=2)
-##'}
-##' Compute PGS from GWAS summary statistics using Bayesian sum of single-effect 
-##' (SuSiE) linear regression using z scores
-##' 
-##' '\code{rapidopgs_multi} computes PGS from a from GWAS summary statistics 
-##' using Bayesian sum of single-effect (SuSiE) linear regression using z scores
-##' 
-##' This function will take a GWAS summary statistic dataset as an input,
-##' will assign LD blocks to it, then use user-provided LD matrices or a preset 
-##' reference panel in Plink format to compute LD matrices for each block. 
-##' Then SuSiE method will be used to compute posterior probabilities of variants to be causal 
-##' and generate PGS weights by multiplying those posteriors by effect sizes (\eqn{\beta}). 
-##' Unlike \code{rapidopgs_single}, this approach will assume one or more causal variants.
-##' 
-##' 
-##' The GWAS summary statistics file to compute PGS using our method must contain
-##' the following minimum columns, with these exact column names:
-##' \describe{
-##'   \item{CHR}{Chromosome}
-##'   \item{BP}{Base position (in GRCh37/hg19).}
-##'   \item{REF}{Reference, or non-effect allele}
-##'   \item{ALT}{Alternative, or effect allele, the one \eqn{\beta} refers to}
-##'   \item{BETA}{\eqn{\beta} (or log(OR)), or effect sizes}
-##'   \item{SE}{standard error of \eqn{\beta}}
-##'   \item{P}{P-value for the association test}
-##' }
-##' In addition, quantitative traits must have the following extra column:
-##' \describe{
-##'   \item{ALT_FREQ}{Minor allele frequency.}
-##' }
-##' Also, for quantitative traits, sample size must be supplied, either as a number,
-##' or indicating the column name, for per-SNP sample size datasets (see below).
-##' Other columns are allowed, and will be ignored.
-##' 
-##' Reference panel should be divided by chromosome, in Plink format.
-##' Both reference panel and summary statistic dataset should be in GRCh37/hg19.
-##' For 1000 Genomes panel, you can use \code{create_1000G} function to set it up
-##' automatically.
-##' 
-##' If prefer to use LD matrices, you must indicate the path to the directory 
-##' where they are stored. They must be in RDS format, named LD_chrZ.rds (where
-##' Z is the 1-22 chromosome number). If you don't have LD matrices already,
-##' we recommend downloading those gently provided by Prive et al., at 
-##' \url{https://figshare.com/articles/dataset/European_LD_reference/13034123}.
-##' These matrices were computed using for 1,054,330 HapMap3 variants based on 
-##' 362,320 European individuals of the UK biobank.
-##'  
-##' 
-##' @param data a data.table containing GWAS summary statistic dataset
-##'   with all required information.
 ##' @param reference a string representing the path to the directory containing 
 ##'   the reference panel (eg. "../ref-data").
 ##' @param LDmatrices a string representing the path to the directory containing 
@@ -593,7 +497,7 @@ rapidopgs_single <- function(data,
 ##' @author Guillermo Reales, Chris Wallace
 ##' @examples
 ##' \dontrun{
-##' sumstats <- data.table(
+##' ss <- data.table(
 ##'			CHR=c("4","20","14","2","4","6","6","21","13"), 
 ##'			BP=c(1479959, 13000913, 29107209, 203573414, 57331393, 11003529, 149256398, 
 ##'					25630085, 79166661), 
@@ -602,7 +506,7 @@ rapidopgs_single <- function(data,
 ##'			BETA=c(0.012,0.0079,0.0224,0.0033,0.0153,0.058,0.0742,0.001,-0.0131),
 ##'			SE=c(0.0099,0.0066,0.0203,0.0171,0.0063,0.0255,0.043,0.0188,0.0074),
 ##'			P=c(0.2237,0.2316,0.2682,0.8477,0.01473,0.02298,0.08472,0.9573,0.07535))
-##' PGS  <- rapidopgs_multi(sumstats, trait="cc", build = "hg19", N = 20000, reference = "ref-data/", ncores=5)
+##' PGS <- rapidopgs_multi(ss, reference = "ref-data/", N = 20000, build = "hg19", trait="cc", ncores=5)
 ##'}
 rapidopgs_multi <- function(data, reference=NULL, LDmatrices=NULL, N=NULL, build=c("hg19", "hg38"), trait=c("cc", "quant"), ncores=1, alpha.block=1e-4, alpha.snp=0.01, sd.prior=NULL, ancestry="EUR", LDblocks = NULL){
  
@@ -857,7 +761,6 @@ rapidopgs_multi <- function(data, reference=NULL, LDmatrices=NULL, N=NULL, build
 ##' \dontrun{
 ##' create_1000G()
 ##'}
-
 create_1000G <- function(directory = "ref-data", remove.related=TRUE, qc.maf = 0.01, qc.hwe=1e-10, qc.geno=0, autosomes.only=TRUE){
   
   # Remove annoying timeout limit in download.file

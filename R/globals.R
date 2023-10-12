@@ -1,2 +1,2 @@
 utils::globalVariables(c("ALT_FREQ","BETA","BP","CHR","EUR_ld.blocks19","EUR_ld.blocks38","P",
-"PUBMEDID","SE","SNPID","chr","id","info_snp.chr","ld.block","pid","sumstats.chr","weight", "beta_se", "pos"))
+"PUBMEDID","SE","SNPID","chr","id","info_snp.chr","ld.block", "ldblock", "pid","sumstats.chr","weight", "beta_se", "pos", "sdY", "ppi", "."))
