@@ -515,9 +515,9 @@ rapidopgs_multi <- function(data, reference=NULL, LDmatrices=NULL, N=NULL, build
   if(is.null(N)) stop("N (sample size) is now required for all GWAS summary statistics. Please provide it.")
   if(!is.null(N) && length(N) != 1) stop("Please provide a single N value.")
   if((is.null(reference) && is.null(LDmatrices)) | (!is.null(reference) && !is.null(LDmatrices))) stop("Please provide either a reference panel or LD matrices.")
-  if(ancestry != "EUR" && is.null(LDblocks)) stop("You selected non-European ancestry but provided no alternative LDblock file.\nAt the moment, RápidoPGS multi only provides LD blocks for Europeans.\nIf you want to create your own, check EUR_ld.blocks.RData in the package files for reference.")
+  if(ancestry != "EUR" && is.null(LDblocks)) stop("You selected non-European ancestry but provided no alternative LDblock file.\nAt the moment, RapidoPGS multi only provides LD blocks for Europeans.\nIf you want to create your own, check EUR_ld.blocks.RData in the package files for reference.")
   if(!is.null(reference) && ncores == 1) message("You selected 1 core. When using a reference you can increase the number of cores")
-  if(!is.null(LDmatrices) && ncores > 1) message("Note: You selected more than 1 core, but RápidoPGS-multi does not use parallelisation when using LD matrices.")
+  if(!is.null(LDmatrices) && ncores > 1) message("Note: You selected more than 1 core, but RapidoPGS-multi does not use parallelisation when using LD matrices.")
   if(length(build) != 1 || !build %in% c("hg19", "hg38")) stop("Please provide a valid genomic build for your data: either 'hg19' or 'hg38' are supported.")
   if(length(trait) != 1 || !trait %in% c("cc", "quant")) stop("Please provide a valid specify your trait type: either case-control ('cc') or quantitative ('quant') are supported.") 
   
