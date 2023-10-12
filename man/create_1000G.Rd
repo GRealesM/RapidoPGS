@@ -32,7 +32,7 @@ p-value, below which variants will be removed. DEFAULT 1e-10.}
 bed, fam and bim files for each chromosome in the chosen directory.
 }
 \description{
-\code{create_1000G} downloads and gets 1000 Genomes Phase III panel in
+\code{create_1000G} downloads and gets 1000 Genomes Phase III panel (hg19) in
 PLINK format, and apply quality control for being used to compute PGS using
 \code{rapidopgs_multi}.
 Given the size of the files, running this function can take long, depending

@@ -11,7 +11,7 @@
 #'   \item{strand}{genomic strand, irrelevant here}
 #' }
 #' @source \url{https://bitbucket.org/nygcresearch/ldetect-data/src} 
-"EUR_ld.blocks"
+"EUR_ld.blocks19"
 
 
 #' LD block architecture for European populations (hg38).
@@ -34,7 +34,7 @@
 #' Subset of Michailidou BRCA GWAS sumstat dataset.
 #'
 #' A data.table containing a subset of \href{https://www.nature.com/articles/nature24284/}{Michailidou et al., 2017} breast cancer summary statistic dataset, in hg38 build.
-#' This dataset is freely available in GWAS catalog (see link below). I removed unnecessary and all-missing columns, and rows
+#' This dataset is freely available in GWAS catalog (see link below). We removed unnecessary and all-missing columns, and rows
 #' with missing data at hm_beta and hm_effect_allele_frequency, and took a random sample of 100,000 SNPs without replacement.
 #'
 #' @format A data.table object containing 100,000 SNPs
@@ -51,12 +51,12 @@
 #' }
 #' @source \url{ftp://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/MichailidouK_29059683_GCST004988/harmonised/29059683-GCST004988-EFO_0000305.h.tsv.gz} 
 #' 
-"michailidou"
+"michailidou38"
 
 #' Subset of Michailidou BRCA GWAS sumstat dataset.
 #'
 #' A data.table containing a subset of \href{https://www.nature.com/articles/nature24284/}{Michailidou et al., 2017} breast cancer summary statistic dataset, in hg19 build.
-#' This dataset is freely available in GWAS catalog (see link below). I used "chromosome", "base_pair_location columns", removed unnecessary and all-missing columns, and took a random sample of 100,000 SNPs without replacement.
+#' This dataset is freely available in GWAS catalog (see link below). We used "chromosome", "base_pair_location columns", removed unnecessary and all-missing columns, and took a random sample of 100,000 SNPs without replacement.
 #'
 #' @format A data.table object containing 100,000 SNPs
 #' \describe{

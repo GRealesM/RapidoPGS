@@ -1,8 +1,18 @@
+# RapidoPGS 2.3.0
+
+RápidoPGS 2.3.0
+2023-10-12
+- We updated `rapidopgs_multi()` to accommodate updates in both `coloc` and `susieR`. This involved adding some arguments (N, sample size), and removing others (pi_i, prior probability, now automatically computed by SuSiE). We also now allow the user to supply their own LD block file for non-European GWAS.
+- Fixed `gwascat.download()` to accommodate the new GWAS catalog file structure. Now it is more interactive, providing extra flexibility.
+- Updated vignettes.
+
 # RapidoPGS 2.2.0
 
 RapidoPGS 2.2.0.9000
 2022-06-15
 - We updated hg38 LD blocks from liftovered Berisa & Pickrell to recomputed MacDonald et al. 2022 (https://github.com/jmacdon/LDblocks_GRCh38, https://www.biorxiv.org/content/10.1101/2022.03.04.483057v1), which offer a more accurate representation of LD structure in hg38.
+
+# RapidoPGS 2.1.0
 
 RapidoPGS 2.1.0.9009
 2021-09-28

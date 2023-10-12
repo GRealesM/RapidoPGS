@@ -1,17 +1,17 @@
 Package: RapidoPGS
 Title: A Fast and Light Package to Compute Polygenic Risk Scores
-Version: 2.2.0
+Version: 2.3.0.9001
 Authors@R: c(
     person("Guillermo","Reales", role = c("aut", "cre"), email = "gr440@cam.ac.uk",  comment = c(ORCID = "0000-0001-9993-3916")),
     person("Chris", "Wallace", role = "aut", email = "cew54@cam.ac.uk", comment = c(ORCID = "0000-0001-9755-1703")),
     person("Olly", "Burren", role = "ctb", email = "ob219@cam.ac.uk", comment = c(ORCID = "0000-0002-3388-5760")))
-Description: Quickly computes polygenic scores from GWAS summary statistics of either case-control or quantitative traits, without LD matrix computation or parameter tuning. Reales,G., Vigorito, E., Kelemen,M., Wallace,C. (2021) <doi:10.1101/2020.07.24.220392> "RápidoPGS: A rapid polygenic score calculator for summary GWAS data without a test dataset".
+Description: Quickly computes polygenic scores from GWAS summary statistics of either case-control or quantitative traits without parameter tuning. Reales,G., Vigorito, E., Kelemen,M., Wallace,C. (2021) <doi:10.1101/2020.07.24.220392> "RápidoPGS: A rapid polygenic score calculator for summary GWAS data without a test dataset".
 License: GPL-3
-Depends: R (>= 4.0), data.table,  RCurl, curl
-Imports: dplyr (>= 1.0.6), GenomicRanges (>= 1.42.0), IRanges (>= 2.24.1), bigsnpr (>= 1.8.1), coloc (>= 5.1.0), bigreadr (>= 0.2.4)
+Depends: R (>= 4.3), data.table,  RCurl, curl
+Imports: dplyr (>= 1.1.3), GenomicRanges (>= 1.52.0), IRanges (>= 2.34.1), bigsnpr (>= 1.12.2), coloc (>= 5.2.3), bigreadr (>= 0.2.5)
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.3
 Suggests: knitr, rmarkdown
 VignetteBuilder: knitr

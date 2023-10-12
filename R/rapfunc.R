@@ -108,7 +108,48 @@ wakefield_pp <- function(beta, se, pi_i=1e-4,sd.prior=0.2) {
   exp(lABF+log(pi_i)-sBF)
 }
 
+##' Finding a file in an FTP directory
+##' This is an internal function to help \code{gwascat.download} find the right file
+##' 
+##'
+##' @param ftp_address a string. An FTP address provided by \code{gwascat.download}.
+##' @param acc a string containing the accession for the desired study.
+##' @param hm a logical. Should it look in the harmonised directory?
+##' @return a data.table containing the dataset.
+##' @import data.table curl RCurl magrittr
+##' @author Guillermo Reales
 
+##'
+find_file_in_ftp <- function(ftp_address, acc, hm){
+		
+		flist <- getURL(ftp_address, dirlistonly = TRUE) %>% strsplit(., "\n")  %>% unlist 
+		flist <- flist[grepl("GCST",flist)]
+
+		accn <- gsub("GCST", "", acc)  %>% as.numeric
+		ac1 <- floor(accn/1000)*1000 + 1
+
+		sfl <- flist[grepl(paste0(ac1, "-"), flist)][1] # Choose the smallest one, if multiple
+
+		tadd <- paste0(ftp_address, sfl, "/", acc, "/")	
+
+		if(!RCurl::url.exists(tadd)) stop("There seem to be no summary statistics available for this accession in GWAS catalog. Please check.\n")
+		tlist <- getURL(tadd, dirlistonly = TRUE) %>% strsplit(., "\n")  %>% unlist
+	
+		ziplist <- tlist[grepl(".csv$|.tsv$|.gz$", perl = TRUE ,tlist)]
+		fileurls <- paste0(tadd, ziplist)
+
+		if(hm && "harmonised" %in% tlist) {
+			message("You have selected 'harmonised' dataset.")
+			qadd <- paste0(ftp_address, sfl, "/", acc, "/harmonised/")
+			qlist <- getURL(qadd, dirlistonly = TRUE) %>% strsplit(., "\n")  %>% unlist
+			ziplist <- qlist[grepl(".csv$|.tsv$|.gz$",  perl = TRUE , qlist)]
+			fileurls <- paste0(qadd, ziplist)
+		}else if (!"harmonised" %in% tlist) {
+		   message("There were no harmonised files available for this accession. Trying the not harmonised ones.")
+		}
+
+		return(fileurls)
+}
 
 ##' Retrieve GWAS summary datasets from GWAS catalog
 ##' '\code{gwascat.download} takes a PMID from the user and downloads the associated summary statistics datasets published in GWAS catalog
@@ -118,61 +159,71 @@ wakefield_pp <- function(beta, se, pi_i=1e-4,sd.prior=0.2) {
 ##' user to choose if there are more than one, and fetches the dataset. 
 ##'
 ##' If multiple files are available for the same study, R will prompt an interactive
-##' dialogue to select a specific file, by number. If you know the number and
-##' prefer to select it automatically, you can provide it using file argument.
+##' dialogue to select a specific file, by number. 
 ##'
 ##' @param ID a numeric. A PubMed ID (PMID) reference number from a GWAS paper.
-##' @param filenum a numeric. If multiple files are available, which one to choose? If NULL (DEFAULT), R will prompt an interactive prompt, asking for the number.
-##' @param hm_only a logical. Should GWAS catalog harmonised columns be retained?
-##' @return a data.table containing the dataset.
+##' @param harmonised a logical. Should GWAS catalog harmonised files be pursued? 
+##'     If not available, the function will fall back to non-harmonised
+##' @return a character vector containing the url(s) to the dataset(s).
 ##' @import data.table curl RCurl
 ##' @export
 ##' @author Guillermo Reales
-##' @examples 
-##' 
-##' \dontrun{
-##'	ds <- gwascat.download(29059683, hm_only = FALSE) # This should work: Michailidou dataset
-##'	wrongds <- gwascat.download(01223247236) # This shouldn't work: The Empress pub phone number
-##'}
 ##'
-
-gwascat.download <- function(ID, filenum = NULL, hm_only=TRUE){
-		gwc.manifest <- fread("https://www.ebi.ac.uk/gwas/api/search/downloads/studies_alternative")
+gwascat.download <- function(ID, harmonised = TRUE){
+		gwc.manifest <- fread("https://www.ebi.ac.uk/gwas/api/search/downloads/studies_alternative", quote = "")
 		
-		study.manifest <- gwc.manifest[ID == PUBMEDID,] 
+		study.manifest <- gwc.manifest[ PUBMEDID == ID ,] 
+		study_acc  <- 1 # For cases when the study has one accession only. Will be updated below otherwise
 		
-		if(nrow(study.manifest) == 0) stop("Please provide a valid PUBMED ID")
-		if(nrow(study.manifest) > 1){
-			message("There are ",nrow(study.manifest)," datasets associated with this PUBMED ID")
-			if(!is.null(filenum)){
-				if(!is.numeric(filenum) || length(filenum) > 1 || filenum > nrow(study.manifest)){
-					stop("Please provide a valid file number!")
-				} else{
-					study_acc  <- filenum
-				}
-			} else{ 
-				print(study.manifest[,"STUDY ACCESSION"])
+		if(nrow(study.manifest) == 0) stop("Please provide a valid PUBMED ID from a study published on GWAS catalog.")
+		message("There are ",nrow(study.manifest)," datasets associated with this PUBMED ID (Note that summary statistics might not be available.)")
+		if(nrow(study.manifest) > 1){	
+			print(study.manifest[,c("STUDY ACCESSION", "DISEASE/TRAIT", "INITIAL SAMPLE SIZE")])
 				study_acc  <- readline(prompt=paste("Please select accession (from 1 to ", nrow(study.manifest),"):", sep=""))
 				study_acc  <- as.integer(study_acc)
-				while(!study_acc %in% 1:nrow(study.manifest)){
+				while(!study_acc %in% seq_len(nrow(study.manifest))){
 					message("Oops! Seems that your number is not in the options. Please try again.")
-					print(study.manifest[,"STUDY ACCESSION"])
+					print(study.manifest[,c("STUDY ACCESSION", "DISEASE/TRAIT", "INITIAL SAMPLE SIZE")])
 					study_acc  <- readline(prompt=paste("Please select accession (from 1 to ", nrow(study.manifest),"):", sep=""))
 					study_acc  <- as.integer(study_acc)
+					message("You selected option ", study_acc, ".")
 					}
 
 			}
-		study.manifest <- study.manifest[study_acc,]
-		}
-		url <- paste("ftp://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/", gsub(" ","", study.manifest$`FIRST AUTHOR`), "_", ID,"_",study.manifest$`STUDY ACCESSION`, "/harmonised/",ID,"-",study.manifest$`STUDY ACCESSION`,"-",sapply(strsplit(study.manifest$MAPPED_TRAIT_URI, "/"), `[`,5),".h.tsv.gz", sep="")
-		if(!RCurl::url.exists(url)) stop("The file you requested is unavailable. This may be due to the fact that public and harmonised summary statistics do not exist. Please check at GWAS catalog website.")
-		message("Retrieving dataset for ",study.manifest$`DISEASE/TRAIT`,", by ", study.manifest$`FIRST AUTHOR`,", from ",study.manifest$DATE, ", published at ", study.manifest$JOURNAL,", with accession ", study.manifest$`STUDY ACCESSION`,".")
 		
-		ds <- fread(url)
-		if(hm_only){
-		hmcols <- grep("hm_",names(ds), value=TRUE)
-		ds  <- ds[,..hmcols]
-		}
+		study.manifest <- study.manifest[study_acc,]
+		# The filesystem changed in GWAS catalog, and now files are organised by the study accession.
+		# We need to build the url accordingly
+
+		ftp_address <- "ftp://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/"
+		access  <- study.manifest$`STUDY ACCESSION`
+		message("Accession ", access, " selected.")
+
+		ff <- find_file_in_ftp(ftp_address, acc = access, hm = harmonised)
+		if(length(ff) == 0) stop("Oh! I couldn't retrieve any file from this accession. Are you sure the data is available at GWAS catalog?")
+		
+		furl <- ff # In case there's only one url
+
+		if(length(ff) > 1){
+			message("There are ", length(ff)," datasets associated with this Accession number.")
+				fdf <- data.table(files = ff)
+				print(fdf)
+				ds_url  <- readline(prompt=paste0("\nNote that 'build37' means hg19/GRCh37, while 'h' means hg38.\nPlease select the file you want to download (from 1 to ", nrow(fdf),"):"))
+				ds_url  <- as.integer(ds_url)
+				while(!ds_url %in% seq_len(nrow(fdf))) {
+					message("Oops! Seems that your number is not in the options. Please try again.")
+					print(fdf)
+					ds_url  <- readline(prompt=paste0("\nNote that 'build37' means hg19/GRCh37, while 'h' means hg38.\nPlease select the file you want to download (from 1 to ", nrow(fdf),"):"))
+					ds_url  <- as.integer(ds_url)
+					}
+					furl <- ff[ds_url]
+			}
+
+		if(!RCurl::url.exists(furl)) stop("The file you requested is unavailable. This may be due to the fact that public and harmonised summary statistics do not exist. Please check at GWAS catalog website.")
+		message("Retrieving dataset for ",study.manifest$`DISEASE/TRAIT`,", by ", study.manifest$`FIRST AUTHOR`,", from ",study.manifest$DATE, ", published at ", study.manifest$JOURNAL,", with accession ", study.manifest$`STUDY ACCESSION`," and url:", furl, ".\n")
+		message("Note that some files indicate the genome build in the file name. For example 'GRCh37' or 'build37' refer to hg19/GRCh37, whereas 'h' and 'GRCh38' indicate hg38/GRCh38 build.")
+		
+		ds <- fread(furl)
 		return(ds)
 }
 
@@ -311,7 +362,7 @@ rapidopgs_single <- function(data,
   # Assign ld.blocks, in case they werent computed yet
   if(!"ld.block" %in% names(ds)){
     if(build == "hg19"){ 
-      blranges <- RapidoPGS::EUR_ld.blocks
+      blranges <- EUR_ld.blocks19
     }else if(build == "hg38"){ 
       blranges <- EUR_ld.blocks38
     }else{ 
@@ -364,78 +415,6 @@ rapidopgs_single <- function(data,
   }
   return(ds)
 }	
-# 
-# 
-# ##' Posterior inclusion probabilities under a multiple causal variant model
-# ##'
-# ##' A wrapper around susie_RSS from the susieR package. See
-# ##' \url{https://stephenslab.github.io/susieR} for the package and Wang et al.
-# ##' JRSSB 2020 for the paper describing the model
-# ##' \url{https://rss.onlinelibrary.wiley.com/doi/full/10.1111/rssb.12388}
-# ##'
-# ##' NB: intended as an internal function, called from other functions in the
-# ##' RapidoPGS package.
-# ##' @param d data.table with columns SNPID, BETA, SE (other columns allowed, d
-# ##'   will be ignored)
-# ##' @param LD LD matrix with dimnames matching "SNPID" column
-# ##' @param nref number of individuals used to create the LD matrix
-# ##' @param pi_i prior probability that a given variant is causal. Default 1e-4
-# ##' @param sd.prior Standard deviation prior of the trait, if NULL (default), it  will be estimated
-# ##' @param max_it maximum number of iterations for susie. The default of 100
-# ##'   should be plenty, but increase if there is not convergence
-# ##' @importFrom susieR susie_rss
-# ##' @return returns pip for each SNP, which we will use as a snp weight in
-# ##'   generating the PGS (=pip * BETA)
-# ##' @examples
-# ##' data(michailidou) # load example data
-# ##' d=michailidou[hm_chrom==3 & abs(hm_pos-27303612) < 1e+5] # focus on a window of association
-# ##' setnames(d, old = c("hm_rsid", "hm_chrom", "hm_pos", "hm_other_allele",
-# ##'   "hm_effect_allele", "hm_beta", "hm_effect_allele_frequency",
-# ##'   "standard_error", "p_value"), new=c("SNPID","CHR", "BP","REF", "ALT",
-# ##'   "BETA", "ALT_FREQ", "SE", "P")) # rename
-# ##' LD=(1 - abs(outer(d$ALT_FREQ,d$ALT_FREQ, "-"))) *
-# ##'    outer(sign(d$BETA), sign(d$BETA), "*")
-# ##' dimnames(LD)=list(d$SNPID,d$SNPID)
-# ##' susie_pip(d, LD)
-# ##' @author Chris Wallace, Guillermo Reales
-# 
-# susie_pip <- function(d,LD,nref=503,pi_i=1e-4, sd.prior=NULL, max_it=100) {
-#   ## checks
-#   nd <- names(d)
-#   if(!all(c("SNPID","BETA","SE") %in% nd))
-#     stop("require columns SNP, BETA, SE")
-#   ## snps should be unique
-#   if("SNPID" %in% nd && is.factor(d$SNPID))
-#     stop("dataset ",suffix,": SNPID should be a character vector but is a factor")
-#   if("SNPID" %in% nd && any(duplicated(d$SNPID)))
-#     stop("dataset ",suffix,": duplicated SNPIDs found")
-#   ## SNPIDs should be in LD matrix
-#   if(!is.matrix(LD) ||
-#      !all(d$SNPID %in% colnames(LD)) ||
-#      !identical(rownames(LD),colnames(LD)) ||
-#      !all(LD >= -1 && LD <= 1))
-#     stop("LD should be a correlation matrix containing all SNPIDs listed in d$SNPID (match by rownames, colnames)")
-#   
-#   z <- d$BETA/d$SE
-#   if(is.null(sd.prior)){
-#     res=susie_rss(z, LD[d$SNPID,d$SNPID], z_ld_weight = 1/nref,
-#                   ,null_weight=1 - length(d$SNPID)*pi_i
-#                   ,estimate_prior_method="EM"
-#                   ## ,verbose=TRUE
-#                   ,max_iter=max_it )
-#   } else{
-#     res=susie_rss(z, LD[d$SNPID,d$SNPID], z_ld_weight = 1/nref,
-#                   ,null_weight=1 - length(d$SNPID)*pi_i
-#                   ,estimate_prior_method="EM"
-#                   ,estimate_prior_variance=FALSE  ### <- stop internal estimation
-#                   ,prior_variance = sd.prior^2 ### <- use custom sd.prior
-#                   ## ,verbose=TRUE
-#                   ,max_iter=max_it )
-#   }
-#   pip <- res$pip[ -length(res$pip) ]
-#   names(pip) <- d$SNPID
-#   pip
-# }
 
 ##' Compute PGS from GWAS summary statistics using Bayesian sum of single-effect 
 ##' (SuSiE) linear regression using z scores
@@ -531,39 +510,127 @@ rapidopgs_single <- function(data,
 ##'			P=c(0.2237,0.2316,0.2682,0.8477,0.01473,0.02298,0.08472,0.9573,0.07535))
 ##' PGS  <- rapidopgs_multi(sumstats, trait="cc", reference = "ref-data/", ncores=2)
 ##'}
-
-rapidopgs_multi <- function(data, trait=c("cc","quant"), reference=NULL, LDmatrices=NULL, N=NULL, ancestry="EUR", pi_i = 1e-04, ncores=1, alpha.block=1e-4, alpha.snp=0.01, sd.prior=NULL){
+##' Compute PGS from GWAS summary statistics using Bayesian sum of single-effect 
+##' (SuSiE) linear regression using z scores
+##' 
+##' '\code{rapidopgs_multi} computes PGS from a from GWAS summary statistics 
+##' using Bayesian sum of single-effect (SuSiE) linear regression using z scores
+##' 
+##' This function will take a GWAS summary statistic dataset as an input,
+##' will assign LD blocks to it, then use user-provided LD matrices or a preset 
+##' reference panel in Plink format to compute LD matrices for each block. 
+##' Then SuSiE method will be used to compute posterior probabilities of variants to be causal 
+##' and generate PGS weights by multiplying those posteriors by effect sizes (\eqn{\beta}). 
+##' Unlike \code{rapidopgs_single}, this approach will assume one or more causal variants.
+##' 
+##' 
+##' The GWAS summary statistics file to compute PGS using our method must contain
+##' the following minimum columns, with these exact column names:
+##' \describe{
+##'   \item{CHR}{Chromosome}
+##'   \item{BP}{Base position (in GRCh37/hg19).}
+##'   \item{REF}{Reference, or non-effect allele}
+##'   \item{ALT}{Alternative, or effect allele, the one \eqn{\beta} refers to}
+##'   \item{BETA}{\eqn{\beta} (or log(OR)), or effect sizes}
+##'   \item{SE}{standard error of \eqn{\beta}}
+##'   \item{P}{P-value for the association test}
+##' }
+##' In addition, quantitative traits must have the following extra column:
+##' \describe{
+##'   \item{ALT_FREQ}{Minor allele frequency.}
+##' }
+##' Also, for quantitative traits, sample size must be supplied, either as a number,
+##' or indicating the column name, for per-SNP sample size datasets (see below).
+##' Other columns are allowed, and will be ignored.
+##' 
+##' Reference panel should be divided by chromosome, in Plink format.
+##' Both reference panel and summary statistic dataset should be in GRCh37/hg19.
+##' For 1000 Genomes panel, you can use \code{create_1000G} function to set it up
+##' automatically.
+##' 
+##' If prefer to use LD matrices, you must indicate the path to the directory 
+##' where they are stored. They must be in RDS format, named LD_chrZ.rds (where
+##' Z is the 1-22 chromosome number). If you don't have LD matrices already,
+##' we recommend downloading those gently provided by Prive et al., at 
+##' \url{https://figshare.com/articles/dataset/European_LD_reference/13034123}.
+##' These matrices were computed using for 1,054,330 HapMap3 variants based on 
+##' 362,320 European individuals of the UK biobank.
+##'  
+##' 
+##' @param data a data.table containing GWAS summary statistic dataset
+##'   with all required information.
+##' @param reference a string representing the path to the directory containing 
+##'   the reference panel (eg. "../ref-data").
+##' @param LDmatrices a string representing the path to the directory containing 
+##'   the pre-computed LD matrices.
+##' @param N a numeric indicating the number of individuals used to generate input
+##'  GWAS dataset, or a string indicating the column name containing per-SNP sample size.
+##' @param build a string indicating the genome build. 'hg19' and 'hg38' are supported. Note that your LD matrices or reference panel should match the build.
+##' @param trait a string indicating if trait is a case-control ("cc") or quantitative ("quant").
+##' @param ncores a numeric specifying the number of cores (CPUs) to be used.
+##'    If using pre-computed LD matrices, one core is enough for best performance.
+##' @param alpha.block a numeric threshold for minimum P-value in LD blocks.
+##'    Blocks with minimum P above \code{alpha.block} will be skipped. Default: 1e-4.
+##' @param alpha.snp a numeric threshold for P-value pruning within LD block.
+##'    SNPs with P above \code{alpha.snp} will be removed. Default: 0.01.
+##' @param sd.prior the prior specifies that BETA at causal SNPs
+##'   follows a centred normal distribution with standard deviation
+##'   sd.prior.
+##'   If NULL (default) it will be automatically estimated (recommended).
+##' @param ancestry a string indicating the ancestral population (DEFAULT: "EUR", European). 
+##'   If using an alternative population, bear in mind that your LD matrices or reference must be from the same population.
+##'   You'll also need to provide matching LD.blocks via the LDblocks argument.
+##' @param LDblocks a string indicating the path to an alternative LD block file in .RData format. Only required for non-European PGS.
+##' @return a data.table containing the sumstats dataset with
+##'   computed PGS weights.
+##' @import data.table
+##' @importFrom bigsnpr snp_match snp_cor snp_readBed snp_attach
+##' @importFrom GenomicRanges GRanges findOverlaps
+##' @importFrom IRanges IRanges 
+##' @importFrom utils download.file setTxtProgressBar txtProgressBar
+##' @importFrom coloc runsusie
+##' @export
+##' @author Guillermo Reales, Chris Wallace
+##' @examples
+##' \dontrun{
+##' sumstats <- data.table(
+##'			CHR=c("4","20","14","2","4","6","6","21","13"), 
+##'			BP=c(1479959, 13000913, 29107209, 203573414, 57331393, 11003529, 149256398, 
+##'					25630085, 79166661), 
+##'			REF=c("C","C","C","T","G","C","C","G","T"), 
+##'			ALT=c("A","T","T","A","A","A","T","A","C"), 
+##'			BETA=c(0.012,0.0079,0.0224,0.0033,0.0153,0.058,0.0742,0.001,-0.0131),
+##'			SE=c(0.0099,0.0066,0.0203,0.0171,0.0063,0.0255,0.043,0.0188,0.0074),
+##'			P=c(0.2237,0.2316,0.2682,0.8477,0.01473,0.02298,0.08472,0.9573,0.07535))
+##' PGS  <- rapidopgs_multi(sumstats, trait="cc", build = "hg19", N = 20000, reference = "ref-data/", ncores=5)
+##'}
+rapidopgs_multi <- function(data, reference=NULL, LDmatrices=NULL, N=NULL, build=c("hg19", "hg38"), trait=c("cc", "quant"), ncores=1, alpha.block=1e-4, alpha.snp=0.01, sd.prior=NULL, ancestry="EUR", LDblocks = NULL){
  
   # Sanity checks
-  if(!"data.table" %in% class(data))
-  	  data <- as.data.table(data)
+  if(!"data.table" %in% class(data)) data <- as.data.table(data)
+  if(is.null(N)) stop("N (sample size) is now required for all GWAS summary statistics. Please provide it.")
+  if(!is.null(N) && length(N) != 1) stop("Please provide a single N value.")
+  if((is.null(reference) && is.null(LDmatrices)) | (!is.null(reference) && !is.null(LDmatrices))) stop("Please provide either a reference panel or LD matrices.")
+  if(ancestry != "EUR" && is.null(LDblocks)) stop("You selected non-European ancestry but provided no alternative LDblock file.\nAt the moment, RápidoPGS multi only provides LD blocks for Europeans.\nIf you want to create your own, check EUR_ld.blocks.RData in the package files for reference.")
+  if(!is.null(reference) && ncores == 1) message("You selected 1 core. When using a reference you can increase the number of cores")
+  if(!is.null(LDmatrices) && ncores > 1) message("Note: You selected more than 1 core, but RápidoPGS-multi does not use parallelisation when using LD matrices.")
+  if(length(build) != 1 || !build %in% c("hg19", "hg38")) stop("Please provide a valid genomic build for your data: either 'hg19' or 'hg38' are supported.")
+  if(length(trait) != 1 || !trait %in% c("cc", "quant")) stop("Please provide a valid specify your trait type: either case-control ('cc') or quantitative ('quant') are supported.") 
   
-  if(!trait %in% c("cc", "quant")) stop("Please, specify your study type, choose case-control ('cc') or quantitative ('quant').")
-  if(length(trait) != 1) stop("Please select only one study type")
-  if(trait == "quant" && is.null(N)) stop("N (sample size) is required for quantitative traits, please provide them, either as an integer or as column name containing it.")
-  if(!is.null(N) && length(N) != 1) stop("Please provide a single N value, either a numeric or a string indicating the column name.")
-  if(is.character(N) && !N %in% names(ds)) stop("N column name was provided, I couldn't find it in the dataset. Please check.")
-
-  if(trait == "cc"){
-    mincol <- c("CHR","BP", "REF","ALT","BETA", "SE","P")
-  } else{
-    mincol <- c("CHR","BP", "REF","ALT","BETA", "SE","P", "ALT_FREQ")
-  }
+  mincol <- c("CHR","BP", "REF","ALT","BETA", "SE","P")
   
   if(!all(mincol %in% names(data)))
     stop("All minimum columns should be present in the summary statistics dataset. Please check, missing columns: ",
          paste(setdiff(mincol,names(data)), collapse=", "))
   
-  if((is.null(reference) & is.null(LDmatrices)) | (!is.null(reference) & !is.null(LDmatrices))){
-    stop("Please provide either a reference panel or LD matrices.")
-  } 
-  
   if(!is.null(reference)){ # If reference is provided, make safety check
-    if(!file.exists(paste(reference,"chr1.bed", sep=""))) # Temp fix to detect panel		
+    if(!dir.exists(reference)){
+      stop("Reference directory doesn't exists. Please select a valid directory. Need to create a reference panel first? Check `create_1000G()`.")
+    }
+    if(!file.exists(paste(reference,"/chr1.bed", sep=""))) # Temp fix to detect panel		
       stop("No reference panel detected. Please check.")
   }
-  
-  
+    
   if(!is.null(LDmatrices)){
     if(!dir.exists(LDmatrices)){
       stop("LDmatices directory doesn't exists. Please select a valid directory. Need to download the LDmatrices?")
@@ -572,7 +639,9 @@ rapidopgs_multi <- function(data, trait=c("cc","quant"), reference=NULL, LDmatri
       stop("Not all matrices LD_chr...rds are present in the directory. Please check.")
     }
   }
- 
+  
+  message("You selected ", build, " build. Please note that your reference or LDmatrices must be in the same build as your dataset.")
+
   ds <- copy(data) # avoid modifying input data.table
   ds[,SNPID:=paste(CHR,BP, sep = ":")]
   ds  <- na.omit(ds, cols=c("CHR","BP", "BETA", "SE", "P"))
@@ -581,12 +650,28 @@ rapidopgs_multi <- function(data, trait=c("cc","quant"), reference=NULL, LDmatri
   # Assign ld.blocks, in case they werent computed yet.
   # Note that in this case only hg19 is admitted.
   if(!"ld.block" %in% names(ds)){
-    blranges <- RapidoPGS::EUR_ld.blocks	
-    message("Assigning LD blocks...")
+
+    if(build == "hg19" && ancestry == "EUR"){
+        blranges <- EUR_ld.blocks19	
+    } else if (build == "hg38" && ancestry == "EUR") {
+        blranges <- EUR_ld.blocks38	
+    }
+
+    # Special case for non-European LD blocks
+    if(ancestry != "EUR"){
+      if(!file.exists(LDblocks) || !grepl(".rda$", LDblocks, ignore.case = TRUE)) stop("Please provide a valid LDblock file as ldblock.rda")
+      load(LDblocks)
+      blranges <- ldblock
+      message("You selected non-European ancestry. Plase ensure that either your reference panel or your LD matrices correspond to this ancestry.")
+    } 
+  
+    ###########
+    message("Assigning LD blocks using pre-computed ", build, " LD blocks.")
     snpranges <- GRanges(seqnames=paste("chr",ds$CHR, sep=""), ranges=IRanges(start=ds$BP, end=ds$BP, names=ds$SNPID), strand="*")
     ds[,ld.block:=findOverlaps(snpranges, blranges, select='last')]
     message("Done!")
   }
+
   ## We ensure that rows without assigned block are removed
   if(any(is.na(ds$ld.block))){
     # warning(length(ds$ld.block[is.na(ds$ld.block)]), " SNPs didn't have any LD block assigned and will be removed")
@@ -595,32 +680,41 @@ rapidopgs_multi <- function(data, trait=c("cc","quant"), reference=NULL, LDmatri
   
   # Dear snp_match require specific names, so let's abide
   setnames(ds, c("CHR", "BP","REF", "ALT", "BETA","SE"), c("chr","pos","a0","a1","beta", "beta_se"))
-  
-  if(!is.null(N) && is.character(N) && length(N) == 1){ # If N supplied as a column name
-    Nco <- N
-    ds[,sdY:=sdY.est(vbeta=beta_se^2, maf=ALT_FREQ, n=get(Nco))]
-  } else if(!is.null(N) && is.numeric(N) && length(N) == 1){ # If N is supplied as a numeric
-    ds[,sdY:=sdY.est(vbeta=beta_se^2, maf=ALT_FREQ, n=N)]
-  }
+
+  #######
   
   results <- data.table()
   
-  if(trait == "cc") message("Running RapidoPGS-multi model with multiple causal variant assumption for a case-control dataset.")
-  if(trait == "quant" && is.character(N)) message("Running RapidoPGS-multi with multiple causal variant assumption for a quantitative trait dataset, with N supplied by column ", Nco,". Mmax N: ", max(ds[,get(Nco)]), ", min N = ", min(ds[,get(Nco)]), ", and mean N: ",mean(ds[,get(Nco)]), ".")
-  if(trait == "quant" && is.numeric(N)) message("Running RapidoPGS-multi with multiple causal variant assumption for a quantitative trait dataset, with N = ", N, ".")
-  
-  if(!is.null(reference)){ # If a panel is supplied
-    for(chrs in 1:22){
+  message("Running RapidoPGS-multi model with multiple causal variant assumption for a GWAS summary statistics dataset in ", build,", of ", ancestry," ancestry, and with N = ", N, ".")
+
+  if(!is.null(LDmatrices)){
+      # In case LDmatrices are provided
+      # Import HapMap3 manifest
+      map <- as.data.table(readRDS(paste(LDmatrices, "map.rds", sep="/")))
+      map[,SNPID:=paste(chr,pos, sep=":")] 
+      # Check if ds is aligned to map, and align if not
+      ds.snp <- paste(ds$chr, ds$pos, ds$a0, ds$a1, sep=":")
+      map.snp <- paste(map$chr, map$pos, map$a0, map$a1, sep=":") 
+
+      if(!all(ds.snp %in% map.snp)){
+        ds <- as.data.table(snp_match(ds, map, match.min.prop = 0))
+      }
+  }
+    
+  ### Here the loop by chromosome starts
+  for(chrs in 1:22){
+
+    if(!is.null(reference)){
       message("Working on chromosome ", chrs,".")
-      # First thing is to check if we already have .rds files for our chr (ie. if we have read the bed files before). If not, we'll read it. This will create a .bk file, but it won't be a problem since we won't call this function again.
-      if(!file.exists(paste0(reference,"chr",chrs,".rds"))){
-        snp_readBed(paste0(reference,"chr",chrs,".bed"))
+    # First thing is to check if we already have .rds files for our chr (ie. if we have read the bed files before). If not, we'll read it. This will create a .bk file, but it won't be a problem since we won't call this function again.
+      if(!file.exists(paste0(reference,"/chr",chrs,".rds"))){
+        snp_readBed(paste0(reference,"/chr",chrs,".bed"))
       }
       # Attach the "bigSNP" object in R session
       # This object contain SNP data from a single chromosome from 1000 genomes phase III.
       # This object contains a matrix of genotypes (analogous to bed), as well as fam and map slots, PLINK format.
-      obj.bigSNP <- snp_attach(paste(reference,"chr",chrs, ".rds", sep=""))
-      # In this case, we'll focus only on individuals of european ancestry
+      obj.bigSNP <- snp_attach(paste(reference,"/chr",chrs, ".rds", sep=""))
+      # By default EUR, but this can be changed, just ensure you supply the right ancestry coding to the function
       euridx  <- grep(ancestry, obj.bigSNP$fam$family.ID)
       # Get aliases for useful slots
       G   <- obj.bigSNP$genotypes
@@ -633,177 +727,113 @@ rapidopgs_multi <- function(data, trait=c("cc","quant"), reference=NULL, LDmatri
       map.chr <- map.chr[map.chr$SNPID %in% ds.chr$SNPID,]	
       message("Matching and aligning SNPs in chr",chrs," to the reference")
       # Align sumstats to panel
-      snp.chr <- snp_match(ds.chr, map.chr, match.min.prop=0)
-      
-      
-      pb <- txtProgressBar(min = 0, max = length(unique(snp.chr$ld.block)), style = 3) # Show a nice progress bar
-      
-      for(block in unique(snp.chr$ld.block)){
-        #			message("This is block ",block)
-        
-        idxbar <- which(unique(snp.chr$ld.block) == block)
-        
-        snp.block <- snp.chr[snp.chr$ld.block == block,]
-        # Skip block if min P is above a certain threshold
-        if(min(snp.block$P) > alpha.block){
-          #				message ("\nBlock ", block," has no SNP with P-value below ",alpha.block," threshold. Skipping block.")
-          setTxtProgressBar(pb,idxbar)
-          next
-        }
-        # Remove SNPs with P above a certain threshold
-        snp.block <- snp.block[snp.block$P < alpha.snp,]
-        
-        # Skip block if has only one SNP after filtering
-        if(nrow(snp.block) < 2){
-          #				message ("\nWarning: Block ", block," has only one SNP. Skipping...")
-          setTxtProgressBar(pb,idxbar)
-          next
-        }
-        
-        # Recover SNP indices	
-        snp.idx <- which(paste(obj.bigSNP$map$chromosome,obj.bigSNP$map$physical.pos, sep=":") %in% snp.block$SNPID) 
-        # Remove duplicates, which sometimes appear
-        if(length(snp.idx) != length(snp.block$SNPID)){
-          du <- paste(obj.bigSNP$map$chromosome,obj.bigSNP$map$physical.pos, sep=":") 
-          dup <- du[du %in% snp.block$SNPID]
-          dup <- dup[duplicated(dup)]
-          snp.block <- snp.block[!snp.block$SNPID %in% dup,]
-          snp.idx <- which(du %in% snp.block$SNPID)
-        }
-        
-        # Compute LD matrix for that block
-        LD.block <- snp_cor(G, ind.col = snp.idx, ind.row= euridx, ncores = ncores, size = length(snp.idx))
-        dimnames(LD.block) <- list(snp.block$SNPID,snp.block$SNPID)
-        LD.block <- as.matrix(LD.block)	
-        
-        # TEMP FIX - data.table makes shallow copies, so when I change column names here it automatically change them in ds and snp.chr (which we don't need). So I'll implement this fix temporarily to avoid this, by making a copy of snp.block.
-        snp.block <- copy(snp.block)
-        setnames(snp.block ,c("chr","pos", "a0","a1","SNPID","beta","beta_se") ,c("CHR","BP","REF","ALT","SNPID","BETA","SE"))
-        
-        
-        susie.ds <- list(snp=snp.block$SNPID, beta=snp.block$BETA, varbeta=snp.block$SE^2, LD=LD.block, type=trait)
-        
-        if(trait == "quant")
-          susie.ds <- list(snp=snp.block$SNPID, beta=snp.block$BETA, varbeta=snp.block$SE^2, sdY=snp.block$sdY, LD=LD.block, type=trait)
-        
-        
-        if(is.null(sd.prior)){
-          prior_est = TRUE
-          prior_var = 50 # Default susie_rss
-        } else{
-          prior_est = FALSE
-          prior_var = sd.prior^2
-        }
-        
-        ppi_susie <- suppressMessages(runsusie(susie.ds,p=pi_i, prior_variance=prior_var, estimate_prior_variance=prior_est))
-        snp.block$ppi_susie <- ppi_susie$pip
-        
-        # Append to results
-        results <- rbind(results, snp.block)
-        
-        # Progress bar
-        
-        setTxtProgressBar(pb, idxbar)
-      }
-      close(pb)
-    } # End of loop
-  } else{
-    # In case LDmatrices are provided
-    # Import HapMap3 manifest
-    map <- as.data.table(readRDS(paste(LDmatrices, "map.rds", sep="/")))
-    map[,SNPID:=paste(chr,pos, sep=":")] 
-    # Check if ds is aligned to map, and align if not
-    ds.snp <- paste(ds$chr, ds$pos, ds$a0, ds$a1, sep=":")
-    map.snp <- paste(map$chr, map$pos, map$a0, map$a1, sep=":") 
-    
-    if(!all(ds.snp %in% map.snp)){
-      ds <- as.data.table(snp_match(ds, map, match.min.prop = 0))
-    }
-    
-    for(chrs in 1:22){
-      message("Working on chromosome ", chrs,".")
-      
-      LD.chr <- readRDS(paste0(LDmatrices, "/LD_chr",chrs, ".rds"))
-      ds.chr  <- ds[chr == chrs,]
-      map.chr <- map[chr == chrs,]
-      
-      # Check LDmatrix has same dimensions as manifest
-      if(nrow(LD.chr) != nrow(map.chr)){
-        stop("Something is wrong. LD matrix doesn't have the same rows as the manifest for this chromosome, please check.")
-      }
+      ds.chr <- snp_match(ds.chr, map.chr, match.min.prop=0)
+      ds.chr <- data.table(ds.chr)
       
       pb <- txtProgressBar(min = 0, max = length(unique(ds.chr$ld.block)), style = 3) # Show a nice progress bar
+
+    } else if (!is.null(LDmatrices)) {
+
+      message("Working on chromosome ", chrs,".")
+      LD.chr <- readRDS(paste0(LDmatrices, "/LD_chr",chrs, ".rds"))
+      ds.chr  <-  ds[chr == chrs]
+      map.chr <- map[chr == chrs]
+    
+      # Check LDmatrix has same dimensions as manifest
+      if(nrow(LD.chr) != nrow(map.chr)){
+      stop("Something is wrong. LD matrix doesn't have the same rows as the manifest for this chromosome, please check.")
+      }   
+      pb <- txtProgressBar(min = 0, max = length(unique(ds.chr$ld.block)), style = 3) # Show a nice progress bar
+    }
+
+    # Here the loop by block starts
+    for(block in unique(ds.chr$ld.block)){
+        #  message("This is block ",block)
+      idxbar <- which(unique(ds.chr$ld.block) == block)
+      snp.block <- ds.chr[ds.chr$ld.block == block]
       
-      for(block in unique(ds.chr$ld.block)){
-        #	message("This is block ",block)
-        
-        idxbar <- which(unique(ds.chr$ld.block) == block)
-        snp.block <- ds.chr[ds.chr$ld.block == block,]
-        
-        # Skip block if min P is above a certain threshold
-        if(min(snp.block$P) > alpha.block){
-          #				message ("\nBlock ", block," has no SNP with P-value below ",alpha.block," threshold. Skipping block.")
-          setTxtProgressBar(pb,idxbar)
-          next
-        }
-        # Remove SNPs with P above a certain threshold
-        snp.block <- snp.block[snp.block$P < alpha.snp,]
-        
-        # Skip block if has only one SNP after filtering
-        if(nrow(snp.block) < 2){
-          #				message ("\nWarning: Block ", block," has only one SNP. Skipping...")
-          setTxtProgressBar(pb,idxbar)
-          next
-        }
-        
-        # Match ids of resulting SNPs with those in map manifest (and hence, LD matrix)
-        # Remove duplicates
-        if(all(!duplicated(snp.block$SNPID))){
-          snp.block <- snp.block[!duplicated(snp.block$SNPID),]
-        }
-        
-        snp.idx <- match(snp.block$SNPID, map.chr$SNPID) 
-        LD.block <- as.matrix(LD.chr[snp.idx,snp.idx])
-        dimnames(LD.block) <- list(snp.block$SNPID, snp.block$SNPID)
-        snp.block <- snp.block[,c("chr","pos", "a0","a1","SNPID","beta","beta_se")]
-        # Prepare dataset for runsusie
-        setnames(snp.block ,c("chr","pos", "a0","a1","SNPID","beta","beta_se") ,c("CHR","BP","REF","ALT","SNPID","BETA","SE"))
-        
-        susie.ds <- list(snp=snp.block$SNPID, beta=snp.block$BETA, varbeta=snp.block$SE^2, LD=LD.block, type=trait)
-        
-        if(trait == "quant")
-          susie.ds <- list(snp=snp.block$SNPID, beta=snp.block$BETA, varbeta=snp.block$SE^2, sdY=snp.block$sdY, LD=LD.block, type=trait)
-        
-        if(is.null(sd.prior)){
-          prior_est <-  TRUE
-          prior_var <-  50 # Susie default.
-        } else{
-          prior_est  <-  FALSE
-          prior_var  <-  sd.prior^2
-        }
-        
-        ppi_susie <- suppressMessages(runsusie(susie.ds,p=pi_i, prior_variance=prior_var, estimate_prior_variance=prior_est))
-        snp.block$ppi_susie <- ppi_susie$pip
-        
-        # Append to results
-        results <- rbind(results, snp.block)
-        
-        # Progress bar
-        setTxtProgressBar(pb, idxbar)
-        
-      } # End of block loop
-      close(pb)
-    } # End of loop 
-  }
+      # Skip block if min P is above a certain threshold
+      if(min(snp.block$P) > alpha.block){
+        #				message ("\nBlock ", block," has no SNP with P-value below ",alpha.block," threshold. Skipping block.")
+        setTxtProgressBar(pb,idxbar)
+        next
+      }
+      # Remove SNPs with P above a certain threshold
+      snp.block <- snp.block[snp.block$P < alpha.snp]
+      
+      # Skip block if has only one SNP after filtering
+      if(nrow(snp.block) < 2){
+        #				message ("\nWarning: Block ", block," has only one SNP. Skipping...")
+        setTxtProgressBar(pb,idxbar)
+        next
+      }
+      
+      if(!is.null(reference)){
+
+            # Recover SNP indices. To avoid duplicates, match by alleles too
+            map.idx <- paste(obj.bigSNP$map$chromosome,obj.bigSNP$map$physical.pos, obj.bigSNP$map$allele1, obj.bigSNP$map$allele2, sep=":")
+            block.idx <- paste(snp.block$chr, snp.block$pos, snp.block$a0, snp.block$a1, sep=":")
+            snp.idx <- which(map.idx %in% block.idx) 
+
+            # Compute LD matrix for that block
+            LD.block <- snp_cor(G, ind.col = snp.idx, ind.row= euridx, ncores = ncores, size = length(snp.idx))
+            dimnames(LD.block) <- list(snp.block$SNPID,snp.block$SNPID)
+            LD.block <- as.matrix(LD.block)	
+
+            snp.block <- copy(snp.block)
+            setnames(snp.block ,c("chr","pos", "a0","a1","SNPID","beta","beta_se") ,c("CHR","BP","REF","ALT","SNPID","BETA","SE"))
+
+      } else if (!is.null(LDmatrices)) {
+
+            snp.idx <- match(snp.block$SNPID, map.chr$SNPID) 
+            LD.block <- as.matrix(LD.chr[snp.idx,snp.idx])
+            dimnames(LD.block) <- list(snp.block$SNPID, snp.block$SNPID)
+            snp.block <- snp.block[,c("chr","pos", "a0","a1","SNPID","beta","beta_se")]
+            snp.block <- copy(snp.block)
+            # Prepare dataset for runsusie
+            setnames(snp.block ,c("chr","pos", "a0","a1","SNPID","beta","beta_se") ,c("CHR","BP","REF","ALT","SNPID","BETA","SE"))
+
+      }
+
+      # Prepare snp.block for susie
+      # Match ids of resulting SNPs with those in map manifest (and hence, LD matrix)
+      # Remove duplicates
+      if(all(!duplicated(snp.block$SNPID))){
+        snp.block <- snp.block[!duplicated(snp.block$SNPID)]
+      }
+      
+      # susie.ds <- list(snp=snp.block$SNPID, beta=snp.block$BETA, varbeta=snp.block$SE^2, LD=LD.block, type=trait)
+      susie.ds <- list(snp=snp.block$SNPID, beta=snp.block$BETA, varbeta=snp.block$SE^2, LD=LD.block, N = as.numeric(N), type = trait)
+
+      if(is.null(sd.prior)){
+        prior_est <-  TRUE
+        prior_var <-  50 # Susie default.
+      } else{
+        prior_est  <-  FALSE
+        prior_var  <-  sd.prior^2
+      }
+      
+      ppi_susie <- suppressMessages(runsusie(susie.ds, prior_variance=prior_var, estimate_prior_variance=prior_est))
+      snp.block$ppi_susie <- ppi_susie$pip
+      
+      # Append to results
+      results <- rbind(results, snp.block)
+      
+      # Progress bar
+      setTxtProgressBar(pb, idxbar)
+      
+    } # End of block loop
+    close(pb)
+  } # End of loop 
   results[,weight:=BETA*ppi_susie]
   return(results)
-  
 }
+
 
 
 ##' Download 1000 Genomes Phase III panel  
 ##' 
-##' \code{create_1000G} downloads and gets 1000 Genomes Phase III panel in 
+##' \code{create_1000G} downloads and gets 1000 Genomes Phase III panel (hg19) in 
 ##' PLINK format, and apply quality control for being used to compute PGS using 
 ##' \code{rapidopgs_multi}.
 ##' Given the size of the files, running this function can take long, depending

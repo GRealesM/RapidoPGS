@@ -61,20 +61,34 @@ In this vignette, we'll use GWAS catalog to obtain an example dataset. For this 
 
 It's a big file, and may take a while to download, so here we will show the command to download, but actually cheat and load a subset of data already loaded.
 
-Note that in this particular case we chose a study that contained a single dataset. In other cases there may be more than one. In that case `gwascat.download` will prompt you with the list of available options, prompting their accession numbers, and asking you to choose a file by its number in the list, if running interactively. If you want to run `gwascat.download` automatically, and you know the number already, you can supply it using `filenum` argument, so R won't bug you. 
+Note that in this particular case we chose a study that contained a single dataset. In other cases there may be more than one. In that case `gwascat.download` will prompt you with the list of available options, prompting their accession numbers, and asking you to choose a file by its number in the list, if running interactively. 
 
-We use it's PubMed ID (29059683). We could download only harmonised GWAS catalog columns (thus having a lighter file) but I don't advise this because sometimes we may need columns from the original file. We then set `hm_only = FALSE` to get all columns.
+We use it's PubMed ID (29059683). When running `gwascat.download` without any other arguments, it will try to get the harmonised files associated with the ID. Harmonised files have been processed by GWAS catalog and are formatted and aligned to the lastest genome build. See [here](https://www.ebi.ac.uk/gwas/docs/methods/summary-statistics) for more information.
+
+Once we download the file, we'll need to prepare it for RápidoPGS. That will involve renaming columns to something RápidoPGS can understand, and this is easy to do with data.table. Also, RápidoPGS use only autosomes, so remove X or Y chromosomes at this step.
 
 ```{r eval =FALSE}
-ds <- gwascat.download(29059683, hm_only = FALSE)
+ds <- gwascat.download(29059683)
+
+# Select the harmonised hg38 file 
+# This is equivalent to:
+# ds <- fread("ftp://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST004001-GCST005000/GCST004988/harmonised/29059683-GCST004988-EFO_0000305.h.tsv.gz")
+
+# Then apply some reformatting
+setnames(ds, old = c("hm_rsid","hm_chrom","hm_pos", "hm_other_allele", "hm_effect_allele", "hm_effect_allele_frequency", "hm_beta", "standard_error", "p_value"), new = c("SNPID","CHR", "BP", "REF","ALT","ALT_FREQ", "BETA", "SE", "P"))
+ds <- ds[,.(SNPID, CHR, BP, REF, ALT, ALT_FREQ, BETA, SE, P)]
+ds <- ds[CHR !="X"]
+ds$CHR <- as.numeric(ds$CHR)
+ds <- ds[order(CHR, BP)]
+ds <- na.omit(ds, cols = c("BETA", "ALT_FREQ"))
+
 ```
 
-
-Now for the cheat: for illustrative purposes, I took a random subset from this file including 100,000 SNPs from this file, which we'll use in this tutorial. Bear in mind that the final PGS won't be a *valid* model since we randomly removed most SNPs. It will serve for our teaching purposes, though! ;)
-
+For illustrative purposes, I took a random subset from this file including 100,000 SNPs from this file, which we'll use in this tutorial. Bear in mind that the final PGS won't be a *valid* model since we randomly removed most SNPs. It will serve for our teaching purposes, though! ;)
+We can load this file straight away.
 
 ```{r}
-ds <- michailidou
+ds <- michailidou38
 ```
 
 
@@ -86,34 +100,26 @@ A note of caution when dealing with GWAS catalog files, though: since they use a
 
 Also, RápidoPGS requires allele frequencies, so it's possible that you need to compute it from an external reference panel (eg. 1000 Genomes Phase III). We don't cover that step in this vignette, but we might write instructions explaining how to do it in the future.
 
-Let's take a look at the file!
+Lastly, we applied a number of QC steps in our paper, which we won't apply here, but encourage you to try when using real data. The details of this procedure are described in the paper. You can also take a look at the code [here](https://github.com/GRealesM/RapidoPGS_paper/blob/master/Preparing_datasets_qcfilt_clean_20210317.R).
+
+Let's now look at the file.
 
 ```{r}
 summary(ds)
 ```
-In this case, we don't have any missing data, which is fantastic. We'll now prepare the dataset for RápidoPGS. We need to rename columns to something RápidoPGS can understand, and this is easy to do with data.table.
-
-```{r}
-setnames(ds, old = c("hm_rsid", "hm_chrom", "hm_pos", "hm_other_allele", "hm_effect_allele", "hm_beta", "hm_effect_allele_frequency", "standard_error", "p_value"), new=c("SNPID","CHR", "BP","REF", "ALT", "BETA", "ALT_FREQ", "SE", "P"))
-```
-
-Now another thing to consider: RápidoPGS use only autosomes, so remove X or Y chromosomes at this step.
-
-```{r}
-ds <- ds[CHR != "X",]
-```
+In this case, we don't have any missing data, which is fantastic. 
 
 
 # Computing PGS using RápidoPGS-single
 
-Now we have applied QC to our dataset, we can now compute our PGS!
-We can easily do that applying the next command, but bear in mind that, since we used harmonised columns, the build is **hg38**, so we must tell RápidoPGS about that.
+Let's now compute our PGS!
+The build of this example file is **hg38**, so we must tell RápidoPGS about that (default is hg19).
 
 In this new version, we don't need sample size for case-control datasets.
 Note that if this was a quantitative trait dataset, we should inform total number of individuals (N parameter). Also, if our dataset had columns reporting the number of individuals for each SNP, we can replace N by a string specifying the column (eg. N = "sample_size"). By doing so, RápidoPGS-single will extract this information directly from the columns.
 
 Let's get our hands dirty! Let's compute first a *full* RápidoPGS-single model. 
-Since we used harmonised coordinates from GWAS catalog, our file is in build hg38, and we need to specify it to RápidoPGS (default is hg19). 
+
 
 **Advanced use note**: You may want to filter by and align your dataset to an external reference. You can do that with RápidoPGS, too, by specifying the path of your reference file at `reference` argument. This reference file should have five columns (CHR, BP, REF, ALT, and SNPID) and be in the **same build** as our summary statistics dataset. RápidoPGS currently supports **hg19** and **hg38** builds.
 

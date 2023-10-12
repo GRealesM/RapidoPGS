@@ -5,17 +5,16 @@
 \title{Retrieve GWAS summary datasets from GWAS catalog
 '\code{gwascat.download} takes a PMID from the user and downloads the associated summary statistics datasets published in GWAS catalog}
 \usage{
-gwascat.download(ID, filenum = NULL, hm_only = TRUE)
+gwascat.download(ID, harmonised = TRUE)
 }
 \arguments{
 \item{ID}{a numeric. A PubMed ID (PMID) reference number from a GWAS paper.}
 
-\item{filenum}{a numeric. If multiple files are available, which one to choose? If NULL (DEFAULT), R will prompt an interactive prompt, asking for the number.}
-
-\item{hm_only}{a logical. Should GWAS catalog harmonised columns be retained?}
+\item{harmonised}{a logical. Should GWAS catalog harmonised files be pursued?
+If not available, the function will fall back to non-harmonised}
 }
 \value{
-a data.table containing the dataset.
+a character vector containing the url(s) to the dataset(s).
 }
 \description{
 This function, takes PUBMED ids as an input, searches at the GWAS catalog
@@ -24,16 +23,7 @@ user to choose if there are more than one, and fetches the dataset.
 }
 \details{
 If multiple files are available for the same study, R will prompt an interactive
-dialogue to select a specific file, by number. If you know the number and
-prefer to select it automatically, you can provide it using file argument.
-}
-\examples{
-
-\dontrun{
-ds <- gwascat.download(29059683, hm_only = FALSE) # This should work: Michailidou dataset
-wrongds <- gwascat.download(01223247236) # This shouldn't work: The Empress pub phone number
-}
-
+dialogue to select a specific file, by number.
 }
 \author{
 Guillermo Reales

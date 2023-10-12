@@ -10,7 +10,11 @@ rapidopgs_single(
   trait = c("cc", "quant"),
   build = "hg19",
   pi_i = 1e-04,
-  sd.prior = if (trait == "quant") {     0.15 } else {     0.2 },
+  sd.prior = if (trait == "quant") {
+     0.15
+ } else {
+     0.2
+ },
   filt_threshold = NULL,
   recalc = TRUE,
   reference = NULL
