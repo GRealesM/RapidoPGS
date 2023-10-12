@@ -13,14 +13,14 @@ A GRanges object containing 1361 ranges
 }
 }
 \source{
-\url{https://raw.githubusercontent.com/jmacdon/LDblocks_GRCh38/master/data/EUR_LD_blocks.bed}
+\url{https://github.com/jmacdon/LDblocks_GRCh38/tree/master/data}
 }
 \usage{
 EUR_ld.blocks38
 }
 \description{
 A GRanges object containing the LD block for European ancestry, in hg38 build.
-This dataset was obtained from \href{https://www.biorxiv.org/content/10.1101/2022.03.04.483057v1}{MacDonald et al. (2022)}, in bed format,
+This dataset was obtained from \href{https://www.biorxiv.org/content/10.1101/2022.03.04.483057v2}{MacDonald et al. (2022)}, in bed format,
 then transformed to GRanges.
 See manuscript for more details.
 }

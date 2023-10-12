@@ -17,7 +17,7 @@
 #' LD block architecture for European populations (hg38).
 #'
 #' A GRanges object containing the LD block for European ancestry, in hg38 build.
-#' This dataset was obtained from \href{https://www.biorxiv.org/content/10.1101/2022.03.04.483057v1}{MacDonald et al. (2022)}, in bed format,
+#' This dataset was obtained from \href{https://www.biorxiv.org/content/10.1101/2022.03.04.483057v2}{MacDonald et al. (2022)}, in bed format,
 #'  then transformed to GRanges.
 #' See manuscript for more details.
 #'
@@ -27,7 +27,7 @@
 #'   \item{ranges}{start and stop positions for the block}
 #'   \item{strand}{genomic strand, irrelevant here}
 #' }
-#' @source \url{https://raw.githubusercontent.com/jmacdon/LDblocks_GRCh38/master/data/EUR_LD_blocks.bed} 
+#' @source \url{https://github.com/jmacdon/LDblocks_GRCh38/tree/master/data} 
 #' 
 "EUR_ld.blocks38"
 
@@ -49,7 +49,7 @@
 #'   \item{standard_error}{standard error of beta}
 #'   \item{p_value}{p-value}
 #' }
-#' @source \url{ftp://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/MichailidouK_29059683_GCST004988/harmonised/29059683-GCST004988-EFO_0000305.h.tsv.gz} 
+#' @source \url{ftp://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST004001-GCST005000/GCST004988/harmonised/29059683-GCST004988-EFO_0000305.h.tsv.gz} 
 #' 
 "michailidou38"
 
@@ -71,6 +71,6 @@
 #'   \item{SE}{standard error of beta}
 #'   \item{P}{p-value}
 #' }
-#' @source \url{ftp://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/MichailidouK_29059683_GCST004988/harmonised/29059683-GCST004988-EFO_0000305.h.tsv.gz} 
+#' @source \url{ftp://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST004001-GCST005000/GCST004988/harmonised/29059683-GCST004988-EFO_0000305-build37.f.tsv.gz} 
 #' 
 "michailidou19"

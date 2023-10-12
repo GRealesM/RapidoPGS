@@ -5,6 +5,7 @@ RápidoPGS 2.3.0
 - We updated `rapidopgs_multi()` to accommodate updates in both `coloc` and `susieR`. This involved adding some arguments (N, sample size), and removing others (pi_i, prior probability, now automatically computed by SuSiE). We also now allow the user to supply their own LD block file for non-European GWAS.
 - Fixed `gwascat.download()` to accommodate the new GWAS catalog file structure. Now it is more interactive, providing extra flexibility.
 - Updated vignettes.
+- Updated hg38 LD blocks file from its original repository, which was also updated.
 
 # RapidoPGS 2.2.0
 
