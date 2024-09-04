@@ -707,7 +707,13 @@ rapidopgs_multi <- function(data, reference=NULL, LDmatrices=NULL, N=NULL, build
       }
       
       # susie.ds <- list(snp=snp.block$SNPID, beta=snp.block$BETA, varbeta=snp.block$SE^2, LD=LD.block, type=trait)
-      susie.ds <- list(snp=snp.block$SNPID, beta=snp.block$BETA, varbeta=snp.block$SE^2, LD=LD.block, N = as.numeric(N), type = trait)
+      # susie.ds <- list(snp=snp.block$SNPID, beta=snp.block$BETA, varbeta=snp.block$SE^2, LD=LD.block, N = as.numeric(N), type = trait)
+      # check_dataset requires sdY if type == "quant", even though susie doesn't need it. We added sdY = 1.
+      if (type == "cc") {
+        susie.ds <- list(snp = snp.block$SNPID, beta = snp.block$BETA, varbeta = snp.block$SE^2, LD = LD.block, N = as.numeric(N), type = trait)
+      } else if (type == "quant") {
+        susie.ds <- list(snp = snp.block$SNPID, beta = snp.block$BETA, varbeta = snp.block$SE^2, LD = LD.block, N = as.numeric(N), type = trait, sdY = 1)
+      }
 
       if(is.null(sd.prior)){
         prior_est <-  TRUE

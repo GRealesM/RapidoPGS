@@ -2,7 +2,11 @@
 
 # RapidoPGS 2.3.0
 
-RápidoPGS 2.3.0
+RapidoPGS 2.3.0.9001
+2024-09-04
+- Fixed a bug derived from `check_dataset()` in `runsusie()` requiring sdY for quantitative traits in `rapidopgs_multi()`. SuSiE doesn't require it so we know detect if `type = "quant"` and pass `sdY = 1` onto `runsusie()`.
+
+RapidoPGS 2.3.0
 2023-10-12
 - We updated `rapidopgs_multi()` to accommodate updates in both `coloc` and `susieR`. This involved adding some arguments (N, sample size), and removing others (pi_i, prior probability, now automatically computed by SuSiE). We also now allow the user to supply their own LD block file for non-European GWAS.
 - Fixed `gwascat.download()` to accommodate the new GWAS catalog file structure. Now it is more interactive, providing extra flexibility.
