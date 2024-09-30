@@ -8,9 +8,9 @@ status](https://www.r-pkg.org/badges/version/RapidoPGS)](https://cran.r-project.
 
 **A *rápido* and lightweight method to compute Polygenic Risk Scores.**
 
-**Last update:** 2023-10-12
+**Last update:** 2024-09-30
 
-**Current version:** 2.3.0
+**Current version:** 2.3.0 (Development version: 2.3.0.9002)
 
 This package allows to quickly (*rápido* is Spanish for "fast") compute polygenic scores (PGS) from case-control or quantitative trait GWAS summary statistic datasets, without the need of an external validation dataset.
 
@@ -21,6 +21,8 @@ You can find a description of the ideas behind RápidoPGS, as well as technical 
 > [Reales G, Vigorito E, Kelemen M, & Wallace C (2021) RápidoPGS: A rapid polygenic score calculator for summary GWAS data without validation dataset. *Bioinformatics*, 37(23), 4444-50.](https://academic.oup.com/bioinformatics/article/37/23/4444/6305825)
 
 # News
+
+* **Note:** Due to changes in dependencies, the `rapidopgs_multi()` in version 2.3.0 may not work. While we push a new version to CRAN, please feel free to use the development version from GitHub. Apologies for the inconvenience.
 
 * In version 2.3.0, we updated the `rapidopgs_multi()` and `gwascat.download()` functions. For  `rapidopgs_multi()`, we udpated it to accomodate changes on [susieR](https://github.com/stephenslab/susieR). Now sample size is required for all files, and the `pi_i` argument has been deprecated. We also opened the possibility to apply RápidoPGS to non-European ancestries. For `gwascat.download()`, we updated the method, which wasn't working anymore to extract data from GWAS catalog. It now works interactively, providing the users advice on which file to choose. We also updated the hg38 LD blocks file, as it was updated in its original repository.
 * In version 2.2.0, we updated hg38 LD blocks from liftovered Berisa & Pickrell to recomputed MacDonald et al. 2022 (https://github.com/jmacdon/LDblocks_GRCh38, https://www.biorxiv.org/content/10.1101/2022.03.04.483057v1).

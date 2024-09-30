@@ -292,7 +292,7 @@ gwascat.download <- function(ID, harmonised = TRUE){
 ##' @examples
 ##' sumstats <- data.table(SNPID=c("rs139096444","rs3843766","rs61977545", "rs544733737",
 ##'			"rs2177641", "rs183491817", "rs72995775","rs78598863", "rs1411315"), 
-##'			CHR=c("4","20","14","2","4","6","6","21","13"), 
+##'			CHR=c(4,20,14,2,4,6,6,21,13), 
 ##'			BP=c(1479959, 13000913, 29107209, 203573414, 57331393, 11003529, 149256398, 
 ##'					25630085, 79166661), 
 ##'			REF=c("C","C","C","T","G","C","C","G","T"), 
@@ -498,7 +498,7 @@ rapidopgs_single <- function(data,
 ##' @examples
 ##' \dontrun{
 ##' ss <- data.table(
-##'			CHR=c("4","20","14","2","4","6","6","21","13"), 
+##'			CHR=c(4,20,14,2,4,6,6,21,13), 
 ##'			BP=c(1479959, 13000913, 29107209, 203573414, 57331393, 11003529, 149256398, 
 ##'					25630085, 79166661), 
 ##'			REF=c("C","C","C","T","G","C","C","G","T"), 
@@ -709,9 +709,9 @@ rapidopgs_multi <- function(data, reference=NULL, LDmatrices=NULL, N=NULL, build
       # susie.ds <- list(snp=snp.block$SNPID, beta=snp.block$BETA, varbeta=snp.block$SE^2, LD=LD.block, type=trait)
       # susie.ds <- list(snp=snp.block$SNPID, beta=snp.block$BETA, varbeta=snp.block$SE^2, LD=LD.block, N = as.numeric(N), type = trait)
       # check_dataset requires sdY if type == "quant", even though susie doesn't need it. We added sdY = 1.
-      if (type == "cc") {
+      if (trait == "cc") {
         susie.ds <- list(snp = snp.block$SNPID, beta = snp.block$BETA, varbeta = snp.block$SE^2, LD = LD.block, N = as.numeric(N), type = trait)
-      } else if (type == "quant") {
+      } else if (trait == "quant") {
         susie.ds <- list(snp = snp.block$SNPID, beta = snp.block$BETA, varbeta = snp.block$SE^2, LD = LD.block, N = as.numeric(N), type = trait, sdY = 1)
       }
 

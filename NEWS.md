@@ -2,6 +2,10 @@
 
 # RapidoPGS 2.3.0
 
+RapidoPGS 2.3.0.9002
+2024-09-30
+- Replace `type` by `trait` within `rapidopgs_multi()` to match the parameter call.
+
 RapidoPGS 2.3.0.9001
 2024-09-04
 - Fixed a bug derived from `check_dataset()` in `runsusie()` requiring sdY for quantitative traits in `rapidopgs_multi()`. SuSiE doesn't require it so we know detect if `type = "quant"` and pass `sdY = 1` onto `runsusie()`.
