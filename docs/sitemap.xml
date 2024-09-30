@@ -1,81 +1,29 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>http://GRealesM.github.io/RapidoPGS/404.html</loc>
-  </url>
-  <url>
-    <loc>http://GRealesM.github.io/RapidoPGS/articles/Computing_RapidoPGS.html</loc>
-  </url>
-  <url>
-    <loc>http://GRealesM.github.io/RapidoPGS/articles/Computing_RapidoPGSmulti.html</loc>
-  </url>
-  <url>
-    <loc>http://GRealesM.github.io/RapidoPGS/articles/Computing_RapidoPGSsingle.html</loc>
-  </url>
-  <url>
-    <loc>http://GRealesM.github.io/RapidoPGS/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>http://GRealesM.github.io/RapidoPGS/authors.html</loc>
-  </url>
-  <url>
-    <loc>http://GRealesM.github.io/RapidoPGS/index.html</loc>
-  </url>
-  <url>
-    <loc>http://GRealesM.github.io/RapidoPGS/news/index.html</loc>
-  </url>
-  <url>
-    <loc>http://GRealesM.github.io/RapidoPGS/reference/EUR_ld.blocks.html</loc>
-  </url>
-  <url>
-    <loc>http://GRealesM.github.io/RapidoPGS/reference/EUR_ld.blocks19.html</loc>
-  </url>
-  <url>
-    <loc>http://GRealesM.github.io/RapidoPGS/reference/EUR_ld.blocks38.html</loc>
-  </url>
-  <url>
-    <loc>http://GRealesM.github.io/RapidoPGS/reference/create_1000G.html</loc>
-  </url>
-  <url>
-    <loc>http://GRealesM.github.io/RapidoPGS/reference/find_file_in_ftp.html</loc>
-  </url>
-  <url>
-    <loc>http://GRealesM.github.io/RapidoPGS/reference/gwascat.download.html</loc>
-  </url>
-  <url>
-    <loc>http://GRealesM.github.io/RapidoPGS/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>http://GRealesM.github.io/RapidoPGS/reference/logsum.html</loc>
-  </url>
-  <url>
-    <loc>http://GRealesM.github.io/RapidoPGS/reference/michailidou.html</loc>
-  </url>
-  <url>
-    <loc>http://GRealesM.github.io/RapidoPGS/reference/michailidou19.html</loc>
-  </url>
-  <url>
-    <loc>http://GRealesM.github.io/RapidoPGS/reference/michailidou38.html</loc>
-  </url>
-  <url>
-    <loc>http://GRealesM.github.io/RapidoPGS/reference/rapidopgs_multi.html</loc>
-  </url>
-  <url>
-    <loc>http://GRealesM.github.io/RapidoPGS/reference/rapidopgs_single.html</loc>
-  </url>
-  <url>
-    <loc>http://GRealesM.github.io/RapidoPGS/reference/sd.prior.est.html</loc>
-  </url>
-  <url>
-    <loc>http://GRealesM.github.io/RapidoPGS/reference/sdY.est.html</loc>
-  </url>
-  <url>
-    <loc>http://GRealesM.github.io/RapidoPGS/reference/susie_pip.html</loc>
-  </url>
-  <url>
-    <loc>http://GRealesM.github.io/RapidoPGS/reference/wakefield_pp.html</loc>
-  </url>
-  <url>
-    <loc>http://GRealesM.github.io/RapidoPGS/reference/wakefield_pp_quant.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>http://GRealesM.github.io/RapidoPGS/404.html</loc></url>
+<url><loc>http://GRealesM.github.io/RapidoPGS/articles/Computing_RapidoPGS.html</loc></url>
+<url><loc>http://GRealesM.github.io/RapidoPGS/articles/Computing_RapidoPGSmulti.html</loc></url>
+<url><loc>http://GRealesM.github.io/RapidoPGS/articles/Computing_RapidoPGSsingle.html</loc></url>
+<url><loc>http://GRealesM.github.io/RapidoPGS/articles/index.html</loc></url>
+<url><loc>http://GRealesM.github.io/RapidoPGS/authors.html</loc></url>
+<url><loc>http://GRealesM.github.io/RapidoPGS/index.html</loc></url>
+<url><loc>http://GRealesM.github.io/RapidoPGS/news/index.html</loc></url>
+<url><loc>http://GRealesM.github.io/RapidoPGS/reference/EUR_ld.blocks.html</loc></url>
+<url><loc>http://GRealesM.github.io/RapidoPGS/reference/EUR_ld.blocks19.html</loc></url>
+<url><loc>http://GRealesM.github.io/RapidoPGS/reference/EUR_ld.blocks38.html</loc></url>
+<url><loc>http://GRealesM.github.io/RapidoPGS/reference/create_1000G.html</loc></url>
+<url><loc>http://GRealesM.github.io/RapidoPGS/reference/find_file_in_ftp.html</loc></url>
+<url><loc>http://GRealesM.github.io/RapidoPGS/reference/gwascat.download.html</loc></url>
+<url><loc>http://GRealesM.github.io/RapidoPGS/reference/index.html</loc></url>
+<url><loc>http://GRealesM.github.io/RapidoPGS/reference/logsum.html</loc></url>
+<url><loc>http://GRealesM.github.io/RapidoPGS/reference/michailidou.html</loc></url>
+<url><loc>http://GRealesM.github.io/RapidoPGS/reference/michailidou19.html</loc></url>
+<url><loc>http://GRealesM.github.io/RapidoPGS/reference/michailidou38.html</loc></url>
+<url><loc>http://GRealesM.github.io/RapidoPGS/reference/rapidopgs_multi.html</loc></url>
+<url><loc>http://GRealesM.github.io/RapidoPGS/reference/rapidopgs_single.html</loc></url>
+<url><loc>http://GRealesM.github.io/RapidoPGS/reference/sd.prior.est.html</loc></url>
+<url><loc>http://GRealesM.github.io/RapidoPGS/reference/sdY.est.html</loc></url>
+<url><loc>http://GRealesM.github.io/RapidoPGS/reference/susie_pip.html</loc></url>
+<url><loc>http://GRealesM.github.io/RapidoPGS/reference/wakefield_pp.html</loc></url>
+<url><loc>http://GRealesM.github.io/RapidoPGS/reference/wakefield_pp_quant.html</loc></url>
 </urlset>
+
