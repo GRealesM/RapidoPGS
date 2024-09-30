@@ -108,7 +108,7 @@ These matrices were computed using for 1,054,330 HapMap3 variants based on
 \examples{
 \dontrun{
 ss <- data.table(
-		CHR=c("4","20","14","2","4","6","6","21","13"), 
+		CHR=c(4,20,14,2,4,6,6,21,13), 
 		BP=c(1479959, 13000913, 29107209, 203573414, 57331393, 11003529, 149256398, 
 				25630085, 79166661), 
 		REF=c("C","C","C","T","G","C","C","G","T"), 
