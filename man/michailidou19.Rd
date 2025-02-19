@@ -26,7 +26,7 @@ SNPID, CHR, BP, REF, ALT, ALT_FREQ, BETA, SE, P
 michailidou19
 }
 \description{
-A data.table containing a subset of \href{https://www.nature.com/articles/nature24284/}{Michailidou et al., 2017} breast cancer summary statistic dataset, in hg19 build.
+A data.table containing a subset of \doi{10.1038/nature24284} breast cancer summary statistic dataset, in hg19 build.
 This dataset is freely available in GWAS catalog (see link below). We used "chromosome", "base_pair_location columns", removed unnecessary and all-missing columns, and took a random sample of 100,000 SNPs without replacement.
 }
 \keyword{datasets}

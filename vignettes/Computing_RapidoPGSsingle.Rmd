@@ -135,7 +135,7 @@ Let's take a look.
 head(full_PGS)
 ```
 
-We see three new columns: **ld.block** corresponds to the [ld-detect](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4731402/) LD block number assigned to the SNP (see manuscript for more details of where this comes from), **ppi** is the posterior probability that the SNP is causal, and **weight** is the weighted effect size (BETA * ppi) - and the column we're interested in.
+We see three new columns: **ld.block** corresponds to the [ld-detect](https://doi.org/10.1093/bioinformatics/btv546) LD block number assigned to the SNP (see manuscript for more details of where this comes from), **ppi** is the posterior probability that the SNP is causal, and **weight** is the weighted effect size (BETA * ppi) - and the column we're interested in.
 
 
 ## Applying different thresholds

@@ -1,10 +1,12 @@
 # RapidoPGS (development version)
 
-# RapidoPGS 2.3.0
+# RapidoPGS 2.3.1
 
-RapidoPGS 2.3.0.9002
+RapidoPGS 2.3.1
 2024-09-30
 - Replace `type` by `trait` within `rapidopgs_multi()` to match the parameter call.
+
+# RapidoPGS 2.3.0
 
 RapidoPGS 2.3.0.9001
 2024-09-04

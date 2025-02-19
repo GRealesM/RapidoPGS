@@ -20,7 +20,7 @@ EUR_ld.blocks38
 }
 \description{
 A GRanges object containing the LD block for European ancestry, in hg38 build.
-This dataset was obtained from \href{https://www.biorxiv.org/content/10.1101/2022.03.04.483057v2}{MacDonald et al. (2022)}, in bed format,
+This dataset was obtained from \doi{10.1101/2022.03.04.483057}, in bed format,
 then transformed to GRanges.
 See manuscript for more details.
 }

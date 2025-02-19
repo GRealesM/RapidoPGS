@@ -20,7 +20,7 @@ EUR_ld.blocks19
 }
 \description{
 A GRanges object containing the LD block for European ancestry, in hg19 build.
-This dataset was obtained from \href{https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4731402/}{Berisa and Pickrell (2016)}, in bed format,
+This dataset was obtained from \doi{10.1093/bioinformatics/btv546}, in bed format,
 then converted to GRanges. See manuscript for more details.
 }
 \keyword{datasets}

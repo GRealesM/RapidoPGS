@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">RápidoPGS</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.3.0.9002</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.3.1</span>
       </span>
     </div>
 
@@ -60,10 +60,15 @@
       <small>Source: <a href="https://github.com/GRealesM/RapidoPGS/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
-    <div class="section level2"><h2 class="page-header" data-toc-text="development version" id="rapidopgs-development-version">RapidoPGS (development version)<a class="anchor" aria-label="anchor" href="#rapidopgs-development-version"></a></h2></div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="development version" id="rapidopgs-development-version">RapidoPGS (development version)<a class="anchor" aria-label="anchor" href="#rapidopgs-development-version"></a></h2>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.3.1" id="rapidopgs-231">RapidoPGS 2.3.1<a class="anchor" aria-label="anchor" href="#rapidopgs-231"></a></h2>
+<p>RapidoPGS 2.3.1 2024-09-30 - Replace <code>type</code> by <code>trait</code> within <code><a href="../reference/rapidopgs_multi.html">rapidopgs_multi()</a></code> to match the parameter call.</p>
+</div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="2.3.0" id="rapidopgs-230">RapidoPGS 2.3.0<small>2023-10-13</small><a class="anchor" aria-label="anchor" href="#rapidopgs-230"></a></h2>
-<p>RapidoPGS 2.3.0.9002 2024-09-30 - Replace <code>type</code> by <code>trait</code> within <code><a href="../reference/rapidopgs_multi.html">rapidopgs_multi()</a></code> to match the parameter call.</p>
 <p>RapidoPGS 2.3.0.9001 2024-09-04 - Fixed a bug derived from <code>check_dataset()</code> in <code>runsusie()</code> requiring sdY for quantitative traits in <code><a href="../reference/rapidopgs_multi.html">rapidopgs_multi()</a></code>. SuSiE doesn’t require it so we know detect if <code>type = "quant"</code> and pass <code>sdY = 1</code> onto <code>runsusie()</code>.</p>
 <p>RapidoPGS 2.3.0 2023-10-12 - We updated <code><a href="../reference/rapidopgs_multi.html">rapidopgs_multi()</a></code> to accommodate updates in both <code>coloc</code> and <code>susieR</code>. This involved adding some arguments (N, sample size), and removing others (pi_i, prior probability, now automatically computed by SuSiE). We also now allow the user to supply their own LD block file for non-European GWAS. - Fixed <code><a href="../reference/gwascat.download.html">gwascat.download()</a></code> to accommodate the new GWAS catalog file structure. Now it is more interactive, providing extra flexibility. - Updated vignettes. - Updated hg38 LD blocks file from its original repository, which was also updated.</p>
 </div>
@@ -111,7 +116,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
       </footer></div>

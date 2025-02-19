@@ -10,7 +10,7 @@ status](https://www.r-pkg.org/badges/version/RapidoPGS)](https://cran.r-project.
 
 **Last update:** 2024-09-30
 
-**Current version:** 2.3.0 (Development version: 2.3.0.9002)
+**Current version:** 2.3.1
 
 This package allows to quickly (*rápido* is Spanish for "fast") compute polygenic scores (PGS) from case-control or quantitative trait GWAS summary statistic datasets, without the need of an external validation dataset.
 
@@ -18,7 +18,7 @@ This package allows to quickly (*rápido* is Spanish for "fast") compute polygen
 
 You can find a description of the ideas behind RápidoPGS, as well as technical details in our *Bioinformatics* paper:
 
-> [Reales G, Vigorito E, Kelemen M, & Wallace C (2021) RápidoPGS: A rapid polygenic score calculator for summary GWAS data without validation dataset. *Bioinformatics*, 37(23), 4444-50.](https://academic.oup.com/bioinformatics/article/37/23/4444/6305825)
+> [Reales G, Vigorito E, Kelemen M, & Wallace C (2021) RápidoPGS: A rapid polygenic score calculator for summary GWAS data without validation dataset. *Bioinformatics*, 37(23), 4444-50.](https://doi.org/10.1093/bioinformatics/btab456)
 
 # News
 
