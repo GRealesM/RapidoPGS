@@ -100,7 +100,7 @@ A note of caution when dealing with GWAS catalog files, though: since they use a
 
 Also, RápidoPGS requires allele frequencies, so it's possible that you need to compute it from an external reference panel (eg. 1000 Genomes Phase III). We don't cover that step in this vignette, but we might write instructions explaining how to do it in the future.
 
-Lastly, we applied a number of QC steps in our paper, which we won't apply here, but encourage you to try when using real data. The details of this procedure are described in the paper. You can also take a look at the code [here](https://github.com/GRealesM/RapidoPGS_paper/blob/master/Preparing_datasets_qcfilt_clean_20210317.R).
+Lastly, we applied a number of QC steps in our paper, which we won't apply here, but encourage you to try when using real data. The details of this procedure are described in the paper. You can also take a look at the code [here](https://raw.githubusercontent.com/GRealesM/RapidoPGS_paper/refs/heads/master/Preparing_datasets_qcfilt_clean_20210317.R).
 
 Let's now look at the file.
 

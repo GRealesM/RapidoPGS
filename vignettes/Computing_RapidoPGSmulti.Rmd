@@ -76,7 +76,7 @@ And that should be it!
 
 # Preparing LD matrices (UK Biobank case)
 
-Alternatively, we can use pre-computed LD matrices (from a larger panel, for example). In our paper, we use pre-computed LD matrices from the UK Biobank panel, made publicly available by LDpred2 authors [here](https://figshare.com/articles/dataset/European_LD_reference/13034123).
+Alternatively, we can use pre-computed LD matrices (from a larger panel, for example). In our paper, we use pre-computed LD matrices from the UK Biobank panel, made publicly available by LDpred2 authors [here](https://doi.org/10.6084/m9.figshare.13034123).
 
 These matrices comprise ~1 million HapMap3 variants, and were computed on 362,320 UK Biobank individuals. We can download and set them up using the following code:
 

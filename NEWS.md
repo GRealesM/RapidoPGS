@@ -1,5 +1,12 @@
 # RapidoPGS (development version)
 
+# RapidoPGS 2.3.2
+
+RapidoPGS 2.3.2
+2026-03-30
+- Fixed issues with `GenomeInfoDb` that caused RapidoPGS to be archived on CRAN.
+
+
 # RapidoPGS 2.3.1
 
 RapidoPGS 2.3.1

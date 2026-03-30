@@ -101,7 +101,7 @@ If prefer to use LD matrices, you must indicate the path to the directory
 where they are stored. They must be in RDS format, named LD_chrZ.rds (where
 Z is the 1-22 chromosome number). If you don't have LD matrices already,
 we recommend downloading those gently provided by Prive et al., at
-\url{https://figshare.com/articles/dataset/European_LD_reference/13034123}.
+\doi{10.6084/m9.figshare.13034123}.
 These matrices were computed using for 1,054,330 HapMap3 variants based on
 362,320 European individuals of the UK biobank.
 }

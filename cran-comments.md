@@ -1,9 +1,4 @@
-## R CMD check results
+This is a resubmission of RapidoPGS, which was archived on 2025-11-07.
 
-0 errors ✔ | 0 warnings ✔ | 1 note ✖
-
-## Resubmission
-
-This is a resubmission. In this version I have:
-
-* Fixed a couple of arguments causing issues in `coloc` and `susieR` dependencies.
+The previous issues regarding `GenomeInfoDb` and  unresponsive maintainer have been addressed. 
+This version updates the package to be compatible with R 4.5.3 and the latest Bioconductor release (3.21).
