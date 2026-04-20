@@ -15,7 +15,5 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 Suggests: knitr, rmarkdown, GenomeInfoDb
 VignetteBuilder: knitr
-Additional_repositories: 
-    https://bioconductor.org/packages/3.21/bioc,
-    https://bioconductor.org/packages/3.21/data/annotation
+
 

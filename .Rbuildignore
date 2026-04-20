@@ -8,3 +8,5 @@
 ^Meta$
 ^revdep$
 ^CRAN-SUBMISSION$
+^\.github$
+^\.gitignore$
