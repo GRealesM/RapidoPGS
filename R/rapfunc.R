@@ -116,7 +116,7 @@ wakefield_pp <- function(beta, se, pi_i=1e-4,sd.prior=0.2) {
 ##' @param acc a string containing the accession for the desired study.
 ##' @param hm a logical. Should it look in the harmonised directory?
 ##' @return a data.table containing the dataset.
-##' @import data.table curl RCurl magrittr
+##' @import curl RCurl magrittr
 ##' @author Guillermo Reales
 find_file_in_ftp <- function(ftp_address, acc, hm){
 		
@@ -163,7 +163,7 @@ find_file_in_ftp <- function(ftp_address, acc, hm){
 ##' @param harmonised a logical. Should GWAS catalog harmonised files be pursued? 
 ##'     If not available, the function will fall back to non-harmonised
 ##' @return a character vector containing the url(s) to the dataset(s).
-##' @import data.table curl RCurl
+##' @import curl RCurl
 ##' @export
 ##' @author Guillermo Reales
 ##'
@@ -283,7 +283,7 @@ gwascat.download <- function(ID, harmonised = TRUE){
 ##'   SNPs should be filtered and aligned to, see Details.
 ##' @return a data.table containing the formatted sumstats dataset with
 ##'   computed PGS weights.
-##' @import data.table 
+##' @importFrom data.table := as.data.table copy data.table fread setnames
 ##' @importFrom bigsnpr snp_match
 ##' @importFrom GenomicRanges GRanges findOverlaps
 ##' @importFrom IRanges IRanges
@@ -487,7 +487,6 @@ rapidopgs_single <- function(data,
 ##' @param LDblocks a string indicating the path to an alternative LD block file in .RData format. Only required for non-European PGS.
 ##' @return a data.table containing the sumstats dataset with
 ##'   computed PGS weights.
-##' @import data.table
 ##' @importFrom bigsnpr snp_match snp_cor snp_readBed snp_attach
 ##' @importFrom GenomicRanges GRanges findOverlaps
 ##' @importFrom IRanges IRanges 
